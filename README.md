@@ -1,6 +1,11 @@
-# OpenInvoiceBridge
+<div align="center">
+  <img src="docs/assets/logo.png" alt="Synclium Logo" width="180" />
+  <h1>Synclium</h1>
+  <p><strong>Universal e-invoice interoperability & synchronization engine</strong></p>
+  <p><em>One invoice in. Any e-invoicing standard out.</em></p>
+</div>
 
-**One invoice in. Any e-invoicing standard out.**
+---
 
 Open-source universal e-invoice interoperability engine. Feed it an invoice — structured
 XML (UBL, Factur-X, ZATCA…), a PDF, or even a scan — and it converts and validates it across

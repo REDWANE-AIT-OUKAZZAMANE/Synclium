@@ -177,19 +177,27 @@ export default function DemoPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(47,150,255,0.18),transparent_55%)]" />
         <div className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
           <div className="flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 font-bold text-white shadow-lg shadow-brand-500/30">
-              ⇄
-            </span>
-            <span className="text-lg font-semibold tracking-tight text-white">
-              OpenInvoiceBridge
-            </span>
+            <img
+              src="/logo.png"
+              alt="Synclium Logo"
+              className="h-10 w-10 rounded-xl object-cover shadow-lg shadow-brand-500/25 ring-1 ring-brand-400/30"
+            />
+            <div className="flex flex-col">
+              <span className="text-lg font-bold tracking-tight text-white">
+                Synclium
+              </span>
+              <span className="text-[11px] font-medium uppercase tracking-wider text-brand-400">
+                OpenInvoiceBridge
+              </span>
+            </div>
             <a
-              href="https://github.com/openinvoicebridge/openinvoicebridge"
-              className="ml-auto rounded-lg border border-ink-700 px-3 py-1.5 text-sm text-slate-300 transition hover:border-brand-500 hover:text-white"
+              href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium"
+              className="ml-auto flex items-center gap-1.5 rounded-lg border border-ink-700 bg-ink-900/60 px-3.5 py-1.5 text-sm font-medium text-slate-200 transition hover:border-brand-500 hover:text-white hover:shadow-sm"
               target="_blank"
               rel="noreferrer"
             >
-              GitHub ↗
+              <span>GitHub</span>
+              <span className="text-xs text-slate-400">↗</span>
             </a>
           </div>
           <h1 className="mt-8 max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
