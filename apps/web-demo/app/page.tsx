@@ -527,7 +527,7 @@ export default function WorkbenchPage() {
                 onClick={() => signIn("github")}
                 className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity shadow-sm"
               >
-                <span>Sign in (3 Free Scans)</span>
+                <span>Sign in (3 Scans / 4h)</span>
               </button>
             )}
 
@@ -648,7 +648,7 @@ export default function WorkbenchPage() {
                     SIGN IN TO UPLOAD & EXTRACT INVOICES
                   </p>
                   <p className="mt-1 font-mono text-[11px] text-blue-600 dark:text-blue-400 font-semibold">
-                    Click to sign in with GitHub for 3 free daily scans
+                    Click to sign in with GitHub for 3 free scans (resets every 4h)
                   </p>
                 </>
               ) : (

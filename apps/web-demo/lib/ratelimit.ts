@@ -20,6 +20,8 @@ export interface GeneralRateLimitResult {
   failClosed?: boolean;
 }
 
+export const EXTRACT_WINDOW_SECONDS = 4 * 3600; // 4 hours window (14,400s)
+
 // In-memory atomic store for local testing/dev when Upstash is not provisioned
 class InMemoryRedisMock {
   private store = new Map<string, { count: number; expiresAt: number }>();
@@ -28,7 +30,7 @@ class InMemoryRedisMock {
     const now = Date.now();
     const entry = this.store.get(key);
     if (!entry || entry.expiresAt < now) {
-      this.store.set(key, { count: 1, expiresAt: now + 86400 * 1000 });
+      this.store.set(key, { count: 1, expiresAt: now + EXTRACT_WINDOW_SECONDS * 1000 });
       return 1;
     }
     entry.count += 1;
@@ -44,6 +46,13 @@ class InMemoryRedisMock {
     return 0;
   }
 
+  async ttl(key: string): Promise<number> {
+    const now = Date.now();
+    const entry = this.store.get(key);
+    if (!entry || entry.expiresAt < now) return -2;
+    return Math.max(0, Math.ceil((entry.expiresAt - now) / 1000));
+  }
+
   async get<T>(key: string): Promise<T | null> {
     const now = Date.now();
     const entry = this.store.get(key);
@@ -57,7 +66,7 @@ class InMemoryRedisMock {
 }
 
 const memoryMock = new InMemoryRedisMock();
-let customRedisClient: { incr: (k: string) => Promise<number>; expire: (k: string, s: number) => Promise<number>; get: <T>(k: string) => Promise<T | null> } | null = null;
+let customRedisClient: { incr: (k: string) => Promise<number>; expire: (k: string, s: number) => Promise<number>; get: <T>(k: string) => Promise<T | null>; ttl?: (k: string) => Promise<number> } | null = null;
 let upstashClient: Redis | null = null;
 
 /** Set a custom or mock Redis client (useful for unit/integration testing) */
@@ -95,8 +104,8 @@ export function getClientIp(req: Request): string {
   }
   const realIp = req.headers.get("x-real-ip");
   if (realIp) return normalizeIp(realIp.trim());
-  const cfIp = req.headers.get("cf-connecting-ip");
-  if (cfIp) return normalizeIp(cfIp.trim());
+  const cfConnectingIp = req.headers.get("cf-connecting-ip");
+  if (cfConnectingIp) return normalizeIp(cfConnectingIp.trim());
 
   return "127.0.0.1";
 }
@@ -132,17 +141,14 @@ export function getSecondsUntilNextMinute(): number {
 
 /**
  * Atomic quota consumption for /extract
- * Keys Redis atomically: scan:{tier}:{identifier}:{YYYY-MM-DD}
- * Sets 24h TTL on first increment.
+ * Keys Redis atomically: scan:4h:{tier}:{identifier}
+ * Sets 4-hour TTL (14,400s) on first increment.
  * Fail closed if Redis is unreachable.
  */
 export async function checkAndConsumeExtractQuota(params: {
   githubUserId?: string | null;
   ip: string;
 }): Promise<QuotaResult> {
-  const today = getTodayUTC();
-  const resetInSec = getSecondsUntilMidnightUTC();
-
   const isAuth = !!params.githubUserId;
   const tier: "anon" | "auth" = isAuth ? "auth" : "anon";
 
@@ -151,15 +157,23 @@ export async function checkAndConsumeExtractQuota(params: {
   const limit = isAuth ? authLimit : anonLimit;
 
   const identifier = isAuth ? String(params.githubUserId) : hashIp(params.ip);
-  const key = `scan:${tier}:${identifier}:${today}`;
+  const key = `scan:4h:${tier}:${identifier}`;
 
   try {
     const redis = getRedisClient();
     const count = await redis.incr(key);
 
-    // Set 24h TTL on first increment to auto-expire
+    // Set 4h TTL on first increment to auto-expire
     if (count === 1) {
-      await redis.expire(key, 86400);
+      await redis.expire(key, EXTRACT_WINDOW_SECONDS);
+    }
+
+    let resetInSec = EXTRACT_WINDOW_SECONDS;
+    if (typeof (redis as any).ttl === "function") {
+      try {
+        const ttl = await (redis as any).ttl(key);
+        if (ttl > 0) resetInSec = ttl;
+      } catch {}
     }
 
     if (count > limit) {
@@ -190,7 +204,7 @@ export async function checkAndConsumeExtractQuota(params: {
       remaining: 0,
       used: limit,
       limit,
-      resetInSec,
+      resetInSec: EXTRACT_WINDOW_SECONDS,
       tier,
       error: "Rate limit service temporarily unavailable. Please try again shortly.",
     };
@@ -204,9 +218,6 @@ export async function peekExtractQuota(params: {
   githubUserId?: string | null;
   ip: string;
 }): Promise<QuotaResult> {
-  const today = getTodayUTC();
-  const resetInSec = getSecondsUntilMidnightUTC();
-
   const isAuth = !!params.githubUserId;
   const tier: "anon" | "auth" = isAuth ? "auth" : "anon";
 
@@ -215,12 +226,20 @@ export async function peekExtractQuota(params: {
   const limit = isAuth ? authLimit : anonLimit;
 
   const identifier = isAuth ? String(params.githubUserId) : hashIp(params.ip);
-  const key = `scan:${tier}:${identifier}:${today}`;
+  const key = `scan:4h:${tier}:${identifier}`;
 
   try {
     const redis = getRedisClient();
     const val = await redis.get<number>(key);
     const count = val ? Number(val) : 0;
+
+    let resetInSec = EXTRACT_WINDOW_SECONDS;
+    if (typeof (redis as any).ttl === "function") {
+      try {
+        const ttl = await (redis as any).ttl(key);
+        if (ttl > 0) resetInSec = ttl;
+      } catch {}
+    }
 
     return {
       allowed: count < limit,
@@ -236,7 +255,7 @@ export async function peekExtractQuota(params: {
       remaining: limit,
       used: 0,
       limit,
-      resetInSec,
+      resetInSec: EXTRACT_WINDOW_SECONDS,
       tier,
     };
   }

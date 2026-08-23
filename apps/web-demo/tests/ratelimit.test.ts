@@ -28,6 +28,10 @@ class PersistentStoreSimulator {
     return 1;
   }
 
+  async ttl(key: string): Promise<number> {
+    return this.ttls.get(key) ?? 14400;
+  }
+
   async get<T>(key: string): Promise<T | null> {
     if (!this.data.has(key)) return null;
     return this.data.get(key) as unknown as T;
@@ -105,12 +109,12 @@ describe("Tiered Persistent Rate Limiting & Bot Mitigation Suite", () => {
       expect(req4.used).toBe(4);
     });
 
-    it("sets 24h TTL (86400s) on first increment only", async () => {
+    it("sets 4h TTL (14400s) on first increment only", async () => {
       const ip = "198.51.100.42";
 
       await checkAndConsumeExtractQuota({ ip });
       expect(mockStore.expireCalls.length).toBe(1);
-      expect(mockStore.expireCalls[0].seconds).toBe(86400);
+      expect(mockStore.expireCalls[0].seconds).toBe(14400);
 
       // Second increment should NOT call expire again
       await checkAndConsumeExtractQuota({ ip });
@@ -209,7 +213,7 @@ describe("Tiered Persistent Rate Limiting & Bot Mitigation Suite", () => {
 
       const expectedHashedIp = hashIp(rawIp);
       expect(storedKey).toContain(expectedHashedIp);
-      expect(storedKey).toBe(`scan:anon:${expectedHashedIp}:${getTodayUTC()}`);
+      expect(storedKey).toBe(`scan:4h:anon:${expectedHashedIp}`);
     });
   });
 
