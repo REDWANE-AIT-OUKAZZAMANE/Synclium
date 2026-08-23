@@ -329,30 +329,62 @@ export default function LandingPage() {
     <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"} text-slate-900 dark:text-[#e2e8f0]`}>
       
       {/* -------------------------------------------------------------------- */}
-      {/* 1. Industrial Header Bar                                             */}
+      {/* 1. Header Bar                                                        */}
       {/* -------------------------------------------------------------------- */}
       <header className="sticky top-0 z-50 border-b border-slate-300 dark:border-[#21262d] bg-white/95 dark:bg-[#07090e]/95 backdrop-blur font-mono">
         <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex items-center gap-6 sm:gap-8">
+            <Link href="/" className="flex items-center gap-2.5 group">
               <img src="/logo.png" alt="Synclium" className="h-6 w-auto object-contain" />
               <div className="flex items-baseline gap-2">
-                <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">SYNCLIUM</span>
-                <span className="text-[11px] text-blue-600 dark:text-[#58a6ff] font-semibold">// BRIDGE_CORE_v1.0</span>
+                <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#58a6ff] transition-colors">
+                  SYNCLIUM
+                </span>
+                <span className="text-[10px] px-1.5 py-0.2 border border-slate-300 dark:border-[#30363d] bg-slate-100 dark:bg-[#161b22] text-slate-600 dark:text-slate-400 font-semibold">
+                  v1.0
+                </span>
               </div>
             </Link>
 
-            <div className="hidden lg:flex items-center gap-2 border-l border-slate-300 dark:border-[#21262d] pl-4 text-[11px] text-slate-500 dark:text-slate-400">
-              <span className="border border-slate-200 dark:border-[#30363d] px-1.5 py-0.5 bg-slate-100 dark:bg-[#161b22]">ISO/IEC 19845</span>
-              <span className="border border-slate-200 dark:border-[#30363d] px-1.5 py-0.5 bg-slate-100 dark:bg-[#161b22]">EN16931 CII</span>
-              <span className="border border-slate-200 dark:border-[#30363d] px-1.5 py-0.5 bg-slate-100 dark:bg-[#161b22]">ZATCA Phase 2</span>
-            </div>
+            {/* Clean Interactive Navigation Links */}
+            <nav className="hidden md:flex items-center gap-5 text-xs text-slate-600 dark:text-slate-400">
+              <a
+                href="#mandates"
+                className="hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors"
+              >
+                Mandates 2026–27
+              </a>
+              <a
+                href="#architecture"
+                className="hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors"
+              >
+                Architecture
+              </a>
+              <a
+                href="#benchmarks"
+                className="hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors"
+              >
+                Benchmarks
+              </a>
+              <a
+                href="#developers"
+                className="hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors"
+              >
+                Developers
+              </a>
+              <Link
+                href="/console"
+                className="text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-[#58a6ff] font-semibold transition-colors"
+              >
+                Console
+              </Link>
+            </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <Link
               href="/console"
-              className="h-7 px-3 inline-flex items-center gap-1.5 border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all"
+              className="h-7 px-3 inline-flex items-center gap-1.5 border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
             >
               <span>Launch Console</span>
               <span>➔</span>
