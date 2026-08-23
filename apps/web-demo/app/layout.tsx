@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OpenInvoiceBridge — universal e-invoice interoperability",
+  title: "Synclium — Universal E-Invoice Bridge & AI Extraction",
   description:
-    "Convert and validate e-invoices across UBL/PEPPOL, Factur-X/ZUGFeRD and ZATCA — right in your browser. Open source, runs locally, nothing stored.",
+    "Convert, validate, and extract e-invoices across UBL/PEPPOL, Factur-X/ZUGFeRD, and ZATCA. Zero-knowledge in-memory processing with Google Gemini Flash AI extraction.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className="antialiased font-sans">{children}</body>
     </html>
   );
 }

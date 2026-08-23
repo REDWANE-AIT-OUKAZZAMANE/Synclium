@@ -1,0 +1,165 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2535 >>
+stream
+BT
+/F2 24 Tf
+1 0 0 1 50 750 Tm
+(INVOICE) Tj
+/F2 12 Tf
+1 0 0 1 50 715 Tm
+(Invoice Number: INV-2026-0901) Tj
+/F1 10 Tf
+1 0 0 1 50 700 Tm
+(Invoice Date: 2026-09-01) Tj
+/F1 10 Tf
+1 0 0 1 50 685 Tm
+(Due Date: 2026-10-01) Tj
+/F1 10 Tf
+1 0 0 1 50 670 Tm
+(Currency: EUR) Tj
+/F2 12 Tf
+1 0 0 1 50 635 Tm
+(SELLER:) Tj
+/F1 10 Tf
+1 0 0 1 50 620 Tm
+(Global Cloud Services SAS) Tj
+/F1 10 Tf
+1 0 0 1 50 605 Tm
+(VAT ID: FR98765432101) Tj
+/F1 10 Tf
+1 0 0 1 50 590 Tm
+(Address: 24 Rue de Rivoli, 75004 Paris, France) Tj
+/F2 12 Tf
+1 0 0 1 320 635 Tm
+(BUYER:) Tj
+/F1 10 Tf
+1 0 0 1 320 620 Tm
+(Nordic Retail Solutions AB) Tj
+/F1 10 Tf
+1 0 0 1 320 605 Tm
+(VAT ID: SE556012345601) Tj
+/F1 10 Tf
+1 0 0 1 320 590 Tm
+(Address: Kungsgatan 12, 111 35 Stockholm, Sweden) Tj
+/F1 10 Tf
+1 0 0 1 50 560 Tm
+(--------------------------------------------------------------------------------------------------------------------------------) Tj
+/F2 10 Tf
+1 0 0 1 50 545 Tm
+(ITEM / DESCRIPTION) Tj
+/F2 10 Tf
+1 0 0 1 320 545 Tm
+(QTY) Tj
+/F2 10 Tf
+1 0 0 1 400 545 Tm
+(UNIT PRICE) Tj
+/F2 10 Tf
+1 0 0 1 490 545 Tm
+(AMOUNT) Tj
+/F1 10 Tf
+1 0 0 1 50 535 Tm
+(--------------------------------------------------------------------------------------------------------------------------------) Tj
+/F1 10 Tf
+1 0 0 1 50 515 Tm
+(1. Cloud Compute Cluster Enterprise) Tj
+/F1 10 Tf
+1 0 0 1 325 515 Tm
+(2) Tj
+/F1 10 Tf
+1 0 0 1 400 515 Tm
+(EUR 850.00) Tj
+/F1 10 Tf
+1 0 0 1 490 515 Tm
+(EUR 1,700.00) Tj
+/F1 10 Tf
+1 0 0 1 50 490 Tm
+(2. Database Backup & Disaster Recovery) Tj
+/F1 10 Tf
+1 0 0 1 325 490 Tm
+(1) Tj
+/F1 10 Tf
+1 0 0 1 400 490 Tm
+(EUR 350.00) Tj
+/F1 10 Tf
+1 0 0 1 490 490 Tm
+(EUR 350.00) Tj
+/F1 10 Tf
+1 0 0 1 50 465 Tm
+(3. Dedicated Engineering SLA (24/7)) Tj
+/F1 10 Tf
+1 0 0 1 325 465 Tm
+(1) Tj
+/F1 10 Tf
+1 0 0 1 400 465 Tm
+(EUR 500.00) Tj
+/F1 10 Tf
+1 0 0 1 490 465 Tm
+(EUR 500.00) Tj
+/F1 10 Tf
+1 0 0 1 50 440 Tm
+(--------------------------------------------------------------------------------------------------------------------------------) Tj
+/F1 10 Tf
+1 0 0 1 350 415 Tm
+(Line Total (Excl. Tax):) Tj
+/F1 10 Tf
+1 0 0 1 490 415 Tm
+(EUR 2,550.00) Tj
+/F1 10 Tf
+1 0 0 1 350 395 Tm
+(Tax Amount (VAT 20%):) Tj
+/F1 10 Tf
+1 0 0 1 490 395 Tm
+(EUR 510.00) Tj
+/F2 12 Tf
+1 0 0 1 350 370 Tm
+(TOTAL DUE (Inc. Tax):) Tj
+/F2 12 Tf
+1 0 0 1 490 370 Tm
+(EUR 3,060.00) Tj
+/F1 10 Tf
+1 0 0 1 50 320 Tm
+(Payment Terms: Net 30 days via SEPA Bank Transfer) Tj
+/F1 10 Tf
+1 0 0 1 50 305 Tm
+(IBAN: FR7630004000019876543210145 | BIC: BNPAFRPP) Tj
+/F3 10 Tf
+1 0 0 1 50 270 Tm
+(Thank you for your business!) Tj
+ET
+
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000261 00000 n 
+0000002848 00000 n 
+0000002918 00000 n 
+0000002993 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+3071
+%%EOF
