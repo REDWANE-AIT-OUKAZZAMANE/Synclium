@@ -58,6 +58,7 @@ class InMemoryRedisMock {
 
 const memoryMock = new InMemoryRedisMock();
 let customRedisClient: { incr: (k: string) => Promise<number>; expire: (k: string, s: number) => Promise<number>; get: <T>(k: string) => Promise<T | null> } | null = null;
+let upstashClient: Redis | null = null;
 
 /** Set a custom or mock Redis client (useful for unit/integration testing) */
 export function setRedisClientForTesting(client: typeof customRedisClient) {
@@ -71,7 +72,10 @@ export function getRedisClient() {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (url && token) {
-    return new Redis({ url, token });
+    if (!upstashClient) {
+      upstashClient = new Redis({ url, token });
+    }
+    return upstashClient;
   }
 
   // Fallback to local in-memory store in dev when Upstash is not configured

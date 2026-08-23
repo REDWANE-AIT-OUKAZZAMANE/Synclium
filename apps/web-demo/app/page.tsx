@@ -469,21 +469,21 @@ export default function WorkbenchPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* Rate Limit Token Shield */}
-            <div className="h-8 px-3 inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-700 dark:text-slate-300">
-              <ShieldCheckIcon className={`w-3.5 h-3.5 ${isAuth ? "text-blue-500" : "text-emerald-500"}`} />
-              <span className="text-slate-500 dark:text-slate-400">
-                {isAuth ? "GitHub Tier:" : "Daily Scans:"}
-              </span>
-              <span className="font-bold text-blue-600 dark:text-blue-400">
-                {quotaRemaining}/{quotaLimit}
-              </span>
-              {resetCountdown && (
-                <span className="hidden md:inline text-[10px] text-slate-400">
-                  (resets in {resetCountdown})
+            {/* GitHub Authenticated Tier Badge */}
+            {isAuth && (
+              <div className="h-8 px-3 inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-700 dark:text-slate-300">
+                <ShieldCheckIcon className="w-3.5 h-3.5 text-blue-500" />
+                <span className="text-slate-500 dark:text-slate-400">Scans:</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400">
+                  {quotaRemaining}/{quotaLimit}
                 </span>
-              )}
-            </div>
+                {resetCountdown && (
+                  <span className="hidden md:inline text-[10px] text-slate-400">
+                    (resets in {resetCountdown})
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* GitHub Authentication Controls */}
             {authStatus === "loading" ? (
@@ -514,9 +514,9 @@ export default function WorkbenchPage() {
             ) : (
               <button
                 onClick={() => signIn("github")}
-                className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity"
+                className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity shadow-sm"
               >
-                <span>Sign in (3 Scans/Day)</span>
+                <span>Sign in (3 Free Scans)</span>
               </button>
             )}
 
