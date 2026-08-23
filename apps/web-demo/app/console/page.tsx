@@ -451,13 +451,13 @@ export default function WorkbenchPage() {
       <header className="sticky top-0 z-40 border-b border-slate-300 dark:border-[#21262d] bg-white/95 dark:bg-[#07090e]/95 backdrop-blur">
         <div className="mx-auto max-w-[1600px] px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-1.5 group">
               <img
                 src="/logo.png"
                 alt="Synclium Logo"
                 className="h-8.5 sm:h-9 w-auto object-contain drop-shadow-sm"
               />
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-1.5">
                 <span className="font-mono text-base font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#58a6ff] transition-colors">
                   SYNCLIUM
                 </span>
