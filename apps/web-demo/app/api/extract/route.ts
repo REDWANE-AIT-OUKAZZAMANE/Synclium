@@ -1,59 +1,197 @@
 import { NextResponse } from "next/server";
 import { createProvider } from "@openinvoicebridge/extract";
+import fs from "fs";
+import path from "path";
+import os from "os";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-// Token protection: in-memory sliding window rate limiter
-const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
-const MAX_REQUESTS_PER_WINDOW = 10;
-const ipRequests = new Map<string, number[]>();
+// Daily persistent quota configuration
+const DAILY_LIMIT = 3;
 
-function checkRateLimit(ip: string): { allowed: boolean; remaining: number; resetInSec: number } {
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_WINDOW_MS;
-  const timestamps = (ipRequests.get(ip) ?? []).filter((t) => t > windowStart);
-  
-  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    const oldest = timestamps[0];
-    const resetInSec = Math.ceil((oldest + RATE_LIMIT_WINDOW_MS - now) / 1000);
-    ipRequests.set(ip, timestamps);
-    return { allowed: false, remaining: 0, resetInSec };
+interface QuotaRecord {
+  date: string; // YYYY-MM-DD
+  used: number;
+}
+
+const inMemoryStore = new Map<string, QuotaRecord>();
+
+// Determine a persistent storage file path
+function getStoragePath(): string {
+  try {
+    const localDir = process.cwd();
+    return path.join(localDir, ".quota-db.json");
+  } catch {
+    return path.join(os.tmpdir(), "synclium-quota-db.json");
+  }
+}
+
+function getTodayString(): string {
+  return new Date().toISOString().split("T")[0]; // YYYY-MM-DD UTC
+}
+
+function getSecondsUntilMidnightUTC(): number {
+  const now = new Date();
+  const midnight = new Date();
+  midnight.setUTCHours(24, 0, 0, 0);
+  return Math.max(1, Math.ceil((midnight.getTime() - now.getTime()) / 1000));
+}
+
+function readPersistentStore(): Record<string, QuotaRecord> {
+  const filePath = getStoragePath();
+  try {
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf-8");
+      return JSON.parse(raw);
+    }
+  } catch {
+    // Fallback to in-memory map converted to object
+  }
+  const obj: Record<string, QuotaRecord> = {};
+  inMemoryStore.forEach((val, key) => {
+    obj[key] = val;
+  });
+  return obj;
+}
+
+function writePersistentStore(store: Record<string, QuotaRecord>): void {
+  const filePath = getStoragePath();
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf-8");
+  } catch {
+    // Save to in-memory store if disk is read-only
+    Object.entries(store).forEach(([k, v]) => {
+      inMemoryStore.set(k, v);
+    });
+  }
+}
+
+function getClientIdentifier(req: Request): string {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  const cfIp = req.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp.trim();
+  return "127.0.0.1";
+}
+
+function checkAndConsumeQuota(identifier: string): {
+  allowed: boolean;
+  remaining: number;
+  used: number;
+  limit: number;
+  resetInSec: number;
+} {
+  const today = getTodayString();
+  const resetInSec = getSecondsUntilMidnightUTC();
+  const store = readPersistentStore();
+
+  let record = store[identifier];
+  if (!record || record.date !== today) {
+    record = { date: today, used: 0 };
   }
 
-  timestamps.push(now);
-  ipRequests.set(ip, timestamps);
+  if (record.used >= DAILY_LIMIT) {
+    store[identifier] = record;
+    writePersistentStore(store);
+    return {
+      allowed: false,
+      remaining: 0,
+      used: record.used,
+      limit: DAILY_LIMIT,
+      resetInSec,
+    };
+  }
+
+  // Consume 1 scan
+  record.used += 1;
+  store[identifier] = record;
+  writePersistentStore(store);
+
   return {
     allowed: true,
-    remaining: MAX_REQUESTS_PER_WINDOW - timestamps.length,
-    resetInSec: Math.ceil(RATE_LIMIT_WINDOW_MS / 1000),
+    remaining: Math.max(0, DAILY_LIMIT - record.used),
+    used: record.used,
+    limit: DAILY_LIMIT,
+    resetInSec,
+  };
+}
+
+function peekQuota(identifier: string): {
+  remaining: number;
+  used: number;
+  limit: number;
+  resetInSec: number;
+} {
+  const today = getTodayString();
+  const resetInSec = getSecondsUntilMidnightUTC();
+  const store = readPersistentStore();
+
+  const record = store[identifier];
+  if (!record || record.date !== today) {
+    return {
+      remaining: DAILY_LIMIT,
+      used: 0,
+      limit: DAILY_LIMIT,
+      resetInSec,
+    };
+  }
+
+  return {
+    remaining: Math.max(0, DAILY_LIMIT - record.used),
+    used: record.used,
+    limit: DAILY_LIMIT,
+    resetInSec,
   };
 }
 
 /**
- * Stateless AI extraction — the uploaded file is processed in memory and never stored.
- * Protected by user rate limiting to preserve free tier AI model quota.
+ * GET: Query current remaining quota for the client without consuming it
+ */
+export async function GET(req: Request) {
+  const ip = getClientIdentifier(req);
+  const quota = peekQuota(ip);
+
+  return NextResponse.json({
+    remaining: quota.remaining,
+    used: quota.used,
+    limit: quota.limit,
+    resetInSec: quota.resetInSec,
+  });
+}
+
+/**
+ * POST: Stateless AI extraction — processes payload in-memory with server-side persistent quota enforcement.
  */
 export async function POST(req: Request) {
   try {
-    const forwarded = req.headers.get("x-forwarded-for");
-    const ip = forwarded ? forwarded.split(",")[0].trim() : req.headers.get("x-real-ip") ?? "127.0.0.1";
-    const limit = checkRateLimit(ip);
+    const ip = getClientIdentifier(req);
+    const quota = checkAndConsumeQuota(ip);
 
-    if (!limit.allowed) {
+    if (!quota.allowed) {
+      const hours = Math.floor(quota.resetInSec / 3600);
+      const mins = Math.floor((quota.resetInSec % 3600) / 60);
+      const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
       return NextResponse.json(
         {
-          error: `Rate limit reached to protect AI token quota. Please wait ${limit.resetInSec}s before uploading another document.`,
+          error: `Daily limit of ${DAILY_LIMIT} AI extractions reached. Your quota resets at 00:00 UTC (in ~${timeStr}).`,
           remaining: 0,
-          resetInSec: limit.resetInSec,
+          used: quota.used,
+          limit: DAILY_LIMIT,
+          resetInSec: quota.resetInSec,
         },
         {
           status: 429,
           headers: {
-            "X-RateLimit-Limit": String(MAX_REQUESTS_PER_WINDOW),
+            "X-RateLimit-Limit": String(DAILY_LIMIT),
             "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": String(limit.resetInSec),
+            "X-RateLimit-Reset": String(quota.resetInSec),
           },
         },
       );
@@ -79,7 +217,7 @@ export async function POST(req: Request) {
       if (hasGemini) providerName = "gemini";
       else if (hasAnthropic) providerName = "anthropic";
       else if (mimeType.startsWith("text/")) providerName = "mock";
-      else providerName = "gemini"; // default attempt
+      else providerName = "gemini";
     }
 
     if (providerName === "gemini" && !hasGemini) {
@@ -117,7 +255,7 @@ export async function POST(req: Request) {
     try {
       let provider = createProvider(providerName);
       const data = Uint8Array.from(Buffer.from(contentBase64, "base64"));
-      
+
       let result;
       try {
         result = await provider.extract({ data, mimeType, filename });
@@ -143,13 +281,15 @@ export async function POST(req: Request) {
           reviewReasons: result.reviewReasons,
           invoice: result.invoice,
           provider: result.provider,
-          remaining: limit.remaining,
+          remaining: quota.remaining,
+          used: quota.used,
+          limit: DAILY_LIMIT,
         },
         {
           headers: {
-            "X-RateLimit-Limit": String(MAX_REQUESTS_PER_WINDOW),
-            "X-RateLimit-Remaining": String(limit.remaining),
-            "X-RateLimit-Reset": String(limit.resetInSec),
+            "X-RateLimit-Limit": String(DAILY_LIMIT),
+            "X-RateLimit-Remaining": String(quota.remaining),
+            "X-RateLimit-Reset": String(quota.resetInSec),
           },
         },
       );

@@ -20,3 +20,5 @@ examples/eval/eval-report-*.json
 apps/web-demo/.vercel
 packages/*/dist
 packages/formats/*/dist
+.quota-db.json
+*.quota-db.json
