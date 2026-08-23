@@ -16,18 +16,20 @@ const SUPPORTED_MIME_PREFIXES = ["text/", "image/", "application/pdf"];
 
 // Default resilient fallback sequence across Google AI models
 const DEFAULT_MODEL_FALLBACKS = [
-  "gemini-2.5-flash",
-  "gemini-2.0-flash",
-  "gemini-1.5-flash",
+  "gemini-3.5-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.1-flash-lite",
+  "gemini-flash-latest",
+  "gemini-flash-lite-latest",
   "gemini-3.6-flash",
-  "gemini-1.5-pro",
+  "gemini-2.5-flash",
 ];
 
 /**
  * Google Gemini Flash-backed extraction (multimodal PDF, image, text)
  * using the Google AI Gemini REST API with structured JSON output.
  *
- * Includes automatic model fallback cascade to bypass per-model free-tier rate limits (429).
+ * Includes automatic model fallback cascade across models to bypass rate limits (429) and deprecations (404).
  */
 export class GeminiProvider implements ExtractionProvider {
   readonly name = "gemini";
@@ -46,7 +48,7 @@ export class GeminiProvider implements ExtractionProvider {
     }
     this.apiKey = key;
 
-    const primaryModel = opts.model ?? process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+    const primaryModel = opts.model ?? process.env.GEMINI_MODEL ?? "gemini-3.5-flash";
     this.models = Array.from(new Set([primaryModel, ...DEFAULT_MODEL_FALLBACKS]));
     this.reviewThreshold = opts.reviewThreshold ?? DEFAULT_REVIEW_THRESHOLD;
     this.baseUrl = opts.baseUrl ?? "https://generativelanguage.googleapis.com/v1beta";
@@ -76,11 +78,10 @@ export class GeminiProvider implements ExtractionProvider {
     let lastError: Error | null = null;
     let payload: any = null;
 
-    // Try models in fallback cascade if rate-limited (429)
+    // Try models in fallback cascade if rate-limited (429), not found (404), or overloaded (503)
     for (const model of this.models) {
       const url = `${this.baseUrl}/models/${model}:generateContent?key=${encodeURIComponent(this.apiKey)}`;
 
-      // Retry loop for transient 503/network errors
       for (let attempt = 1; attempt <= 2; attempt++) {
         try {
           const res = await fetch(url, {
@@ -96,32 +97,36 @@ export class GeminiProvider implements ExtractionProvider {
             const detail = await res.text().catch(() => "");
 
             if (res.status === 429) {
-              // Rate-limited on this model: break to try next model in fallback cascade
               const retryMatch = detail.match(/retry in ([0-9.]+)s/i);
               const retrySecs = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : 60;
               lastError = new Error(
-                `Google Gemini free tier quota exceeded. Please retry in ~${retrySecs}s or add billing in AI Studio.`,
+                `Google Gemini free tier quota exceeded on ${model} (retry in ~${retrySecs}s).`,
               );
-              break;
+              break; // Try next model in cascade
             }
 
-            if (res.status === 503 && attempt < 2) {
-              await new Promise((r) => setTimeout(r, attempt * 1500));
-              continue;
+            if (res.status === 404) {
+              lastError = new Error(`Model ${model} is not available on this API key.`);
+              break; // Try next model in cascade
             }
 
-            throw new Error(`Google Gemini API error ${res.status}: ${detail.slice(0, 400)}`);
+            if (res.status === 503) {
+              if (attempt < 2) {
+                await new Promise((r) => setTimeout(r, attempt * 1000));
+                continue;
+              }
+              lastError = new Error(`Model ${model} temporarily overloaded.`);
+              break; // Try next model in cascade
+            }
+
+            lastError = new Error(`Google Gemini API error ${res.status}: ${detail.slice(0, 400)}`);
+            break;
           }
 
           payload = await res.json();
           break;
         } catch (err: any) {
           lastError = err;
-          if (attempt < 2 && err.message?.includes("503")) {
-            await new Promise((r) => setTimeout(r, attempt * 1500));
-            continue;
-          }
-          // If 429 was thrown or caught, break to next model
           break;
         }
       }
