@@ -333,9 +333,9 @@ export default function WorkbenchPage() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
               <img
-                src="/logo.svg"
+                src="/logo.png"
                 alt="Synclium Logo"
-                className="h-7 w-auto object-contain drop-shadow-sm"
+                className="h-7 w-auto object-contain rounded-md drop-shadow-sm"
               />
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-sm font-bold tracking-tight text-slate-900 dark:text-white">
@@ -770,7 +770,7 @@ export default function WorkbenchPage() {
       <footer className="border-t border-slate-300 dark:border-[#21262d] py-6 bg-slate-100 dark:bg-[#05070a] font-mono text-xs text-slate-500 dark:text-slate-400">
         <div className="mx-auto max-w-[1600px] px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.svg" alt="Synclium" className="h-5 w-auto object-contain opacity-80" />
+            <img src="/logo.png" alt="Synclium" className="h-5 w-auto object-contain rounded opacity-80" />
             <span className="font-bold text-slate-800 dark:text-slate-200">SYNCLIUM</span>
             <span>// Universal Electronic Invoicing Bridge</span>
           </div>
