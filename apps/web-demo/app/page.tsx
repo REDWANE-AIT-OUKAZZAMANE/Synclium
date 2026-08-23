@@ -327,14 +327,55 @@ export default function WorkbenchPage() {
     }
   };
 
-  function download(name: string, content: string) {
-    const blob = new Blob([content], { type: "text/plain" });
+  const handleDownload = () => {
+    if (!activeContent) return;
+
+    let ext = "xml";
+    let mime = "application/xml;charset=utf-8";
+
+    if (activeTab === "canonical") {
+      ext = "json";
+      mime = "application/json;charset=utf-8";
+    } else if (activeTab === "compiled") {
+      if (to === "canonical") {
+        ext = "json";
+        mime = "application/json;charset=utf-8";
+      } else {
+        ext = "xml";
+        mime = "application/xml;charset=utf-8";
+      }
+    } else {
+      // Raw Ingestion Buffer tab
+      const trimmed = activeContent.trimStart();
+      if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+        ext = "json";
+        mime = "application/json;charset=utf-8";
+      } else if (trimmed.startsWith("<")) {
+        ext = "xml";
+        mime = "application/xml;charset=utf-8";
+      } else {
+        ext = "txt";
+        mime = "text/plain;charset=utf-8";
+      }
+    }
+
+    const cleanBase = (fileName || "invoice")
+      .replace(/\s*->\s*.*$/, "")
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[^a-zA-Z0-9_-]/g, "_");
+
+    const downloadName = `synclium-${cleanBase}-${activeTab}.${ext}`;
+
+    const blob = new Blob([activeContent], { type: mime });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
+    a.href = url;
+    a.download = downloadName;
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(a.href);
-  }
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
 
   const activeContent =
     activeTab === "editor" ? input : activeTab === "canonical" ? canonicalOut : convertedOut;
@@ -726,15 +767,9 @@ export default function WorkbenchPage() {
                 <CopyButton content={activeContent} />
 
                 <button
-                  onClick={() => {
-                    if (activeContent) {
-                      download(
-                        `synclium-${activeTab}.${to === "canonical" ? "json" : "xml"}`,
-                        activeContent,
-                      );
-                    }
-                  }}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-200 dark:bg-[#161b22] border border-slate-300 dark:border-[#30363d] font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:border-blue-500"
+                  onClick={handleDownload}
+                  disabled={!activeContent}
+                  className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-200 dark:bg-[#161b22] border border-slate-300 dark:border-[#30363d] font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <DownloadIcon className="w-3 h-3" />
                   <span>Download</span>
