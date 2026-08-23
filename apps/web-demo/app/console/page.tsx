@@ -799,8 +799,8 @@ export default function WorkbenchPage() {
                   }
                   void runExtract(input);
                 }}
-                disabled={isAuth && (!input.trim() && !fileRef.current?.value) || busy !== ""}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={isAuth ? ((!input.trim() && !fileRef.current?.value) || busy !== "") : false}
+                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 {!isAuth ? (
                   <>
@@ -816,21 +816,51 @@ export default function WorkbenchPage() {
               </button>
 
               <button
-                onClick={() => void runValidate()}
-                disabled={!input.trim() || busy !== ""}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                onClick={() => {
+                  if (!isAuth) {
+                    signIn("github");
+                    return;
+                  }
+                  void runValidate();
+                }}
+                disabled={isAuth ? (!input.trim() || busy !== "") : false}
+                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
-                <CheckCircle2Icon className="w-3.5 h-3.5" />
-                <span>Validate</span>
+                {!isAuth ? (
+                  <>
+                    <LockIcon className="w-3.5 h-3.5" />
+                    <span>Sign in to Validate</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2Icon className="w-3.5 h-3.5" />
+                    <span>Validate</span>
+                  </>
+                )}
               </button>
 
               <button
-                onClick={() => void runConvert()}
-                disabled={!input.trim() || busy !== ""}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold shadow transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                onClick={() => {
+                  if (!isAuth) {
+                    signIn("github");
+                    return;
+                  }
+                  void runConvert();
+                }}
+                disabled={isAuth ? (!input.trim() || busy !== "") : false}
+                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold shadow transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
-                <ArrowRightLeftIcon className="w-3.5 h-3.5" />
-                <span>Transpile</span>
+                {!isAuth ? (
+                  <>
+                    <LockIcon className="w-3.5 h-3.5 text-white/90" />
+                    <span>Sign in to Transpile</span>
+                  </>
+                ) : (
+                  <>
+                    <ArrowRightLeftIcon className="w-3.5 h-3.5" />
+                    <span>Transpile</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -847,7 +877,7 @@ export default function WorkbenchPage() {
                     onClick={() => signIn("github")}
                     className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded bg-red-600 text-white font-bold hover:bg-red-500 transition-colors"
                   >
-                    Sign in with GitHub for 3 Scans/Day
+                    Sign in with GitHub for 3 Scans / 4h
                   </button>
                 )}
               </div>
