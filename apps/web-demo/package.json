@@ -6,6 +6,7 @@
   "description": "Browser demo for OpenInvoiceBridge â€” drag an invoice in, convert & validate it live",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "pnpm --filter @openinvoicebridge/core build && pnpm --filter @openinvoicebridge/ubl build && pnpm --filter @openinvoicebridge/facturx build && pnpm --filter @openinvoicebridge/zatca build && pnpm --filter @openinvoicebridge/registry build && pnpm --filter @openinvoicebridge/extract build",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit"
