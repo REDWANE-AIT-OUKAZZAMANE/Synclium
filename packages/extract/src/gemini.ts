@@ -39,7 +39,7 @@ export class GeminiProvider implements ExtractionProvider {
     this.model = opts.model ?? process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
     this.reviewThreshold = opts.reviewThreshold ?? DEFAULT_REVIEW_THRESHOLD;
     this.baseUrl = opts.baseUrl ?? "https://generativelanguage.googleapis.com/v1beta";
-    this.timeoutMs = opts.timeoutMs ?? 30000;
+    this.timeoutMs = opts.timeoutMs ?? 60000;
   }
 
   async extract(input: ExtractionInput): Promise<ExtractionResult> {
@@ -64,21 +64,44 @@ export class GeminiProvider implements ExtractionProvider {
 
     const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${encodeURIComponent(this.apiKey)}`;
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(this.timeoutMs),
-    });
+    let lastError: Error | null = null;
+    let payload: any = null;
 
-    if (!res.ok) {
-      const detail = await res.text().catch(() => "");
-      throw new Error(`Google Gemini API error ${res.status}: ${detail.slice(0, 500)}`);
+    // Retry loop for transient 429/503 errors (up to 3 attempts)
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(this.timeoutMs),
+        });
+
+        if (!res.ok) {
+          const detail = await res.text().catch(() => "");
+          if ((res.status === 429 || res.status === 503) && attempt < 3) {
+            await new Promise((r) => setTimeout(r, attempt * 1500));
+            continue;
+          }
+          throw new Error(`Google Gemini API error ${res.status}: ${detail.slice(0, 500)}`);
+        }
+
+        payload = await res.json();
+        break;
+      } catch (err: any) {
+        lastError = err;
+        if (attempt < 3 && err.message?.includes("503")) {
+          await new Promise((r) => setTimeout(r, attempt * 1500));
+          continue;
+        }
+        throw err;
+      }
     }
 
-    const payload: any = await res.json();
+    if (!payload) throw lastError ?? new Error("Failed to receive response from Gemini.");
+
     const candidate = payload.candidates?.[0];
     if (!candidate?.content?.parts?.length) {
       throw new Error("Gemini returned an empty response or blocked content.");

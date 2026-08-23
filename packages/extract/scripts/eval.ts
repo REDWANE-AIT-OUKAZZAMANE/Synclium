@@ -92,6 +92,9 @@ async function main() {
       console.error(`${c.name.padEnd(12)} ERROR: ${err.message}`);
       results.push({ case: c.name, error: err.message });
     }
+    if (provider.name !== "mock") {
+      await new Promise((r) => setTimeout(r, 1000));
+    }
   }
 
   const accuracy = totalFields ? (totalMatched / totalFields) * 100 : 0;
