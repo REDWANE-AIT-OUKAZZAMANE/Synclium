@@ -25,6 +25,7 @@ import {
   EyeIcon,
   Code2Icon,
   TableIcon,
+  LockIcon,
 } from "@/components/Icons";
 import { CustomDropdown, DropdownOption } from "@/components/CustomDropdown";
 import { InvoiceSummaryView } from "@/components/InvoiceSummaryView";
@@ -242,24 +243,35 @@ export default function WorkbenchPage() {
     setExtractReport(null);
   };
 
-  const loadFile = useCallback(async (file: File) => {
-    reset();
-    setFileName(file.name);
-    if (file.name.toLowerCase().endsWith(".pdf") || /\.(png|jpe?g|webp)$/i.test(file.name)) {
-      setInput("");
-      await runExtract(file);
-      return;
-    }
-    const text = await file.text();
-    setInput(text);
-    const t = text.trimStart();
-    if (t.startsWith("{")) setFrom("auto");
-    else if (t.includes("CrossIndustryInvoice")) setFrom("facturx");
-    else setFrom("auto");
-    setActiveTab("editor");
-  }, []);
+  const loadFile = useCallback(
+    async (file: File) => {
+      if (!isAuth) {
+        signIn("github");
+        return;
+      }
+      reset();
+      setFileName(file.name);
+      if (file.name.toLowerCase().endsWith(".pdf") || /\.(png|jpe?g|webp)$/i.test(file.name)) {
+        setInput("");
+        await runExtract(file);
+        return;
+      }
+      const text = await file.text();
+      setInput(text);
+      const t = text.trimStart();
+      if (t.startsWith("{")) setFrom("auto");
+      else if (t.includes("CrossIndustryInvoice")) setFrom("facturx");
+      else setFrom("auto");
+      setActiveTab("editor");
+    },
+    [isAuth],
+  );
 
   const runExtract = async (fileOrText?: File | string) => {
+    if (!isAuth) {
+      signIn("github");
+      return;
+    }
     setBusy("extract");
     reset();
     try {
@@ -590,13 +602,25 @@ export default function WorkbenchPage() {
               onDrop={(e) => {
                 e.preventDefault();
                 setDragging(false);
+                if (!isAuth) {
+                  signIn("github");
+                  return;
+                }
                 const f = e.dataTransfer.files?.[0];
                 if (f) void loadFile(f);
               }}
-              onClick={() => fileRef.current?.click()}
+              onClick={() => {
+                if (!isAuth) {
+                  signIn("github");
+                  return;
+                }
+                fileRef.current?.click();
+              }}
               className={`mt-4 cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${
                 dragging
                   ? "border-blue-500 bg-blue-500/10"
+                  : !isAuth
+                  ? "border-blue-500/40 bg-blue-50/40 dark:bg-blue-950/10 hover:border-blue-500 hover:bg-blue-500/5"
                   : "border-slate-300 dark:border-[#30363d] bg-slate-50/50 dark:bg-[#05070a] hover:border-blue-500"
               }`}
             >
@@ -606,31 +630,52 @@ export default function WorkbenchPage() {
                 accept=".xml,.json,.txt,.pdf,.png,.jpg,.jpeg,.webp"
                 className="hidden"
                 onChange={(e) => {
+                  if (!isAuth) {
+                    signIn("github");
+                    return;
+                  }
                   const f = e.target.files?.[0];
                   if (f) void loadFile(f);
                 }}
               />
 
-              <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
-                {busy ? (
-                  <RefreshCwIcon className="w-5 h-5 animate-spin text-blue-500" />
-                ) : (
-                  <UploadCloudIcon className="w-5 h-5" />
-                )}
-              </div>
+              {!isAuth ? (
+                <>
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    <LockIcon className="w-5 h-5" />
+                  </div>
 
-              <p className="mt-3 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
-                {busy === "extract"
-                  ? "EXTRACTING DOCUMENT..."
-                  : busy === "convert"
-                  ? "TRANSPILING DIALECT..."
-                  : busy === "validate"
-                  ? "RUNNING SCHEMATRON VALIDATION..."
-                  : "DROP INVOICE PAYLOAD (PDF, XML, JSON, TXT)"}
-              </p>
-              <p className="mt-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
-                Native binary PDF / scan ingestion + XML / JSON schema detection
-              </p>
+                  <p className="mt-3 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
+                    SIGN IN TO UPLOAD & EXTRACT INVOICES
+                  </p>
+                  <p className="mt-1 font-mono text-[11px] text-blue-600 dark:text-blue-400 font-semibold">
+                    Click to sign in with GitHub for 3 free daily scans
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                    {busy ? (
+                      <RefreshCwIcon className="w-5 h-5 animate-spin text-blue-500" />
+                    ) : (
+                      <UploadCloudIcon className="w-5 h-5" />
+                    )}
+                  </div>
+
+                  <p className="mt-3 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
+                    {busy === "extract"
+                      ? "EXTRACTING DOCUMENT..."
+                      : busy === "convert"
+                      ? "TRANSPILING DIALECT..."
+                      : busy === "validate"
+                      ? "RUNNING SCHEMATRON VALIDATION..."
+                      : "DROP INVOICE PAYLOAD (PDF, XML, JSON, TXT)"}
+                  </p>
+                  <p className="mt-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                    Native binary PDF / scan ingestion + XML / JSON schema detection
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Active Payload Tag */}
@@ -740,12 +785,27 @@ export default function WorkbenchPage() {
             {/* Action Bar */}
             <div className="mt-4 grid grid-cols-3 gap-2.5">
               <button
-                onClick={() => void runExtract(input)}
-                disabled={(!input.trim() && !fileRef.current?.value) || busy !== ""}
+                onClick={() => {
+                  if (!isAuth) {
+                    signIn("github");
+                    return;
+                  }
+                  void runExtract(input);
+                }}
+                disabled={isAuth && (!input.trim() && !fileRef.current?.value) || busy !== ""}
                 className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <SparklesIcon className="w-3.5 h-3.5" />
-                <span>AI Extract</span>
+                {!isAuth ? (
+                  <>
+                    <LockIcon className="w-3.5 h-3.5" />
+                    <span>Sign in to Extract</span>
+                  </>
+                ) : (
+                  <>
+                    <SparklesIcon className="w-3.5 h-3.5" />
+                    <span>AI Extract</span>
+                  </>
+                )}
               </button>
 
               <button
