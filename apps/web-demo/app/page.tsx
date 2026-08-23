@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import {
   SparklesIcon,
   UploadCloudIcon,
@@ -45,6 +47,7 @@ interface ExtractReport {
   provider: string;
   invoice: any;
   remaining?: number;
+  tier?: "anon" | "auth";
 }
 
 const SOURCE_OPTIONS: DropdownOption<"auto" | FormatId>[] = [
@@ -116,28 +119,30 @@ const TARGET_OPTIONS: DropdownOption<FormatId>[] = [
   },
 ];
 
+// Fictional production test cases
 const REAL_WORLD_SAMPLES = [
   {
     id: "de-rail",
     format: "facturx",
-    label: "Siemens Mobility GmbH ➔ Deutsche Bahn AG",
+    label: "Nordwind Transit Systems GmbH ➔ Europa Rail Networks AG",
     desc: "German EN16931 / CII cross-border rail infrastructure invoice (€142,500.00)",
   },
   {
     id: "fr-energy",
     format: "ubl",
-    label: "TotalEnergies SE ➔ SNCF Voyageurs",
+    label: "Voltrix Energy Solutions SAS ➔ TransHexagone Rail SA",
     desc: "French PEPPOL BIS Billing 3.0 commercial electricity dispatch (€84,200.00)",
   },
   {
     id: "sa-dairy",
     format: "zatca",
-    label: "Almarai Dairy Co. CJSC ➔ Panda Retail KSA",
+    label: "Al-Manar Agro-Industries CJSC ➔ HyperGulf Retail LLC",
     desc: "Saudi ZATCA Phase 2 standard tax invoice with 15% VAT (SAR 218,500.00)",
   },
 ];
 
 export default function WorkbenchPage() {
+  const { data: session, status: authStatus } = useSession();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [input, setInput] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
@@ -161,7 +166,17 @@ export default function WorkbenchPage() {
   const [error, setError] = useState<string>("");
   const [busy, setBusy] = useState<"" | "convert" | "validate" | "extract">("");
   const [samples, setSamples] = useState<Record<string, { name: string; label: string; content: string }[]>>({});
-  const [quotaRemaining, setQuotaRemaining] = useState<number>(3);
+  
+  // Rate-limiting state
+  const [quotaRemaining, setQuotaRemaining] = useState<number>(1);
+  const [quotaLimit, setQuotaLimit] = useState<number>(1);
+  const [quotaTier, setQuotaTier] = useState<"anon" | "auth">("anon");
+  const [resetCountdown, setResetCountdown] = useState<string>("");
+  const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
+  
+  // Turnstile challenge token
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Initialize theme
@@ -179,25 +194,33 @@ export default function WorkbenchPage() {
     document.documentElement.classList.toggle("dark", next === "dark");
   };
 
-  // Fetch initial sample data and client persistent quota balance
+  // Fetch initial sample data and query rate-limit status
+  const refreshQuota = useCallback(() => {
+    fetch("/api/extract", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (typeof d.remaining === "number") {
+          setQuotaRemaining(d.remaining);
+          setQuotaLimit(d.limit || 1);
+          setQuotaTier(d.tier || "anon");
+          if (d.resetInSec) {
+            const h = Math.floor(d.resetInSec / 3600);
+            const m = Math.floor((d.resetInSec % 3600) / 60);
+            setResetCountdown(h > 0 ? `${h}h ${m}m` : `${m}m`);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     fetch("/api/samples")
       .then((r) => r.json())
       .then((d) => setSamples(d.samples ?? {}))
       .catch(() => {});
 
-    fetch("/api/extract", {
-      cache: "no-store",
-      headers: {
-        "x-client-fingerprint": getDeviceFingerprint(),
-      },
-    })
-      .then((r) => r.json())
-      .then((d) => {
-        if (typeof d.remaining === "number") setQuotaRemaining(d.remaining);
-      })
-      .catch(() => {});
-  }, []);
+    refreshQuota();
+  }, [refreshQuota, session]);
 
   // Update parsed object whenever canonical output changes
   useEffect(() => {
@@ -262,12 +285,34 @@ export default function WorkbenchPage() {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-client-fingerprint": getDeviceFingerprint(),
+          ...(turnstileToken ? { "x-turnstile-token": turnstileToken } : {}),
         },
-        body: JSON.stringify({ contentBase64, mimeType, filename }),
+        body: JSON.stringify({
+          contentBase64,
+          mimeType,
+          filename,
+          turnstileToken,
+        }),
       });
+
       const data = await res.json();
-      if (typeof data.remaining === "number") setQuotaRemaining(data.remaining);
+      if (typeof data.remaining === "number") {
+        setQuotaRemaining(data.remaining);
+        setQuotaLimit(data.limit || 1);
+        setQuotaTier(data.tier || "anon");
+      }
+
+      if (res.status === 429) {
+        if (data.upgradeAvailable) {
+          setShowUpgradeModal(true);
+        }
+        throw new Error(data.error || "Rate limit reached for today.");
+      }
+
+      if (res.status === 503) {
+        throw new Error(data.error || "Rate limit service temporarily unavailable. Please retry.");
+      }
+
       if (!res.ok) throw new Error(data.error || `Extraction failed (${res.status})`);
 
       setExtractReport(data);
@@ -382,6 +427,8 @@ export default function WorkbenchPage() {
   const lineCount = activeContent ? activeContent.split("\n").length : 0;
   const byteSize = activeContent ? new Blob([activeContent]).size : 0;
 
+  const isAuth = !!session?.user;
+
   return (
     <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"}`}>
       {/* Top Status & Telemetry Header */}
@@ -420,10 +467,50 @@ export default function WorkbenchPage() {
           <div className="flex items-center gap-3">
             {/* Rate Limit Token Shield */}
             <div className="flex items-center gap-2 px-3 py-1 rounded bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-700 dark:text-slate-300">
-              <ShieldCheckIcon className="w-3.5 h-3.5 text-emerald-500" />
-              <span className="text-slate-500 dark:text-slate-400">Daily Scans:</span>
-              <span className="font-bold text-blue-600 dark:text-blue-400">{quotaRemaining}/3</span>
+              <ShieldCheckIcon className={`w-3.5 h-3.5 ${isAuth ? "text-blue-500" : "text-emerald-500"}`} />
+              <span className="text-slate-500 dark:text-slate-400">
+                {isAuth ? "GitHub Tier:" : "Daily Scans:"}
+              </span>
+              <span className="font-bold text-blue-600 dark:text-blue-400">
+                {quotaRemaining}/{quotaLimit}
+              </span>
+              {resetCountdown && (
+                <span className="hidden md:inline text-[10px] text-slate-400">
+                  (resets in {resetCountdown})
+                </span>
+              )}
             </div>
+
+            {/* GitHub Authentication Controls */}
+            {authStatus === "loading" ? (
+              <span className="font-mono text-xs text-slate-400">...</span>
+            ) : isAuth ? (
+              <div className="flex items-center gap-2">
+                {session?.user?.image ? (
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name || "User"}
+                    className="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-700"
+                  />
+                ) : null}
+                <span className="hidden sm:inline font-mono text-xs text-slate-700 dark:text-slate-300 font-semibold">
+                  {(session.user as any).login || session.user?.name}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-200 dark:bg-[#161b22] hover:bg-slate-300 dark:hover:bg-[#21262d] text-slate-600 dark:text-slate-400"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => signIn("github")}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity"
+              >
+                <span>Sign in (3 Scans/Day)</span>
+              </button>
+            )}
 
             {/* Dark / Light Toggle */}
             <button
@@ -439,7 +526,7 @@ export default function WorkbenchPage() {
               href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 font-mono text-xs font-semibold hover:border-blue-500 transition-colors"
             >
               <span>GitHub</span>
               <ExternalLinkIcon className="w-3 h-3 opacity-75" />
@@ -447,6 +534,25 @@ export default function WorkbenchPage() {
           </div>
         </div>
       </header>
+
+      {/* Upgrade Banner for Anonymous Users Hit Limit */}
+      {showUpgradeModal && !isAuth && (
+        <div className="bg-gradient-to-r from-blue-900/90 to-purple-900/90 border-b border-blue-500/30 px-4 py-3 text-white text-center font-mono text-xs flex flex-wrap items-center justify-center gap-3">
+          <span>You have reached your 1 free daily scan. Sign in with GitHub to unlock 3 scans/day!</span>
+          <button
+            onClick={() => signIn("github")}
+            className="px-3 py-1 rounded bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors shadow"
+          >
+            Sign in with GitHub
+          </button>
+          <button
+            onClick={() => setShowUpgradeModal(false)}
+            className="text-slate-300 hover:text-white underline ml-2"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Main Split-Screen Technical Workbench */}
       <main className="mx-auto max-w-[1600px] p-4 sm:p-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -608,8 +714,22 @@ export default function WorkbenchPage() {
               />
             </div>
 
+            {/* Cloudflare Turnstile Bot Challenge */}
+            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-[#21262d] flex flex-col items-center justify-center min-h-[65px]">
+              <Turnstile
+                siteKey={turnstileSiteKey}
+                onSuccess={(token) => setTurnstileToken(token)}
+                onError={() => setTurnstileToken("")}
+                onExpire={() => setTurnstileToken("")}
+                options={{
+                  theme: theme === "dark" ? "dark" : "light",
+                  size: "flexible",
+                }}
+              />
+            </div>
+
             {/* Action Bar */}
-            <div className="mt-5 grid grid-cols-3 gap-2.5">
+            <div className="mt-4 grid grid-cols-3 gap-2.5">
               <button
                 onClick={() => void runExtract(input)}
                 disabled={(!input.trim() && !fileRef.current?.value) || busy !== ""}
@@ -646,6 +766,14 @@ export default function WorkbenchPage() {
               <div>
                 <p className="font-bold">ENGINE_EXECUTION_ERROR</p>
                 <p className="mt-1 opacity-90">{error}</p>
+                {!isAuth && (
+                  <button
+                    onClick={() => signIn("github")}
+                    className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded bg-red-600 text-white font-bold hover:bg-red-500 transition-colors"
+                  >
+                    Sign in with GitHub for 3 Scans/Day
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -875,25 +1003,4 @@ function guessMime(name: string): string {
   if (name.toLowerCase().endsWith(".png")) return "image/png";
   if (name.toLowerCase().endsWith(".webp")) return "image/webp";
   return "image/jpeg";
-}
-
-function getDeviceFingerprint(): string {
-  if (typeof window === "undefined") return "server";
-  try {
-    const raw = [
-      navigator.userAgent || "",
-      navigator.language || "",
-      screen.width + "x" + screen.height + "x" + (screen.colorDepth || 24),
-      Intl.DateTimeFormat().resolvedOptions().timeZone || "",
-      navigator.hardwareConcurrency || 4,
-    ].join("::");
-
-    let hash = 5381;
-    for (let i = 0; i < raw.length; i++) {
-      hash = (hash * 33) ^ raw.charCodeAt(i);
-    }
-    return "dev_" + (hash >>> 0).toString(36);
-  } catch {
-    return "dev_fallback";
-  }
 }

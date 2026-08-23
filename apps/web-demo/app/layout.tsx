@@ -16,10 +16,14 @@ export const metadata: Metadata = {
   manifest: "/favicon/site.webmanifest",
 };
 
+import { AuthProvider } from "@/components/AuthProvider";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
-      <body className="antialiased font-sans">{children}</body>
+      <body className="antialiased font-sans">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

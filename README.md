@@ -122,7 +122,7 @@ Launch the Next.js split-screen engineering workbench with dark/light themes, cu
 pnpm dev:web         # Open http://localhost:3000
 ```
 
-> **Zero Data Persistence Guarantee**: Uploaded files and payloads are processed strictly in-memory and never stored to disk or database.
+> **Zero Data Persistence Guarantee**: Uploaded invoice files, documents, and extracted payload contents are processed strictly in-memory and are never stored to disk, databases, or external storage. For upstream model protection, temporary rate-limiting counters (keyed by a salted SHA-256 IP hash or verified GitHub user ID) are stored in Redis with an automatic 24-hour expiration.
 
 ---
 

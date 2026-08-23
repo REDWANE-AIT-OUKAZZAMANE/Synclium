@@ -9,13 +9,17 @@
     "prebuild": "pnpm --filter @synclium/core build && pnpm --filter @synclium/ubl build && pnpm --filter @synclium/facturx build && pnpm --filter @synclium/zatca build && pnpm --filter @synclium/registry build && pnpm --filter @synclium/extract build",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@marsidev/react-turnstile": "^1.6.0",
     "@synclium/core": "workspace:*",
     "@synclium/extract": "workspace:*",
     "@synclium/registry": "workspace:*",
+    "@upstash/redis": "^1.38.2",
     "next": "^14.2.15",
+    "next-auth": "^4.24.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -26,6 +30,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^3.2.7"
   }
 }
