@@ -186,7 +186,12 @@ export default function WorkbenchPage() {
       .then((d) => setSamples(d.samples ?? {}))
       .catch(() => {});
 
-    fetch("/api/extract")
+    fetch("/api/extract", {
+      cache: "no-store",
+      headers: {
+        "x-client-fingerprint": getDeviceFingerprint(),
+      },
+    })
       .then((r) => r.json())
       .then((d) => {
         if (typeof d.remaining === "number") setQuotaRemaining(d.remaining);
@@ -255,7 +260,10 @@ export default function WorkbenchPage() {
 
       const res = await fetch("/api/extract", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "x-client-fingerprint": getDeviceFingerprint(),
+        },
         body: JSON.stringify({ contentBase64, mimeType, filename }),
       });
       const data = await res.json();
@@ -832,4 +840,25 @@ function guessMime(name: string): string {
   if (name.toLowerCase().endsWith(".png")) return "image/png";
   if (name.toLowerCase().endsWith(".webp")) return "image/webp";
   return "image/jpeg";
+}
+
+function getDeviceFingerprint(): string {
+  if (typeof window === "undefined") return "server";
+  try {
+    const raw = [
+      navigator.userAgent || "",
+      navigator.language || "",
+      screen.width + "x" + screen.height + "x" + (screen.colorDepth || 24),
+      Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      navigator.hardwareConcurrency || 4,
+    ].join("::");
+
+    let hash = 5381;
+    for (let i = 0; i < raw.length; i++) {
+      hash = (hash * 33) ^ raw.charCodeAt(i);
+    }
+    return "dev_" + (hash >>> 0).toString(36);
+  } catch {
+    return "dev_fallback";
+  }
 }

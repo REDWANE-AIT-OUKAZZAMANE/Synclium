@@ -20,12 +20,20 @@ const inMemoryStore = new Map<string, QuotaRecord>();
 
 // Determine a persistent storage file path
 function getStoragePath(): string {
-  try {
-    const localDir = process.cwd();
-    return path.join(localDir, ".quota-db.json");
-  } catch {
-    return path.join(os.tmpdir(), "synclium-quota-db.json");
+  const candidates = [
+    path.join(process.cwd(), ".quota-db.json"),
+    path.join(os.homedir(), ".synclium-quota-db.json"),
+    path.join(os.tmpdir(), "synclium-quota-db.json"),
+  ];
+  for (const p of candidates) {
+    try {
+      const dir = path.dirname(p);
+      if (fs.existsSync(dir)) {
+        return p;
+      }
+    } catch {}
   }
+  return candidates[0];
 }
 
 function getTodayString(): string {
@@ -46,9 +54,8 @@ function readPersistentStore(): Record<string, QuotaRecord> {
       const raw = fs.readFileSync(filePath, "utf-8");
       return JSON.parse(raw);
     }
-  } catch {
-    // Fallback to in-memory map converted to object
-  }
+  } catch {}
+  
   const obj: Record<string, QuotaRecord> = {};
   inMemoryStore.forEach((val, key) => {
     obj[key] = val;
@@ -57,27 +64,33 @@ function readPersistentStore(): Record<string, QuotaRecord> {
 }
 
 function writePersistentStore(store: Record<string, QuotaRecord>): void {
+  // Always update in-memory cache
+  Object.entries(store).forEach(([k, v]) => {
+    inMemoryStore.set(k, v);
+  });
+
   const filePath = getStoragePath();
   try {
     fs.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf-8");
-  } catch {
-    // Save to in-memory store if disk is read-only
-    Object.entries(store).forEach(([k, v]) => {
-      inMemoryStore.set(k, v);
-    });
-  }
+  } catch {}
 }
 
 function getClientIdentifier(req: Request): string {
+  let rawIp = "127.0.0.1";
   const forwarded = req.headers.get("x-forwarded-for");
   if (forwarded) {
-    return forwarded.split(",")[0].trim();
+    rawIp = forwarded.split(",")[0].trim();
+  } else {
+    rawIp = req.headers.get("x-real-ip")?.trim() || req.headers.get("cf-connecting-ip")?.trim() || "127.0.0.1";
   }
-  const realIp = req.headers.get("x-real-ip");
-  if (realIp) return realIp.trim();
-  const cfIp = req.headers.get("cf-connecting-ip");
-  if (cfIp) return cfIp.trim();
-  return "127.0.0.1";
+
+  // Normalize localhost and IPv6 variants
+  if (rawIp === "::1" || rawIp === "::ffff:127.0.0.1" || rawIp === "localhost" || rawIp.startsWith("127.")) {
+    rawIp = "127.0.0.1";
+  }
+
+  const deviceFp = req.headers.get("x-client-fingerprint")?.trim() || "generic_client";
+  return `${rawIp}__${deviceFp}`;
 }
 
 function checkAndConsumeQuota(identifier: string): {
@@ -154,15 +167,27 @@ function peekQuota(identifier: string): {
  * GET: Query current remaining quota for the client without consuming it
  */
 export async function GET(req: Request) {
-  const ip = getClientIdentifier(req);
-  const quota = peekQuota(ip);
+  const identifier = getClientIdentifier(req);
+  const quota = peekQuota(identifier);
 
-  return NextResponse.json({
-    remaining: quota.remaining,
-    used: quota.used,
-    limit: quota.limit,
-    resetInSec: quota.resetInSec,
-  });
+  return NextResponse.json(
+    {
+      remaining: quota.remaining,
+      used: quota.used,
+      limit: quota.limit,
+      resetInSec: quota.resetInSec,
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-RateLimit-Limit": String(quota.limit),
+        "X-RateLimit-Remaining": String(quota.remaining),
+        "X-RateLimit-Reset": String(quota.resetInSec),
+      },
+    },
+  );
 }
 
 /**
@@ -170,8 +195,8 @@ export async function GET(req: Request) {
  */
 export async function POST(req: Request) {
   try {
-    const ip = getClientIdentifier(req);
-    const quota = checkAndConsumeQuota(ip);
+    const identifier = getClientIdentifier(req);
+    const quota = checkAndConsumeQuota(identifier);
 
     if (!quota.allowed) {
       const hours = Math.floor(quota.resetInSec / 3600);
@@ -189,6 +214,7 @@ export async function POST(req: Request) {
         {
           status: 429,
           headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
             "X-RateLimit-Limit": String(DAILY_LIMIT),
             "X-RateLimit-Remaining": "0",
             "X-RateLimit-Reset": String(quota.resetInSec),
@@ -287,6 +313,7 @@ export async function POST(req: Request) {
         },
         {
           headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
             "X-RateLimit-Limit": String(DAILY_LIMIT),
             "X-RateLimit-Remaining": String(quota.remaining),
             "X-RateLimit-Reset": String(quota.resetInSec),
