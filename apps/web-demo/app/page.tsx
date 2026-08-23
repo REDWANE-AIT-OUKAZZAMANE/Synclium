@@ -492,7 +492,9 @@ export default function WorkbenchPage() {
                   <img
                     src={session.user.image}
                     alt={session.user.name || "User"}
-                    className="w-4.5 h-4.5 rounded-full border border-slate-300 dark:border-slate-700 object-cover"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-700 object-cover shrink-0"
                   />
                 ) : null}
                 <span className="hidden sm:inline font-mono text-xs text-slate-700 dark:text-slate-300 font-semibold">
