@@ -137,9 +137,9 @@ Tested across 10 multi-lingual enterprise invoices (**554 verified data fields**
 | **Anthropic Claude 3.5 Sonnet** | **97.8%** (542/554) | Requires `ANTHROPIC_API_KEY` |
 
 ```bash
-pnpm --filter @openinvoicebridge/extract eval            # Run mock baseline
-pnpm --filter @openinvoicebridge/extract eval:gemini     # Run Google Gemini Flash benchmark
-pnpm --filter @openinvoicebridge/extract eval:anthropic  # Run Claude benchmark
+pnpm --filter @synclium/extract eval            # Run mock baseline
+pnpm --filter @synclium/extract eval:gemini     # Run Google Gemini Flash benchmark
+pnpm --filter @synclium/extract eval:anthropic  # Run Claude benchmark
 ```
 
 ---

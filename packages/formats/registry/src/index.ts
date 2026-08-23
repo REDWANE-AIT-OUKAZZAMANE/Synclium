@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
-import type { CanonicalInvoice, FormatValidationResult } from "@openinvoicebridge/core";
-import * as ubl from "@openinvoicebridge/ubl";
-import * as facturx from "@openinvoicebridge/facturx";
-import * as zatca from "@openinvoicebridge/zatca";
+import type { CanonicalInvoice, FormatValidationResult } from "@synclium/core";
+import * as ubl from "@synclium/ubl";
+import * as facturx from "@synclium/facturx";
+import * as zatca from "@synclium/zatca";
 
 export const SUPPORTED_FORMATS = ["ubl", "facturx", "zatca", "canonical"] as const;
 export type FormatId = (typeof SUPPORTED_FORMATS)[number];
@@ -113,7 +113,7 @@ export function validateFormat(
   format: FormatId | "auto",
 ): FormatValidationResult & { format?: string } {
   if (format === "canonical") {
-    throw new FormatError("Canonical validation is handled by @openinvoicebridge/core (validateCanonicalInvoice).");
+    throw new FormatError("Canonical validation is handled by @synclium/core (validateCanonicalInvoice).");
   }
   const resolved = format === "auto" ? detectFormat(input) : format;
   const mod = FORMATS[resolved];

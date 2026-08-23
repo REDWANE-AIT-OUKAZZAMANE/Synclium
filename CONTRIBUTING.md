@@ -24,9 +24,9 @@ existing format package (`packages/formats/ubl` is the reference implementation)
 
 ```
 packages/formats/pintmy/
-├── package.json          name: @openinvoicebridge/pintmy
+├── package.json          name: @synclium/pintmy
 ├── tsconfig.json         extends ../../../tsconfig.base.json
-├── vitest.config.ts      alias @openinvoicebridge/core → ../../core/src/index.ts (copy from ubl)
+├── vitest.config.ts      alias @synclium/core → ../../core/src/index.ts (copy from ubl)
 ├── src/
 │   ├── importer.ts       pintmy XML → CanonicalInvoice
 │   ├── exporter.ts       CanonicalInvoice → pintmy XML
@@ -40,11 +40,11 @@ packages/formats/pintmy/
 
 ```json
 {
-  "name": "@openinvoicebridge/pintmy",
+  "name": "@synclium/pintmy",
   "type": "module",
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
   "dependencies": {
-    "@openinvoicebridge/core": "workspace:*",
+    "@synclium/core": "workspace:*",
     "fast-xml-parser": "^4.5.1",
     "xmlbuilder2": "^3.1.1"
   }
@@ -64,7 +64,7 @@ export { validate } from "./validator.js";                   // raw XML → Form
 The function signatures fulfill:
 
 ```ts
-import type { CanonicalInvoice, FormatValidationResult } from "@openinvoicebridge/core";
+import type { CanonicalInvoice, FormatValidationResult } from "@synclium/core";
 
 export function import(rawXml: string): CanonicalInvoice;
 export function export(invoice: CanonicalInvoice): string;
@@ -119,7 +119,7 @@ document it in step 6. That's expected — silent loss is not.
 In `packages/formats/registry/src/index.ts`:
 
 ```ts
-import * as pintmy from "@openinvoicebridge/pintmy";
+import * as pintmy from "@synclium/pintmy";
 
 export const FORMATS = {
   // …existing…
@@ -127,7 +127,7 @@ export const FORMATS = {
 };
 ```
 
-Add `"@openinvoicebridge/pintmy": "workspace:*"` to the registry's `package.json`.
+Add `"@synclium/pintmy": "workspace:*"` to the registry's `package.json`.
 CLI (`oib convert --to pintmy`), API (`/convert {"to":"pintmy"}`) and web demo pick it up
 automatically — no other changes needed. Extend `detectFormat()` if content sniffing can
 distinguish your format.

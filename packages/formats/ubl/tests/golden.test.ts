@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { CanonicalInvoiceSchema } from "@openinvoicebridge/core";
+import { CanonicalInvoiceSchema } from "@synclium/core";
 import { import as importUBL, export as exportUBL, validate } from "../src/index.js";
 
 const examplesDir = join(__dirname, "../../../../examples/ubl");

@@ -1,6 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
-import type { CanonicalInvoice } from "@openinvoicebridge/core";
-import { import as importUBL } from "@openinvoicebridge/ubl";
+import type { CanonicalInvoice } from "@synclium/core";
+import { import as importUBL } from "@synclium/ubl";
 
 const parser = new XMLParser({
   ignoreAttributes: false,

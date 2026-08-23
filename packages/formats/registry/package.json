@@ -1,5 +1,5 @@
 {
-  "name": "@openinvoicebridge/registry",
+  "name": "@synclium/registry",
   "version": "0.1.0",
   "license": "MIT",
   "description": "Registry of supported invoice format implementations (shared by CLI and API)",
@@ -17,10 +17,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@openinvoicebridge/core": "workspace:*",
-    "@openinvoicebridge/ubl": "workspace:*",
-    "@openinvoicebridge/facturx": "workspace:*",
-    "@openinvoicebridge/zatca": "workspace:*"
+    "@synclium/core": "workspace:*",
+    "@synclium/ubl": "workspace:*",
+    "@synclium/facturx": "workspace:*",
+    "@synclium/zatca": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.17.10",

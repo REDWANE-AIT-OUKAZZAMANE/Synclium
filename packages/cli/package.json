@@ -1,5 +1,5 @@
 {
-  "name": "@openinvoicebridge/cli",
+  "name": "@synclium/cli",
   "version": "0.1.0",
   "license": "MIT",
   "description": "oib â€” command-line tool for converting and validating e-invoices across formats",
@@ -21,9 +21,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@openinvoicebridge/core": "workspace:*",
-    "@openinvoicebridge/registry": "workspace:*",
-    "@openinvoicebridge/extract": "workspace:*",
+    "@synclium/core": "workspace:*",
+    "@synclium/registry": "workspace:*",
+    "@synclium/extract": "workspace:*",
     "commander": "^12.1.0"
   },
   "devDependencies": {

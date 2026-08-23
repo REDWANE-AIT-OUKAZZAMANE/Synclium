@@ -10,8 +10,8 @@ import {
   isFormatId,
   loadCanonical,
   type FormatId,
-} from "@openinvoicebridge/registry";
-import { createProvider } from "@openinvoicebridge/extract";
+} from "@synclium/registry";
+import { createProvider } from "@synclium/extract";
 
 const MAX_STRING_PAYLOAD_BYTES = 3 * 1024 * 1024; // 3MB maximum string length
 
@@ -172,7 +172,7 @@ export function buildRoutes(app: FastifyInstance) {
 
         if (format === "canonical") {
           const inv = loadCanonical(input);
-          const { validateCanonicalInvoice } = await import("@openinvoicebridge/core");
+          const { validateCanonicalInvoice } = await import("@synclium/core");
           result = validateCanonicalInvoice(inv);
           fmt = "canonical";
         } else {

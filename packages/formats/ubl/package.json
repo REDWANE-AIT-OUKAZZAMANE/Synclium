@@ -1,5 +1,5 @@
 {
-  "name": "@openinvoicebridge/ubl",
+  "name": "@synclium/ubl",
   "version": "0.1.0",
   "license": "MIT",
   "description": "UBL 2.1 / PEPPOL BIS Billing 3.0 importer, exporter, validator",
@@ -18,7 +18,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@openinvoicebridge/core": "workspace:*",
+    "@synclium/core": "workspace:*",
     "fast-xml-parser": "^4.5.1",
     "xmlbuilder2": "^3.1.1",
     "ajv": "^8.17.1"

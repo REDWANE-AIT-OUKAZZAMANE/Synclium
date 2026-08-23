@@ -2,12 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [
-    "@openinvoicebridge/core",
-    "@openinvoicebridge/extract",
-    "@openinvoicebridge/registry",
-    "@openinvoicebridge/ubl",
-    "@openinvoicebridge/facturx",
-    "@openinvoicebridge/zatca",
+    "@synclium/core",
+    "@synclium/extract",
+    "@synclium/registry",
+    "@synclium/ubl",
+    "@synclium/facturx",
+    "@synclium/zatca",
   ],
 };
 

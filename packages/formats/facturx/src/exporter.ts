@@ -1,5 +1,5 @@
 import { create } from "xmlbuilder2";
-import type { CanonicalInvoice, TaxBreakdown } from "@openinvoicebridge/core";
+import type { CanonicalInvoice, TaxBreakdown } from "@synclium/core";
 
 function formatDate102(dateStr: string): string {
   // YYYY-MM-DD -> YYYYMMDD

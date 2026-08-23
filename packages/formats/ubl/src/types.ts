@@ -1,4 +1,4 @@
-import type { CanonicalInvoice, FormatValidationResult } from "@openinvoicebridge/core";
+import type { CanonicalInvoice, FormatValidationResult } from "@synclium/core";
 
 export type ValidationResult = FormatValidationResult;
 

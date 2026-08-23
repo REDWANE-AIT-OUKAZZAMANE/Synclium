@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { validateFormat, FormatError, type FormatId } from "@openinvoicebridge/registry";
-import { validateCanonicalInvoice } from "@openinvoicebridge/core";
+import { validateFormat, FormatError, type FormatId } from "@synclium/registry";
+import { validateCanonicalInvoice } from "@synclium/core";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

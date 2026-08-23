@@ -7,7 +7,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      "@openinvoicebridge/core": path.resolve(here, "../core/src/index.ts"),
+      "@synclium/core": path.resolve(here, "../core/src/index.ts"),
     },
   },
   test: {

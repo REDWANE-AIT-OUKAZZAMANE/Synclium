@@ -1,5 +1,5 @@
 {
-  "name": "@openinvoicebridge/extract",
+  "name": "@synclium/extract",
   "version": "0.1.0",
   "license": "MIT",
   "description": "AI-powered invoice extraction into the canonical schema (provider-agnostic)",
@@ -21,7 +21,7 @@
     "eval:anthropic": "tsx scripts/eval.ts --provider anthropic"
   },
   "dependencies": {
-    "@openinvoicebridge/core": "workspace:*",
+    "@synclium/core": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "@openinvoicebridge/core",
+  "name": "@synclium/core",
   "version": "0.1.0",
   "license": "MIT",
   "description": "Canonical invoice schema — hub of the hub-and-spoke model",

@@ -17,13 +17,13 @@ importers:
 
   apps/web-demo:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@openinvoicebridge/extract':
+      '@synclium/extract':
         specifier: workspace:*
         version: link:../../packages/extract
-      '@openinvoicebridge/registry':
+      '@synclium/registry':
         specifier: workspace:*
         version: link:../../packages/formats/registry
       next:
@@ -69,13 +69,13 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^4.1.0
         version: 4.2.0
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../core
-      '@openinvoicebridge/extract':
+      '@synclium/extract':
         specifier: workspace:*
         version: link:../extract
-      '@openinvoicebridge/registry':
+      '@synclium/registry':
         specifier: workspace:*
         version: link:../formats/registry
       fastify:
@@ -94,13 +94,13 @@ importers:
 
   packages/cli:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../core
-      '@openinvoicebridge/extract':
+      '@synclium/extract':
         specifier: workspace:*
         version: link:../extract
-      '@openinvoicebridge/registry':
+      '@synclium/registry':
         specifier: workspace:*
         version: link:../formats/registry
       commander:
@@ -138,7 +138,7 @@ importers:
 
   packages/extract:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../core
       zod:
@@ -160,7 +160,7 @@ importers:
 
   packages/formats/facturx:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../../core
       fast-xml-parser:
@@ -179,16 +179,16 @@ importers:
 
   packages/formats/registry:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../../core
-      '@openinvoicebridge/facturx':
+      '@synclium/facturx':
         specifier: workspace:*
         version: link:../facturx
-      '@openinvoicebridge/ubl':
+      '@synclium/ubl':
         specifier: workspace:*
         version: link:../ubl
-      '@openinvoicebridge/zatca':
+      '@synclium/zatca':
         specifier: workspace:*
         version: link:../zatca
     devDependencies:
@@ -201,7 +201,7 @@ importers:
 
   packages/formats/ubl:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../../core
       ajv:
@@ -223,10 +223,10 @@ importers:
 
   packages/formats/zatca:
     dependencies:
-      '@openinvoicebridge/core':
+      '@synclium/core':
         specifier: workspace:*
         version: link:../../core
-      '@openinvoicebridge/ubl':
+      '@synclium/ubl':
         specifier: workspace:*
         version: link:../ubl
       fast-xml-parser:

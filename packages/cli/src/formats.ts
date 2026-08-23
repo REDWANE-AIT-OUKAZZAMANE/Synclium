@@ -1,1 +1,1 @@
-export * from "@openinvoicebridge/registry";
+export * from "@synclium/registry";

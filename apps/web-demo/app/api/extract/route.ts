@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createProvider } from "@openinvoicebridge/extract";
+import { createProvider } from "@synclium/extract";
 import fs from "fs";
 import path from "path";
 import os from "os";

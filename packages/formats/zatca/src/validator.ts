@@ -1,5 +1,5 @@
-import type { FormatValidationResult } from "@openinvoicebridge/core";
-import { validate as validateUBL } from "@openinvoicebridge/ubl";
+import type { FormatValidationResult } from "@synclium/core";
+import { validate as validateUBL } from "@synclium/ubl";
 
 export type ValidationResult = FormatValidationResult;
 

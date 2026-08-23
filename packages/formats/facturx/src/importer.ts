@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import type { CanonicalInvoice, Party, LineItem, Tax, Totals, TaxBreakdown } from "@openinvoicebridge/core";
+import type { CanonicalInvoice, Party, LineItem, Tax, Totals, TaxBreakdown } from "@synclium/core";
 
 const parser = new XMLParser({
   ignoreAttributes: false,

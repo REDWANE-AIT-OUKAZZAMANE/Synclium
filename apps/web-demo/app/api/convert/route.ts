@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { convert, FormatError, isFormatId, type FormatId } from "@openinvoicebridge/registry";
+import { convert, FormatError, isFormatId, type FormatId } from "@synclium/registry";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

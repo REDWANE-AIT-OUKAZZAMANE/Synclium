@@ -19,8 +19,8 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
-    "dev:api": "pnpm --filter @openinvoicebridge/api dev",
-    "dev:web": "pnpm --filter @openinvoicebridge/web-demo dev"
+    "dev:api": "pnpm --filter @synclium/api dev",
+    "dev:web": "pnpm --filter @synclium/web-demo dev"
   },
   "devDependencies": {
     "typescript": "^5.7.3",
