@@ -171,25 +171,69 @@ export type TaxBreakdown = z.infer<typeof TaxBreakdownSchema>;
 
 // --- payment terms -----------------------------------------------------------
 
+export const FinancialAccountString = z.preprocess((val) => {
+  if (typeof val === "string") return val.trim();
+  if (val && typeof val === "object") {
+    const obj = val as Record<string, unknown>;
+    const extracted = obj.iban ?? obj.id ?? obj.accountNumber ?? obj.accountID ?? obj.value ?? obj.number;
+    if (typeof extracted === "string" && extracted.trim()) return extracted.trim();
+    if (typeof obj.name === "string" && obj.name.trim()) return obj.name.trim();
+    if (typeof extracted === "number") return String(extracted);
+  }
+  return val;
+}, z.string().optional());
+
+export const FinancialInstitutionString = z.preprocess((val) => {
+  if (typeof val === "string") return val.trim();
+  if (val && typeof val === "object") {
+    const obj = val as Record<string, unknown>;
+    const extracted = obj.bic ?? obj.id ?? obj.name ?? obj.value ?? obj.branchID;
+    if (typeof extracted === "string" && extracted.trim()) return extracted.trim();
+  }
+  return val;
+}, z.string().optional());
+
+export const PaymentMeansCodeString = z.preprocess((val) => {
+  if (typeof val === "number") return String(val);
+  if (typeof val === "string") return val.trim();
+  if (val && typeof val === "object") {
+    const obj = val as Record<string, unknown>;
+    const extracted = obj.code ?? obj.id ?? obj.value ?? obj.typeCode;
+    if (extracted !== undefined) return String(extracted).trim();
+  }
+  return val;
+}, z.string().optional());
+
 export const PaymentTermsSchema = z.object({
   note: z.string().optional(),
   paymentDueDate: DateSchema.optional(),
-  paymentMeansCode: z.string().optional().describe("UNCL4461, e.g. 30=credit transfer, 48=card"),
-  payeeFinancialAccount: z.string().optional(),
-  payeeFinancialInstitution: z.string().optional(),
+  paymentMeansCode: PaymentMeansCodeString.describe("UNCL4461, e.g. 30=credit transfer, 48=card"),
+  payeeFinancialAccount: FinancialAccountString,
+  payeeFinancialInstitution: FinancialInstitutionString,
 });
 
 export type PaymentTerms = z.infer<typeof PaymentTermsSchema>;
 
 // --- references --------------------------------------------------------------
 
+export const ReferenceString = z.preprocess((val) => {
+  if (typeof val === "string") return val.trim();
+  if (val && typeof val === "object") {
+    const obj = val as Record<string, unknown>;
+    const extracted = obj.id ?? obj.value ?? obj.code ?? obj.reference;
+    if (typeof extracted === "string" && extracted.trim()) return extracted.trim();
+    if (typeof extracted === "number") return String(extracted);
+  }
+  return val;
+}, z.string().optional());
+
 export const ReferencesSchema = z.object({
-  orderReference: z.string().optional(),
-  contractReference: z.string().optional(),
-  despatchDocumentReference: z.string().optional(),
-  billingReference: z.string().optional(),
-  projectReference: z.string().optional(),
-  buyerOrderReference: z.string().optional(),
+  orderReference: ReferenceString,
+  contractReference: ReferenceString,
+  despatchDocumentReference: ReferenceString,
+  billingReference: ReferenceString,
+  projectReference: ReferenceString,
+  buyerOrderReference: ReferenceString,
 });
 
 export type References = z.infer<typeof ReferencesSchema>;
