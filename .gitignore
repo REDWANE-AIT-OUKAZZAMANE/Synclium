@@ -22,3 +22,6 @@ packages/*/dist
 packages/formats/*/dist
 .quota-db.json
 *.quota-db.json
+security_test_*.cjs
+server_*.txt
+gitleaks*

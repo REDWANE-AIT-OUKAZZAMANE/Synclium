@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { extname, basename, resolve } from "node:path";
+import { extname, basename, resolve, dirname } from "node:path";
 import {
   SUPPORTED_FORMATS,
   convert,
@@ -31,19 +31,35 @@ program
   .description("OpenInvoiceBridge — convert and validate e-invoices across formats (UBL/PEPPOL, Factur-X, ZATCA)")
   .version("0.1.0");
 
+function fail(msg: string): never {
+  console.error(`✖ ${msg}`);
+  process.exit(1);
+}
+
+// OIB-002 / OIB-003: Safe path resolution and validation
+function resolveSafePath(userPath: string, allowMissing = false): string {
+  if (!userPath || typeof userPath !== "string") {
+    fail("Path must be a non-empty string.");
+  }
+  if (userPath.includes("\0")) {
+    fail("Path contains forbidden null bytes.");
+  }
+  const resolved = resolve(process.cwd(), userPath);
+  if (!allowMissing && !existsSync(resolved)) {
+    fail(`File does not exist: ${userPath}`);
+  }
+  return resolved;
+}
+
 function readInput(file: string): string {
+  const safePath = resolveSafePath(file, false);
   try {
-    return readFileSync(file, "utf-8");
+    return readFileSync(safePath, "utf-8");
   } catch (e) {
     console.error(`✖ Cannot read input file: ${file}`);
     console.error(`  ${(e as Error).message}`);
     process.exit(2);
   }
-}
-
-function fail(msg: string): never {
-  console.error(`✖ ${msg}`);
-  process.exit(1);
 }
 
 program
@@ -64,7 +80,12 @@ program
     try {
       const out = convert(input, opts.from as FormatId | "auto", opts.to as FormatId);
       if (opts.output) {
-        writeFileSync(opts.output, out);
+        const safeOut = resolveSafePath(opts.output, true);
+        const parentDir = dirname(safeOut);
+        if (!existsSync(parentDir)) {
+          mkdirSync(parentDir, { recursive: true });
+        }
+        writeFileSync(safeOut, out, "utf-8");
         console.log(`✔ Wrote ${opts.to} output to ${opts.output}`);
       } else {
         process.stdout.write(out + "\n");
@@ -130,13 +151,14 @@ program
   .option("--model <model>", "model id (e.g. gemini-2.0-flash, claude-sonnet-4-20250514)")
   .option("--json-out <file>", "write full extraction report as JSON")
   .action(async (inputFile: string, opts: { provider: string; model?: string; jsonOut?: string }) => {
+    const safeInput = resolveSafePath(inputFile, false);
     let data: Buffer;
     try {
-      data = await readFile(inputFile);
+      data = await readFile(safeInput);
     } catch (e) {
       fail(`Cannot read input file: ${(e as Error).message}`);
     }
-    const ext = extname(inputFile).toLowerCase();
+    const ext = extname(safeInput).toLowerCase();
     const mimeType =
       ext === ".pdf" ? "application/pdf"
       : ext === ".png" ? "image/png"
@@ -164,7 +186,7 @@ program
       const result = await provider.extract({
         data: new Uint8Array(data),
         mimeType,
-        filename: basename(inputFile),
+        filename: basename(safeInput),
       });
       const report = {
         needsReview: result.needsReview,
@@ -176,7 +198,12 @@ program
         invoice: result.invoice,
       };
       if (opts.jsonOut) {
-        writeFileSync(opts.jsonOut, JSON.stringify(report, null, 2));
+        const safeJsonOut = resolveSafePath(opts.jsonOut, true);
+        const parentDir = dirname(safeJsonOut);
+        if (!existsSync(parentDir)) {
+          mkdirSync(parentDir, { recursive: true });
+        }
+        writeFileSync(safeJsonOut, JSON.stringify(report, null, 2), "utf-8");
         console.error(`✔ Report written to ${opts.jsonOut}`);
       }
       console.log(JSON.stringify(report.invoice, null, 2));

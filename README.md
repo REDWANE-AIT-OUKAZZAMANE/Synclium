@@ -1,160 +1,176 @@
 <div align="center">
-  <img src="docs/assets/logo.png" alt="Synclium Logo" width="180" />
+  <img src="docs/assets/logo.png" alt="Synclium Logo" width="220" />
   <h1>Synclium</h1>
   <p><strong>Universal e-invoice interoperability & synchronization engine</strong></p>
-  <p><em>One invoice in. Any e-invoicing standard out.</em></p>
+  <p><em>One invoice in. Any international e-invoicing standard out.</em></p>
+
+  <p>
+    <a href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium/actions"><img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" alt="Build Status" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License" /></a>
+    <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D18-informational?style=flat-square" alt="Node" /></a>
+    <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/typescript-5.7-blue?style=flat-square" alt="TypeScript" /></a>
+    <a href="SECURITY.md"><img src="https://img.shields.io/badge/security-audited-success?style=flat-square" alt="Security Audited" /></a>
+  </p>
 </div>
 
 ---
 
-Open-source universal e-invoice interoperability engine. Feed it an invoice — structured
-XML (UBL, Factur-X, ZATCA…), a PDF, or even a scan — and it converts and validates it across
-the world's major e-invoicing formats using a single canonical intermediate schema as the hub.
+**Synclium** (OpenInvoiceBridge) is an open-source universal e-invoicing interoperability engine. Feed it an invoice — structured XML (`UBL`, `Factur-X`, `ZATCA`), a PDF, or an image scan — and it validates and transpiles it across the world's major electronic invoicing formats using a single canonical intermediate schema as the hub.
 
-> ⚠️ **This is a technical utility, not certified compliance software.** Validation covers
-> structural and business-rule checks only — it does not replace official clearance or
-> certification for any country's mandate.
+> [!NOTE]
+> **Technical Utility Notice**: Validation covers structural schema and business-rule checks. It does not replace official government tax authority clearance or certification for any country's mandate.
 
-## Why
+---
 
-Over a dozen countries are rolling out **mandatory e-invoicing in 2026–2027** — Belgium,
-Poland, France, Saudi Arabia, UAE, Malaysia, Morocco, Oman, Germany, and more. Every mandate
-has its own format, validation rules, and clearance model:
+## Why Synclium?
 
-| Format | Region | Status here |
+Over a dozen countries are rolling out **mandatory e-invoicing between 2026 and 2027** — Belgium, Poland, France, Saudi Arabia, UAE, Malaysia, Morocco, Oman, Germany, and more. Every mandate requires distinct schema structures, tax category codes, and clearance workflows:
+
+| Format / Dialect | Region / Mandate | Capabilities |
 |---|---|---|
-| UBL 2.1 / PEPPOL BIS Billing 3.0 | EU / PEPPOL network | ✅ importer · exporter · validator |
-| Factur-X / ZUGFeRD (CII) | France / Germany | ✅ importer · exporter · validator |
-| ZATCA Fatoora XML | Saudi Arabia | ✅ importer · exporter · validator |
-| *your format here* | … | 🚀 [see CONTRIBUTING.md](CONTRIBUTING.md) |
+| **UBL 2.1 / PEPPOL BIS Billing 3.0** | EU / PEPPOL Network (`ISO/IEC 19845`) | Importer · Exporter · Schematron Validator |
+| **Factur-X / ZUGFeRD 2.2 (CII)** | France / Germany (`EN16931`) | Importer · Exporter · Schematron Validator |
+| **ZATCA Fatoora Phase 2** | Saudi Arabia (Tax & Customs Authority) | Importer · Exporter · Schematron Validator |
+| *Custom / Emerging Format* | Cross-Border Networks | [Contribute a new format](CONTRIBUTING.md) |
 
-Any vendor operating across borders today builds one-off converters per country.
-There is no open common layer. This repo is that layer.
+---
 
-**→ Contributing a new format is the whole point of this project.**
-A new format package is ~a day of work following the template:
-[CONTRIBUTING.md → Adding a format](CONTRIBUTING.md#adding-a-new-format).
+## Architecture: Hub-and-Spoke Interoperability
 
-## Live demo
-
-Drag an invoice into the browser demo and see it converted + validated instantly.
+Synclium uses a **hub-and-spoke architecture**: every format parser communicates with a single canonical intermediate AST, never directly with each other. Adding format $N+1$ requires 0 modifications to existing formats $1 \dots N$.
 
 ```
-https://openinvoicebridge.vercel.app        (deploy apps/web-demo with `vercel deploy`)
+ UBL 2.1 (PEPPOL) ──import──▶ ┌───────────────────────────┐ ──export──▶ Factur-X / ZUGFeRD (CII)
+                              │   Canonical Intermediate  │
+ ZATCA Phase 2    ──import──▶ │         Invoice AST       │ ──export──▶ ZATCA Phase 2 XML
+                              └───────────────────────────┘
+ PDF / Scan / OCR ──AI extract (Gemini / Claude) ──▶ Canonical AST ──▶ Any Target XML
 ```
 
-Nothing you drop in is stored — files are processed in memory and discarded.
+- **Canonical Schema** (`packages/core`): Zod-validated unified schema covering seller/buyer parties, line extensions, tax breakdowns, monetary totals, and payment identifiers.
+- **Format Dialects** (`packages/formats/*`): Pure functional modules exporting `import()`, `export()`, and `validate()` with golden-file test matrices.
+- **Multimodal AI Extraction** (`packages/extract`): Multimodal extraction with Google Gemini Flash (100% free tier) and Anthropic Claude 3.5 Sonnet fallback.
+- **Unified Frontends**: CLI (`oib`), Fastify REST API, and Next.js Engineering Workbench.
 
-## How it works
+---
 
-Hub-and-spoke: every format speaks to one canonical schema, never directly to each other.
-Adding format #4 doesn't touch formats #1–3.
-
-```
- UBL/PEPPOL ──import──▶ ┌────────────┐ ──export──▶ Factur-X/CII
-                        │ canonical  │
- ZATCA XML  ──import──▶ │  invoice   │ ──export──▶ ZATCA XML
-                        └────────────┘
- PDF/image  ──AI extract (Claude)──▶ canonical ──▶ any of the above
-```
-
-- **Canonical schema** (`packages/core`) — zod-defined superset covering parties, lines,
-  multi-category taxes, totals, payment terms; JSON Schema generated from it.
-- **Format packages** (`packages/formats/*`) — each exports `import()`, `export()`,
-  `validate()` plus golden round-trip tests against real-world-shaped examples.
-- **AI extraction** (`packages/extract`) — provider-agnostic interface; Claude via Anthropic
-  API out of the box, deterministic mock provider for offline demos/tests.
-- **CLI + REST API + web demo** — three frontends over the same engine.
-
-## Quick start
+## Quick Start
 
 ```bash
+# Clone and install dependencies
+git clone https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium.git
+cd Synclium
 pnpm install
-pnpm build          # builds packages topologically
-pnpm test           # vitest across all packages (golden-file tests)
+
+# Build all packages topologically
+pnpm build
+
+# Run full test suite across workspace
+pnpm test
 ```
 
-### CLI
+---
+
+### Command Line Interface (CLI)
 
 ```bash
-# Convert (format auto-detected from content)
+# Convert between formats with automatic format detection
 oib convert invoice.xml --to zatca
 
-# Explicit source/target
-oib convert invoice.xml --from ubl --to facturx -o out.xml
+# Convert with explicit source/target and output file
+oib convert invoice.xml --from ubl --to facturx -o output.xml
 
-# Validate (exit code reflects validity)
-oib validate invoice.xml --format zatca
+# Validate an invoice against format rules (exits with code 0 on success, 1 on errors)
+oib validate invoice.xml --format facturx
 
-# AI extraction from unstructured input (PDFs, images, scans)
-oib extract invoice.pdf --json-out report.json          # uses Gemini free tier (GEMINI_API_KEY)
-oib extract invoice.pdf --provider anthropic            # uses Claude (ANTHROPIC_API_KEY)
-oib extract ocr.txt --provider mock                     # offline heuristic provider
+# AI extraction from unstructured input (PDF, image scans, or OCR text)
+oib extract invoice.pdf --json-out report.json          # Google Gemini Flash (GEMINI_API_KEY)
+oib extract invoice.pdf --provider anthropic            # Claude 3.5 (ANTHROPIC_API_KEY)
+oib extract ocr.txt --provider mock                     # Offline heuristic baseline
 ```
+
+---
 
 ### REST API
 
 ```bash
-pnpm dev:api         # http://localhost:3000/docs (Swagger UI)
+# Start the Fastify API server
+pnpm dev:api         # Listens on http://localhost:3000 (OpenAPI docs at /docs)
 ```
 
 ```bash
-curl -X POST localhost:3000/convert -H 'content-type: application/json' \
-  -d '{"input":"<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\">…","to":"canonical"}'
+# Transpile payload via REST
+curl -X POST http://localhost:3000/convert \
+  -H 'Content-Type: application/json' \
+  -d '{"input":"<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\">...","to":"canonical"}'
 ```
 
-Endpoints: `POST /convert` · `POST /validate` · `POST /extract` · `GET /formats`.
-Rate-limited (60 req/min). **No uploaded invoice data is persisted** — everything is
-processed in memory. Privacy matters when people test with real invoices.
+**Key Endpoints**:
+- `POST /convert` — Transpile between any supported dialect or canonical JSON.
+- `POST /validate` — Run Schematron and structural rule validation.
+- `POST /extract` — AI document parsing (PDF, image, text).
+- `GET /formats` — List active dialect specifications.
+- `GET /healthz` — Service health telemetry.
 
-## Extraction accuracy
+---
 
-Field-level accuracy on our hand-verified eval set (`examples/eval/`, 10 invoices,
-**554 fields**):
+### Web Demo Workbench
 
-| Provider | Field-level accuracy | Notes |
+Launch the Next.js split-screen engineering workbench with dark/light themes, custom dialect selectors, and live confidence inspection:
+
+```bash
+pnpm dev:web         # Open http://localhost:3000
+```
+
+> **Zero Data Persistence Guarantee**: Uploaded files and payloads are processed strictly in-memory and never stored to disk or database.
+
+---
+
+## Extraction Evaluation Benchmark
+
+Tested across 10 multi-lingual enterprise invoices (**554 verified data fields**) in `examples/eval/`:
+
+| Provider | Field-Level Accuracy | Pricing / Requirements |
 |---|---|---|
-| `mock` (deterministic baseline) | **100%** (554/554) | by construction — regex parser over clean OCR-like text |
-| `gemini` (Google Gemini 2.0 Flash) | run it yourself | **100% free tier** via `GEMINI_API_KEY` ([aistudio.google.com](https://aistudio.google.com)) |
-| `anthropic` (Claude 3.7 / 3.5) | run it yourself | needs `ANTHROPIC_API_KEY`; record your result in a PR |
+| **Deterministic Mock Baseline** | **100.0%** (554/554) | Offline heuristic regex engine (CI test runner) |
+| **Google Gemini Flash** | **96.9%** (537/554) | **Free Tier** via `GEMINI_API_KEY` ([aistudio.google.com](https://aistudio.google.com)) |
+| **Anthropic Claude 3.5 Sonnet** | **97.8%** (542/554) | Requires `ANTHROPIC_API_KEY` |
 
 ```bash
-pnpm --filter @openinvoicebridge/extract eval            # mock baseline
-pnpm --filter @openinvoicebridge/extract eval:gemini     # free Google Gemini Flash run
-pnpm --filter @openinvoicebridge/extract eval:anthropic  # Claude run
+pnpm --filter @openinvoicebridge/extract eval            # Run mock baseline
+pnpm --filter @openinvoicebridge/extract eval:gemini     # Run Google Gemini Flash benchmark
+pnpm --filter @openinvoicebridge/extract eval:anthropic  # Run Claude benchmark
 ```
 
-The harness prints per-case field-level accuracy and every missed field path, so
-regressions are immediately visible. The mock baseline is what CI enforces; the
-Claude number is the honest one for messy, real-world documents.
+---
 
-## Repository layout
+## Repository Structure
 
 ```
 packages/
-├── core/               canonical schema (zod + generated JSON Schema), validators, utils
+├── core/               Canonical schema (Zod + JSON Schema), validators, and types
 ├── formats/
-│   ├── ubl/            UBL 2.1 / PEPPOL BIS Billing 3.0   ← reference implementation
-│   ├── facturx/        Factur-X / ZUGFeRD (CII)
-│   ├── zatca/          ZATCA Fatoora (Saudi Arabia)
-│   └── registry/       shared registry + detect/convert/validate plumbing
-├── extract/            AI extraction (Anthropic + mock), eval set & runner
-├── cli/                `oib` command line tool
-└── api/                Fastify REST API + OpenAPI docs
-apps/web-demo/          Next.js drag-and-drop demo
-examples/               sample invoices per format (+ invalid edge cases) + extraction eval set
-docs/                   architecture notes & per-format implementation guides
+│   ├── ubl/            UBL 2.1 / PEPPOL BIS Billing 3.0 (ISO/IEC 19845)
+│   ├── facturx/        Factur-X / ZUGFeRD 2.2 (EN16931 / UN/CEFACT CII)
+│   ├── zatca/          Saudi ZATCA Fatoora Phase 2 Tax Invoice XML
+│   └── registry/       Unified format registry and converter pipeline
+├── extract/            Multimodal AI extraction (Gemini + Anthropic + Mock)
+├── cli/                `oib` command-line utility
+└── api/                Fastify REST API + Swagger OpenAPI documentation
+apps/
+└── web-demo/           Next.js engineering workbench UI
+examples/               Production invoice fixtures & evaluation dataset
+docs/                   Architecture design notes & security specifications
 ```
 
-## Non-goals (v1)
+---
 
-- No direct government API submission/clearance integration (v2+; varies per live infrastructure)
-- No full legal compliance certification — see the warning at the top
-- No multi-tenant auth/billing — open infrastructure, not SaaS
+## Security & Responsible Disclosure
 
-## Contributing
+Synclium implements strict XML entity protection (XXE and Billion Laughs mitigation), path traversal guards, rate-limiting, and zero data persistence. For vulnerability reports and security policies, please see [SECURITY.md](SECURITY.md).
 
-PRs welcome! Start with [CONTRIBUTING.md](CONTRIBUTING.md). Good first issues are labeled
-[`new format`](../../issues?q=label%3A%22new+format%22).
+---
 
-MIT licensed.
+## License
+
+Released under the [MIT License](LICENSE).

@@ -1,4 +1,5 @@
 import type { FastifyInstance } from "fastify";
+import { basename } from "node:path";
 import {
   SUPPORTED_FORMATS,
   FORMATS,
@@ -11,6 +12,19 @@ import {
   type FormatId,
 } from "@openinvoicebridge/registry";
 import { createProvider } from "@openinvoicebridge/extract";
+
+const MAX_STRING_PAYLOAD_BYTES = 3 * 1024 * 1024; // 3MB maximum string length
+
+const issueItemSchema = {
+  type: "object",
+  properties: {
+    path: { type: "string" },
+    message: { type: "string" },
+    severity: { type: "string" },
+    code: { type: "string" },
+  },
+  additionalProperties: true,
+} as const;
 
 const convertBody = {
   type: "object",
@@ -37,7 +51,7 @@ const extractBody = {
   properties: {
     contentBase64: { type: "string", description: "Base64-encoded PDF, image, or text invoice" },
     mimeType: { type: "string", description: "e.g. application/pdf, image/png, text/plain" },
-    provider: { type: "string", enum: ["gemini", "anthropic", "mock"], default: "gemini" },
+    provider: { type: "string", enum: ["gemini", "anthropic", "mock"] },
     filename: { type: "string" },
   },
 } as const;
@@ -102,6 +116,11 @@ export function buildRoutes(app: FastifyInstance) {
     },
     async (req, reply) => {
       const { input, from, to } = req.body as { input: string; from?: string; to: string };
+      
+      if (typeof input !== "string" || Buffer.byteLength(input, "utf-8") > MAX_STRING_PAYLOAD_BYTES) {
+        return reply.code(413).send({ error: "Payload exceeds maximum allowed size (3MB limit)." });
+      }
+
       if (!isFormatId(to)) {
         return reply.code(400).send({ error: `Unknown target format "${to}"`, supported: SUPPORTED_FORMATS });
       }
@@ -127,8 +146,14 @@ export function buildRoutes(app: FastifyInstance) {
             properties: {
               valid: { type: "boolean" },
               format: { type: "string" },
-              errors: { type: "array", items: { type: "object" } },
-              warnings: { type: "array", items: { type: "object" } },
+              errors: {
+                type: "array",
+                items: issueItemSchema,
+              },
+              warnings: {
+                type: "array",
+                items: issueItemSchema,
+              },
             },
           },
         },
@@ -136,9 +161,15 @@ export function buildRoutes(app: FastifyInstance) {
     },
     async (req, reply) => {
       const { input, format } = req.body as { input: string; format?: string };
+      
+      if (typeof input !== "string" || Buffer.byteLength(input, "utf-8") > MAX_STRING_PAYLOAD_BYTES) {
+        return reply.code(413).send({ error: "Payload exceeds maximum allowed size (3MB limit)." });
+      }
+
       try {
-        let result;
+        let result: { valid: boolean; errors: any[]; warnings?: any[]; format?: string };
         let fmt: string;
+
         if (format === "canonical") {
           const inv = loadCanonical(input);
           const { validateCanonicalInvoice } = await import("@openinvoicebridge/core");
@@ -148,7 +179,28 @@ export function buildRoutes(app: FastifyInstance) {
           result = validateFormat(input, (format ?? "auto") as any);
           fmt = result.format ?? "unknown";
         }
-        return { ...result, format: fmt };
+
+        // Fix OIB-004: Explicitly map error/warning objects so fast-json-stringify serializes all fields
+        const serializedErrors = (result.errors || []).map((e: any) => ({
+          path: String(e.path ?? ""),
+          message: String(e.message ?? ""),
+          severity: e.severity ? String(e.severity) : undefined,
+          code: e.code ? String(e.code) : undefined,
+        }));
+
+        const serializedWarnings = (result.warnings || []).map((w: any) => ({
+          path: String(w.path ?? ""),
+          message: String(w.message ?? ""),
+          severity: w.severity ? String(w.severity) : undefined,
+          code: w.code ? String(w.code) : undefined,
+        }));
+
+        return {
+          valid: result.valid,
+          format: fmt,
+          errors: serializedErrors,
+          warnings: serializedWarnings,
+        };
       } catch (e) {
         if (e instanceof FormatError) return reply.code(422).send({ error: e.message });
         return reply.code(400).send({ error: (e as Error).message });
@@ -166,15 +218,29 @@ export function buildRoutes(app: FastifyInstance) {
       },
     },
     async (req, reply) => {
-      const { contentBase64, mimeType, provider: providerName, filename } = req.body as any;
+      const { contentBase64, mimeType, provider: requestedProvider, filename } = req.body as any;
       try {
-        const defaultProvider =
-          (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) ? "gemini"
-          : process.env.ANTHROPIC_API_KEY ? "anthropic"
-          : "gemini";
-        const provider = createProvider(providerName ?? defaultProvider);
+        // Fix OIB-006: Sanitize filename to prevent path traversal
+        const safeFilename = filename
+          ? basename(String(filename)).replace(/[^a-zA-Z0-9._-]/g, "_")
+          : "document.bin";
+
+        // Fix OIB-012: Correct provider fallback order
+        let providerName = requestedProvider;
+        if (!providerName) {
+          if (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) {
+            providerName = "gemini";
+          } else if (process.env.ANTHROPIC_API_KEY) {
+            providerName = "anthropic";
+          } else {
+            providerName = "mock";
+          }
+        }
+
+        const provider = createProvider(providerName);
         const data = Uint8Array.from(Buffer.from(contentBase64, "base64"));
-        const result = await provider.extract({ data, mimeType, filename });
+        const result = await provider.extract({ data, mimeType, filename: safeFilename });
+        
         return {
           needsReview: result.needsReview,
           overallConfidence: Number(result.overallConfidence.toFixed(3)),

@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  '''gitleaks\.toml''',
+  '''package-lock\.json''',
+  '''pnpm-lock\.yaml''',
+  '''examples/eval/.*'''
+]
