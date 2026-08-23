@@ -36,7 +36,7 @@ export class GeminiProvider implements ExtractionProvider {
       );
     }
     this.apiKey = key;
-    this.model = opts.model ?? "gemini-2.0-flash";
+    this.model = opts.model ?? process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
     this.reviewThreshold = opts.reviewThreshold ?? DEFAULT_REVIEW_THRESHOLD;
     this.baseUrl = opts.baseUrl ?? "https://generativelanguage.googleapis.com/v1beta";
     this.timeoutMs = opts.timeoutMs ?? 30000;

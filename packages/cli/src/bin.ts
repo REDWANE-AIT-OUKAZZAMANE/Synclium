@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { extname, basename } from "node:path";
+import { extname, basename, resolve } from "node:path";
 import {
   SUPPORTED_FORMATS,
   convert,
@@ -15,6 +15,14 @@ import {
 } from "@openinvoicebridge/registry";
 import { createProvider } from "@openinvoicebridge/extract";
 import { validateCanonicalInvoice } from "@openinvoicebridge/core";
+
+// Auto-load .env if available
+if (typeof process.loadEnvFile === "function") {
+  const rootEnv = resolve(process.cwd(), ".env");
+  if (existsSync(rootEnv)) {
+    try { process.loadEnvFile(rootEnv); } catch {}
+  }
+}
 
 const program = new Command();
 

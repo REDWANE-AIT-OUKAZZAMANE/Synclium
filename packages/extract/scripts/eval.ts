@@ -7,9 +7,19 @@
  * Scores field-level accuracy across examples/eval/*.txt against their
  * hand-verified *.expected.json files.
  */
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { createProvider } from "../src/index.js";
+
+// Auto-load .env if present
+if (typeof process.loadEnvFile === "function") {
+  const rootEnv = resolve(process.cwd(), "../../.env");
+  if (existsSync(rootEnv)) {
+    try { process.loadEnvFile(rootEnv); } catch {}
+  } else if (existsSync(".env")) {
+    try { process.loadEnvFile(".env"); } catch {}
+  }
+}
 
 interface Case {
   name: string;
