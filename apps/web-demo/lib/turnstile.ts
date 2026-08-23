@@ -26,13 +26,13 @@ export async function verifyTurnstileToken(
   }
 
   if (!token || typeof token !== "string" || !token.trim()) {
-    // If Turnstile is completely unconfigured in local dev (dummy keys) and token is omitted in dev, allow gracefully
-    if (secretKey.startsWith("1x00000000000000000000000000000000AA") && process.env.NODE_ENV !== "production") {
+    // In local development mode, allow graceful execution if token is pending
+    if (process.env.NODE_ENV !== "production") {
       return { success: true };
     }
     return {
       success: false,
-      error: "Missing Cloudflare Turnstile bot challenge token. Please complete the verification check.",
+      error: "Missing Cloudflare Turnstile bot challenge token. Please complete the verification check before extracting.",
     };
   }
 

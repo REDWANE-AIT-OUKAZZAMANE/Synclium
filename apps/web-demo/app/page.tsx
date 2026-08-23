@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { Turnstile } from "@marsidev/react-turnstile";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import {
   SparklesIcon,
   UploadCloudIcon,
@@ -174,8 +174,9 @@ export default function WorkbenchPage() {
   const [resetCountdown, setResetCountdown] = useState<string>("");
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
   
-  // Turnstile challenge token
+  // Turnstile challenge token & ref
   const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -327,6 +328,9 @@ export default function WorkbenchPage() {
       setError((e as Error).message);
     } finally {
       setBusy("");
+      try {
+        turnstileRef.current?.reset();
+      } catch {}
     }
   };
 
@@ -721,6 +725,7 @@ export default function WorkbenchPage() {
             {/* Cloudflare Turnstile Bot Challenge */}
             <div className="mt-4 pt-3 border-t border-slate-200 dark:border-[#21262d] flex flex-col items-center justify-center min-h-[65px]">
               <Turnstile
+                ref={turnstileRef}
                 siteKey={turnstileSiteKey}
                 onSuccess={(token) => setTurnstileToken(token)}
                 onError={() => setTurnstileToken("")}
