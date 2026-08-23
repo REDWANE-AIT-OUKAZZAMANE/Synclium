@@ -327,15 +327,15 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"} text-slate-900 dark:text-[#e2e8f0]`}>
-      
+
       {/* -------------------------------------------------------------------- */}
       {/* 1. Header Bar                                                        */}
       {/* -------------------------------------------------------------------- */}
       <header className="sticky top-0 z-50 border-b border-slate-300 dark:border-[#21262d] bg-white/95 dark:bg-[#07090e]/95 backdrop-blur font-mono">
         <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-6 sm:gap-8">
-            <Link href="/" className="flex items-center gap-1.5 group">
-              <img src="/logo.png" alt="Synclium" className="h-8.5 sm:h-9 w-auto object-contain drop-shadow-sm" />
+            <Link href="/" className="flex items-center group">
+              <img src="/logo.png" alt="Synclium" className="h-12 sm:h-12 w-auto object-contain drop-shadow-sm" />
               <div className="flex items-baseline gap-1.5">
                 <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#58a6ff] transition-colors">
                   SYNCLIUM
@@ -417,7 +417,7 @@ export default function LandingPage() {
       <main>
         <section className="pt-8 pb-12 sm:pt-12 sm:pb-16 border-b border-slate-300 dark:border-[#21262d]">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
-            
+
             {/* System Specification Monospace Breadcrumb */}
             <div className="font-mono text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
               <span className="text-blue-600 dark:text-[#58a6ff] font-bold">SYS_SPEC</span>
@@ -436,9 +436,9 @@ export default function LandingPage() {
               </h1>
               <p className="mt-3 font-mono text-sm sm:text-base text-slate-700 dark:text-slate-300 max-w-4xl leading-relaxed">
                 Belgium, France, Poland, and Saudi Arabia mandate incompatible e-invoicing schemas.
-                Synclium is a stateless, pure-TypeScript compiler that validates and transpiles across 
-                <span className="font-bold text-slate-900 dark:text-white"> UBL 2.1 (PEPPOL)</span>, 
-                <span className="font-bold text-slate-900 dark:text-white"> Factur-X / ZUGFeRD (CII)</span>, and 
+                Synclium is a stateless, pure-TypeScript compiler that validates and transpiles across
+                <span className="font-bold text-slate-900 dark:text-white"> UBL 2.1 (PEPPOL)</span>,
+                <span className="font-bold text-slate-900 dark:text-white"> Factur-X / ZUGFeRD (CII)</span>, and
                 <span className="font-bold text-slate-900 dark:text-white"> ZATCA Phase 2</span> via a lossless intermediate hub AST.
               </p>
             </div>
@@ -477,7 +477,7 @@ export default function LandingPage() {
             {/* The Live Interactive Dual-Pane Compiler Instrument (Hero Core)   */}
             {/* ---------------------------------------------------------------- */}
             <div className="mt-8 border border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#0d1117] shadow-xl">
-              
+
               {/* Terminal Control Strip & Test Case Selector */}
               <div className="px-4 py-2.5 bg-slate-100 dark:bg-[#161b22] border-b border-slate-300 dark:border-[#21262d] flex flex-wrap items-center justify-between gap-3 font-mono">
                 <div className="flex items-center gap-2">
@@ -491,11 +491,10 @@ export default function LandingPage() {
                     <button
                       key={tc.id}
                       onClick={() => setSelectedCaseIdx(idx)}
-                      className={`px-2.5 py-1 text-[11px] font-bold border transition-all ${
-                        selectedCaseIdx === idx
-                          ? "border-blue-600 bg-blue-600 text-white"
-                          : "border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#07090e] text-slate-700 dark:text-slate-300 hover:border-slate-400"
-                      }`}
+                      className={`px-2.5 py-1 text-[11px] font-bold border transition-all ${selectedCaseIdx === idx
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#07090e] text-slate-700 dark:text-slate-300 hover:border-slate-400"
+                        }`}
                     >
                       Case {idx + 1}
                     </button>
@@ -505,7 +504,7 @@ export default function LandingPage() {
 
               {/* Dual-Pane Code Split Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-300 dark:divide-[#21262d]">
-                
+
                 {/* Left Pane: Source Dialect */}
                 <div className="flex flex-col bg-slate-50/70 dark:bg-[#05070a]">
                   <div className="px-4 py-2 bg-slate-100/80 dark:bg-[#0e131d] border-b border-slate-300 dark:border-[#21262d] flex items-center justify-between font-mono text-[11px]">
@@ -593,14 +592,14 @@ export default function LandingPage() {
         {/* -------------------------------------------------------------------- */}
         <section id="mandates" className="py-14 sm:py-20 border-b border-slate-300 dark:border-[#21262d]">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-6 font-mono">
-            
+
             <div className="flex items-center gap-2">
               <span className="text-blue-600 dark:text-[#58a6ff] font-bold">◆ 01</span>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                 MANDATE COMPLIANCE MATRIX // 2026–2027 TIMELINE
               </h2>
             </div>
-            
+
             <h3 className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
               The O(N²) Point-to-Point Integration Trap vs O(N) Canonical Hub
             </h3>
@@ -660,7 +659,7 @@ export default function LandingPage() {
             {/* Architecture Mathematical Proof */}
             <div className="mt-4 p-4 border border-slate-300 dark:border-[#21262d] bg-slate-50 dark:bg-[#090d14] text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
               <span className="font-bold text-slate-900 dark:text-white">COMPUTATIONAL TOPOLOGY: </span>
-              Supporting N formats across M jurisdictions with point-to-point converters requires <code className="text-red-500 font-bold">N × (N - 1)</code> bespoke mappings. 
+              Supporting N formats across M jurisdictions with point-to-point converters requires <code className="text-red-500 font-bold">N × (N - 1)</code> bespoke mappings.
               With Synclium&apos;s Canonical Intermediate Hub, complexity is strictly reduced to <code className="text-emerald-500 font-bold">2 × N</code> pure functional transformers. Adding format N+1 requires exactly 0 changes to existing formats.
             </div>
 
@@ -672,20 +671,20 @@ export default function LandingPage() {
         {/* -------------------------------------------------------------------- */}
         <section id="architecture" className="py-14 sm:py-20 border-b border-slate-300 dark:border-[#21262d]">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-6 font-mono">
-            
+
             <div className="flex items-center gap-2">
               <span className="text-blue-600 dark:text-[#58a6ff] font-bold">◆ 02</span>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                 INTERNAL COMPILER PIPELINE
               </h2>
             </div>
-            
+
             <h3 className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
               Stateless In-Memory Transpilation Architecture
             </h3>
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-              
+
               {/* Step 1 */}
               <div className="border border-slate-300 dark:border-[#21262d] bg-white dark:bg-[#0d1117] p-5 flex flex-col justify-between">
                 <div>
@@ -738,20 +737,20 @@ export default function LandingPage() {
         {/* -------------------------------------------------------------------- */}
         <section id="benchmarks" className="py-14 sm:py-20 border-b border-slate-300 dark:border-[#21262d]">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-6 font-mono">
-            
+
             <div className="flex items-center gap-2">
               <span className="text-blue-600 dark:text-[#58a6ff] font-bold">◆ 03</span>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                 AUDITED RUNTIME BENCHMARKS &amp; DATA PRIVACY
               </h2>
             </div>
-            
+
             <h3 className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
               Real Engineering Metrics. Zero Marketing Inventions.
             </h3>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              
+
               <div className="border border-slate-300 dark:border-[#21262d] bg-white dark:bg-[#0d1117] p-5">
                 <div className="text-2xl font-bold text-slate-900 dark:text-white">67 / 67</div>
                 <div className="mt-1 text-xs text-blue-600 dark:text-[#58a6ff] font-bold uppercase">Test Suites Passing</div>
@@ -794,51 +793,48 @@ export default function LandingPage() {
         {/* -------------------------------------------------------------------- */}
         <section id="developers" className="py-14 sm:py-20 border-b border-slate-300 dark:border-[#21262d]">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-6 font-mono">
-            
+
             <div className="flex items-center gap-2">
               <span className="text-blue-600 dark:text-[#58a6ff] font-bold">◆ 04</span>
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
                 FOR DEVELOPERS &amp; CONTRIBUTING ADAPTERS
               </h2>
             </div>
-            
+
             <h3 className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">
               Embed as a Library, Run in CI/CD, or Add New Country Formats
             </h3>
 
             <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-              
+
               {/* Terminal Tab Box */}
               <div className="border border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#05070a]">
                 <div className="px-4 py-2 bg-slate-100 dark:bg-[#161b22] border-b border-slate-300 dark:border-[#21262d] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setActiveDevTab("cli")}
-                      className={`px-2 py-0.5 border ${
-                        activeDevTab === "cli"
-                          ? "border-blue-600 bg-blue-600 text-white font-bold"
-                          : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
-                      }`}
+                      className={`px-2 py-0.5 border ${activeDevTab === "cli"
+                        ? "border-blue-600 bg-blue-600 text-white font-bold"
+                        : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
+                        }`}
                     >
                       CLI (oib)
                     </button>
                     <button
                       onClick={() => setActiveDevTab("sdk")}
-                      className={`px-2 py-0.5 border ${
-                        activeDevTab === "sdk"
-                          ? "border-blue-600 bg-blue-600 text-white font-bold"
-                          : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
-                      }`}
+                      className={`px-2 py-0.5 border ${activeDevTab === "sdk"
+                        ? "border-blue-600 bg-blue-600 text-white font-bold"
+                        : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
+                        }`}
                     >
                       TypeScript SDK
                     </button>
                     <button
                       onClick={() => setActiveDevTab("api")}
-                      className={`px-2 py-0.5 border ${
-                        activeDevTab === "api"
-                          ? "border-blue-600 bg-blue-600 text-white font-bold"
-                          : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
-                      }`}
+                      className={`px-2 py-0.5 border ${activeDevTab === "api"
+                        ? "border-blue-600 bg-blue-600 text-white font-bold"
+                        : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
+                        }`}
                     >
                       REST API
                     </button>
@@ -851,10 +847,10 @@ export default function LandingPage() {
                     <pre className="space-y-2">
                       <span className="text-slate-400"># Transpile with auto-detected format signature</span>
                       <p className="text-blue-600 dark:text-[#58a6ff] font-bold">$ oib convert invoice.xml --to zatca</p>
-                      
+
                       <span className="text-slate-400"># Execute Schematron compliance validation</span>
                       <p className="text-emerald-600 dark:text-emerald-400 font-bold">$ oib validate invoice.xml --format facturx</p>
-                      
+
                       <span className="text-slate-400"># AI multimodal extraction from scan PDF or image</span>
                       <p className="text-purple-600 dark:text-purple-400 font-bold">$ oib extract scan.pdf --json-out report.json</p>
                     </pre>
@@ -939,7 +935,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2.5">
             <img src="/logo.png" alt="Synclium" className="h-5 w-auto object-contain" />
             <span className="font-bold text-slate-800 dark:text-slate-200">SYNCLIUM</span>
-            <span>// Universal Electronic Invoicing Bridge</span>
+            <span>- Universal Electronic Invoicing Bridge</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 text-[11px]">
