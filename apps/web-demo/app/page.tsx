@@ -334,10 +334,10 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 border-b border-slate-300 dark:border-[#21262d] bg-white/95 dark:bg-[#07090e]/95 backdrop-blur font-mono">
         <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-6 sm:gap-8">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <img src="/logo.png" alt="Synclium" className="h-6 w-auto object-contain" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <img src="/logo.png" alt="Synclium" className="h-8.5 sm:h-9 w-auto object-contain drop-shadow-sm" />
               <div className="flex items-baseline gap-2">
-                <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#58a6ff] transition-colors">
+                <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#58a6ff] transition-colors">
                   SYNCLIUM
                 </span>
                 <span className="text-[10px] px-1.5 py-0.2 border border-slate-300 dark:border-[#30363d] bg-slate-100 dark:bg-[#161b22] text-slate-600 dark:text-slate-400 font-semibold">
@@ -937,7 +937,7 @@ export default function LandingPage() {
       <footer className="border-t border-slate-300 dark:border-[#21262d] bg-white dark:bg-[#07090e] py-6 text-slate-500 font-mono text-xs">
         <div className="mx-auto max-w-[1600px] px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Synclium" className="h-4 w-auto object-contain" />
+            <img src="/logo.png" alt="Synclium" className="h-5 w-auto object-contain" />
             <span className="font-bold text-slate-800 dark:text-slate-200">SYNCLIUM</span>
             <span>// Universal Electronic Invoicing Bridge</span>
           </div>
