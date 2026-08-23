@@ -24,17 +24,43 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing 'contentBase64' or 'mimeType'" }, { status: 400 });
     }
 
-    let providerName = requested ?? "anthropic";
-    const hasKey = !!process.env.ANTHROPIC_API_KEY;
+    const hasGemini = !!(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
+    const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
 
-    if (providerName === "anthropic" && !hasKey) {
-      if (mimeType.startsWith("text/")) {
-        providerName = "mock"; // graceful demo fallback for text inputs
+    let providerName = requested;
+    if (!providerName) {
+      if (hasGemini) providerName = "gemini";
+      else if (hasAnthropic) providerName = "anthropic";
+      else if (mimeType.startsWith("text/")) providerName = "mock";
+      else providerName = "gemini"; // default attempt
+    }
+
+    if (providerName === "gemini" && !hasGemini) {
+      if (hasAnthropic) {
+        providerName = "anthropic";
+      } else if (mimeType.startsWith("text/")) {
+        providerName = "mock";
       } else {
         return NextResponse.json(
           {
             error:
-              "AI extraction for PDFs/images requires an ANTHROPIC_API_KEY on the server. Text files work with the offline mock provider.",
+              "AI extraction for PDFs/images requires a free GEMINI_API_KEY (get a free key at https://aistudio.google.com) or ANTHROPIC_API_KEY on the server. Text files work with the offline mock provider.",
+          },
+          { status: 503 },
+        );
+      }
+    }
+
+    if (providerName === "anthropic" && !hasAnthropic) {
+      if (hasGemini) {
+        providerName = "gemini";
+      } else if (mimeType.startsWith("text/")) {
+        providerName = "mock";
+      } else {
+        return NextResponse.json(
+          {
+            error:
+              "AI extraction for PDFs/images requires a free GEMINI_API_KEY (get a free key at https://aistudio.google.com) or ANTHROPIC_API_KEY on the server. Text files work with the offline mock provider.",
           },
           { status: 503 },
         );

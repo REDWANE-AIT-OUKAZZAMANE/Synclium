@@ -86,9 +86,10 @@ oib convert invoice.xml --from ubl --to facturx -o out.xml
 # Validate (exit code reflects validity)
 oib validate invoice.xml --format zatca
 
-# AI extraction from unstructured input (needs ANTHROPIC_API_KEY)
-oib extract scan.pdf --json-out report.json
-oib extract ocr.txt --provider mock   # offline heuristic provider
+# AI extraction from unstructured input (PDFs, images, scans)
+oib extract invoice.pdf --json-out report.json          # uses Gemini free tier (GEMINI_API_KEY)
+oib extract invoice.pdf --provider anthropic            # uses Claude (ANTHROPIC_API_KEY)
+oib extract ocr.txt --provider mock                     # offline heuristic provider
 ```
 
 ### REST API
@@ -114,11 +115,13 @@ Field-level accuracy on our hand-verified eval set (`examples/eval/`, 10 invoice
 | Provider | Field-level accuracy | Notes |
 |---|---|---|
 | `mock` (deterministic baseline) | **100%** (554/554) | by construction — regex parser over clean OCR-like text |
-| `anthropic` (Claude) | run it yourself | needs `ANTHROPIC_API_KEY`; record your result in a PR |
+| `gemini` (Google Gemini 2.0 Flash) | run it yourself | **100% free tier** via `GEMINI_API_KEY` ([aistudio.google.com](https://aistudio.google.com)) |
+| `anthropic` (Claude 3.7 / 3.5) | run it yourself | needs `ANTHROPIC_API_KEY`; record your result in a PR |
 
 ```bash
 pnpm --filter @openinvoicebridge/extract eval            # mock baseline
-pnpm --filter @openinvoicebridge/extract eval:anthropic  # real Claude runs
+pnpm --filter @openinvoicebridge/extract eval:gemini     # free Google Gemini Flash run
+pnpm --filter @openinvoicebridge/extract eval:anthropic  # Claude run
 ```
 
 The harness prints per-case field-level accuracy and every missed field path, so

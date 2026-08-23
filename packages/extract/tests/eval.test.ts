@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { MockProvider } from "../src/mock.js";
+import { GeminiProvider } from "../src/gemini.js";
 import { finalizeResult } from "../src/types.js";
 
 const evalDir = join(__dirname, "../../../examples/eval");
@@ -99,5 +100,25 @@ describe("finalizeResult", () => {
     );
     expect(r.needsReview).toBe(true);
     expect(r.reviewReasons.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GeminiProvider", () => {
+  it("throws when API key is missing", () => {
+    const prevKey = process.env.GEMINI_API_KEY;
+    const prevGoogle = process.env.GOOGLE_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GOOGLE_API_KEY;
+    try {
+      expect(() => new GeminiProvider()).toThrow(/requires an API key/);
+    } finally {
+      if (prevKey) process.env.GEMINI_API_KEY = prevKey;
+      if (prevGoogle) process.env.GOOGLE_API_KEY = prevGoogle;
+    }
+  });
+
+  it("instantiates with explicit key and options", () => {
+    const p = new GeminiProvider({ apiKey: "test-key", model: "gemini-2.0-flash" });
+    expect(p.name).toBe("gemini");
   });
 });

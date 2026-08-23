@@ -37,7 +37,7 @@ const extractBody = {
   properties: {
     contentBase64: { type: "string", description: "Base64-encoded PDF, image, or text invoice" },
     mimeType: { type: "string", description: "e.g. application/pdf, image/png, text/plain" },
-    provider: { type: "string", enum: ["anthropic", "mock"], default: "anthropic" },
+    provider: { type: "string", enum: ["gemini", "anthropic", "mock"], default: "gemini" },
     filename: { type: "string" },
   },
 } as const;
@@ -168,7 +168,11 @@ export function buildRoutes(app: FastifyInstance) {
     async (req, reply) => {
       const { contentBase64, mimeType, provider: providerName, filename } = req.body as any;
       try {
-        const provider = createProvider(providerName ?? "anthropic");
+        const defaultProvider =
+          (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) ? "gemini"
+          : process.env.ANTHROPIC_API_KEY ? "anthropic"
+          : "gemini";
+        const provider = createProvider(providerName ?? defaultProvider);
         const data = Uint8Array.from(Buffer.from(contentBase64, "base64"));
         const result = await provider.extract({ data, mimeType, filename });
         return {

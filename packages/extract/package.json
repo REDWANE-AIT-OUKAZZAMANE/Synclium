@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "eval": "tsx scripts/eval.ts",
+    "eval:gemini": "tsx scripts/eval.ts --provider gemini",
     "eval:anthropic": "tsx scripts/eval.ts --provider anthropic"
   },
   "dependencies": {

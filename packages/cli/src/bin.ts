@@ -118,8 +118,8 @@ program
   .command("extract")
   .description("Extract invoice data from unstructured input (PDF/image/text) using AI")
   .argument("<input>", "PDF, image or text file")
-  .option("-p, --provider <name>", "extraction provider: anthropic|mock", "anthropic")
-  .option("--model <model>", "model id (anthropic provider)")
+  .option("-p, --provider <name>", "extraction provider: gemini|anthropic|mock", "gemini")
+  .option("--model <model>", "model id (e.g. gemini-2.0-flash, claude-sonnet-4-20250514)")
   .option("--json-out <file>", "write full extraction report as JSON")
   .action(async (inputFile: string, opts: { provider: string; model?: string; jsonOut?: string }) => {
     let data: Buffer;
@@ -135,10 +135,18 @@ program
       : ext === ".jpg" || ext === ".jpeg" ? "image/jpeg"
       : "text/plain";
 
+    if (opts.provider === "gemini" && !process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {
+      fail(
+        "GEMINI_API_KEY is not set.\n" +
+          "  Hint: get a free key at https://aistudio.google.com and export GEMINI_API_KEY=AIza...\n" +
+          "  Or use --provider mock for offline text extraction, or --provider anthropic.",
+      );
+    }
+
     if (opts.provider === "anthropic" && !process.env.ANTHROPIC_API_KEY) {
       fail(
         "ANTHROPIC_API_KEY is not set.\n" +
-          '  Hint: export ANTHROPIC_API_KEY=sk-... or use --provider mock for offline text extraction.',
+          '  Hint: export ANTHROPIC_API_KEY=sk-... or use --provider gemini / --provider mock.',
       );
     }
 
