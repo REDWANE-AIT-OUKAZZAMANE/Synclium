@@ -621,7 +621,7 @@ export default function WorkbenchPage() {
 
               <p className="mt-3 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
                 {busy === "extract"
-                  ? "EXTRACTING DOCUMENT VIA GEMINI FLASH..."
+                  ? "EXTRACTING DOCUMENT..."
                   : busy === "convert"
                   ? "TRANSPILING DIALECT..."
                   : busy === "validate"
