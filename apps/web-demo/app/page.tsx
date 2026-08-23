@@ -17,11 +17,16 @@ import {
   SunIcon,
   MoonIcon,
   ShieldCheckIcon,
-  ZapIcon,
   GaugeIcon,
   LayersIcon,
   ExternalLinkIcon,
+  EyeIcon,
+  Code2Icon,
+  TableIcon,
 } from "@/components/Icons";
+import { CustomDropdown, DropdownOption } from "@/components/CustomDropdown";
+import { InvoiceSummaryView } from "@/components/InvoiceSummaryView";
+import { ConfidenceTable } from "@/components/ConfidenceTable";
 
 type FormatId = "ubl" | "facturx" | "zatca" | "canonical";
 
@@ -38,39 +43,78 @@ interface ExtractReport {
   reviewReasons: string[];
   fieldConfidence: Record<string, number>;
   provider: string;
-  invoice: unknown;
+  invoice: any;
   remaining?: number;
 }
 
-const FORMAT_METRICS: Record<
-  FormatId,
-  { label: string; standard: string; region: string; tag: string }
-> = {
-  ubl: {
+const SOURCE_OPTIONS: DropdownOption<"auto" | FormatId>[] = [
+  {
+    value: "auto",
+    label: "Auto-Detect Schema Signature",
+    sublabel: "Inspects root XML namespace or JSON structure",
+    tag: "AUTO",
+    tagColor: "bg-blue-500/10 text-blue-500 border border-blue-500/20",
+  },
+  {
+    value: "ubl",
+    label: "UBL 2.1 / PEPPOL BIS Billing 3.0",
+    sublabel: "ISO/IEC 19845 · European standard e-invoice",
+    tag: "UBL",
+    tagColor: "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20",
+  },
+  {
+    value: "facturx",
+    label: "Factur-X / ZUGFeRD 2.2 (CII)",
+    sublabel: "EN16931 · France & Germany CrossIndustryInvoice",
+    tag: "CII",
+    tagColor: "bg-purple-500/10 text-purple-500 border border-purple-500/20",
+  },
+  {
+    value: "zatca",
+    label: "ZATCA Fatoora Phase 2 (KSA)",
+    sublabel: "Saudi Arabia Tax and Customs Clearance XML",
+    tag: "KSA",
+    tagColor: "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20",
+  },
+  {
+    value: "canonical",
+    label: "Canonical JSON AST",
+    sublabel: "Universal intermediate invoice hub schema",
+    tag: "JSON",
+    tagColor: "bg-amber-500/10 text-amber-500 border border-amber-500/20",
+  },
+];
+
+const TARGET_OPTIONS: DropdownOption<FormatId>[] = [
+  {
+    value: "ubl",
     label: "UBL 2.1 (PEPPOL BIS Billing 3.0)",
-    standard: "ISO/IEC 19845",
-    region: "European Union & Global PEPPOL",
-    tag: "UBL-2.1",
+    sublabel: "Compile to ISO/IEC 19845 XML",
+    tag: "UBL",
+    tagColor: "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20",
   },
-  facturx: {
-    label: "Factur-X / ZUGFeRD (CII 16B)",
-    standard: "EN16931 / UN/CEFACT",
-    region: "France & Germany",
-    tag: "CII-16B",
+  {
+    value: "facturx",
+    label: "Factur-X / ZUGFeRD (CII)",
+    sublabel: "Compile to EN16931 CrossIndustryInvoice XML",
+    tag: "CII",
+    tagColor: "bg-purple-500/10 text-purple-500 border border-purple-500/20",
   },
-  zatca: {
-    label: "ZATCA Fatoora Phase 2",
-    standard: "KSA VAT E-Invoicing",
-    region: "Kingdom of Saudi Arabia",
-    tag: "ZATCA-KSA",
+  {
+    value: "zatca",
+    label: "Saudi ZATCA Phase 2 XML",
+    sublabel: "Compile to KSA VAT compliant electronic invoice",
+    tag: "KSA",
+    tagColor: "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20",
   },
-  canonical: {
-    label: "Canonical Invoice Hub",
-    standard: "OpenInvoiceSchema v1.0",
-    region: "Universal Schema AST",
-    tag: "CANONICAL",
+  {
+    value: "canonical",
+    label: "Canonical JSON (Hub)",
+    sublabel: "Generate intermediate unified JSON object",
+    tag: "JSON",
+    tagColor: "bg-amber-500/10 text-amber-500 border border-amber-500/20",
   },
-};
+];
 
 const REAL_WORLD_SAMPLES = [
   {
@@ -98,12 +142,15 @@ export default function WorkbenchPage() {
   const [input, setInput] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
   const [from, setFrom] = useState<"auto" | FormatId>("auto");
-  const [to, setTo] = useState<FormatId>("canonical");
+  const [to, setTo] = useState<FormatId>("ubl");
   const [dragging, setDragging] = useState(false);
 
   const [canonicalOut, setCanonicalOut] = useState<string>("");
   const [convertedOut, setConvertedOut] = useState<string>("");
+  const [parsedInvoiceObj, setParsedInvoiceObj] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"editor" | "canonical" | "compiled">("editor");
+  const [viewMode, setViewMode] = useState<"code" | "visual">("code");
+
   const [validation, setValidation] = useState<{
     valid: boolean;
     errors: ValidationIssue[];
@@ -138,6 +185,19 @@ export default function WorkbenchPage() {
       .then((d) => setSamples(d.samples ?? {}))
       .catch(() => {});
   }, []);
+
+  // Update parsed object whenever canonical output changes
+  useEffect(() => {
+    if (canonicalOut) {
+      try {
+        setParsedInvoiceObj(JSON.parse(canonicalOut));
+      } catch {
+        setParsedInvoiceObj(null);
+      }
+    } else {
+      setParsedInvoiceObj(null);
+    }
+  }, [canonicalOut]);
 
   const reset = () => {
     setError("");
@@ -198,6 +258,7 @@ export default function WorkbenchPage() {
       const canon = JSON.stringify(data.invoice, null, 2);
       setCanonicalOut(canon);
       setInput(canon);
+      setParsedInvoiceObj(data.invoice);
       setFileName(`${filename} -> Parsed Canonical AST`);
       setTo("ubl");
       setActiveTab("canonical");
@@ -258,6 +319,11 @@ export default function WorkbenchPage() {
     a.click();
     URL.revokeObjectURL(a.href);
   }
+
+  const activeContent =
+    activeTab === "editor" ? input : activeTab === "canonical" ? canonicalOut : convertedOut;
+  const lineCount = activeContent ? activeContent.split("\n").length : 0;
+  const byteSize = activeContent ? new Blob([activeContent]).size : 0;
 
   return (
     <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"}`}>
@@ -460,7 +526,7 @@ export default function WorkbenchPage() {
             </div>
           </div>
 
-          {/* Pipeline Transformation Controls */}
+          {/* Pipeline Transformation Controls with Custom Dropdowns */}
           <div className="surface-card rounded-xl p-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-[#21262d]">
               <GaugeIcon className="w-4 h-4 text-blue-500" />
@@ -470,40 +536,19 @@ export default function WorkbenchPage() {
             </div>
 
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase">
-                  Source Ingestion Dialect
-                </label>
-                <select
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value as any)}
-                  className="w-full rounded-lg surface-input p-2.5 text-xs text-slate-900 dark:text-white"
-                >
-                  <option value="auto">Auto-Detect Schema Signature</option>
-                  {(Object.keys(FORMAT_METRICS) as FormatId[]).map((f) => (
-                    <option key={f} value={f}>
-                      {FORMAT_METRICS[f].label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <CustomDropdown<"auto" | FormatId>
+                label="Source Dialect"
+                value={from}
+                options={SOURCE_OPTIONS}
+                onChange={(val) => setFrom(val)}
+              />
 
-              <div>
-                <label className="block font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase">
-                  Target Export Dialect
-                </label>
-                <select
-                  value={to}
-                  onChange={(e) => setTo(e.target.value as any)}
-                  className="w-full rounded-lg surface-input p-2.5 text-xs text-slate-900 dark:text-white"
-                >
-                  {(Object.keys(FORMAT_METRICS) as FormatId[]).map((f) => (
-                    <option key={f} value={f}>
-                      {FORMAT_METRICS[f].label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <CustomDropdown<FormatId>
+                label="Target Export"
+                value={to}
+                options={TARGET_OPTIONS}
+                onChange={(val) => setTo(val)}
+              />
             </div>
 
             {/* Action Bar */}
@@ -582,41 +627,19 @@ export default function WorkbenchPage() {
             </div>
           )}
 
-          {/* Extraction Diagnostics */}
+          {/* AI Extraction Confidence Matrix Component */}
           {extractReport && (
-            <div className="p-4 rounded-xl border border-purple-500/40 bg-purple-500/10 font-mono text-xs">
-              <div className="flex items-center justify-between pb-2 border-b border-purple-500/20 text-purple-700 dark:text-purple-300">
-                <div className="flex items-center gap-2 font-bold">
-                  <SparklesIcon className="w-4 h-4" />
-                  <span>AI_EXTRACT_COMPLETED</span>
-                </div>
-                <span className="px-2 py-0.5 rounded bg-purple-500/20 font-bold">
-                  {(extractReport.overallConfidence * 100).toFixed(1)}% Confidence
-                </span>
-              </div>
-
-              {extractReport.fieldConfidence && (
-                <div className="mt-3 grid grid-cols-2 gap-1.5 text-[10px]">
-                  {Object.entries(extractReport.fieldConfidence).slice(0, 8).map(([field, conf]) => (
-                    <div
-                      key={field}
-                      className="p-1.5 rounded bg-white/40 dark:bg-black/40 border border-purple-500/20 flex items-center justify-between"
-                    >
-                      <span className="truncate text-slate-700 dark:text-slate-300">{field}</span>
-                      <span className="font-bold text-purple-600 dark:text-purple-400">
-                        {(conf * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <ConfidenceTable
+              fieldConfidence={extractReport.fieldConfidence}
+              overallConfidence={extractReport.overallConfidence}
+              provider={extractReport.provider}
+            />
           )}
         </section>
 
-        {/* Right Column: Code & Matrix Inspector (7 Cols) */}
+        {/* Right Column: Code Matrix & Executive Summary Inspector (7 Cols) */}
         <section className="xl:col-span-7 flex flex-col gap-4">
-          <div className="surface-card rounded-xl overflow-hidden flex flex-col h-full min-h-[640px]">
+          <div className="surface-card rounded-xl overflow-hidden flex flex-col h-full min-h-[660px]">
             {/* Editor Workspace Tab Bar */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#21262d] bg-slate-50 dark:bg-[#05070a] px-3 pt-2">
               <div className="flex items-center gap-1 font-mono text-xs">
@@ -652,33 +675,46 @@ export default function WorkbenchPage() {
                       : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
-                  Compiled Target ({FORMAT_METRICS[to].tag})
+                  Compiled Target ({to.toUpperCase()})
                 </button>
               </div>
 
-              {/* Action Toolbar */}
+              {/* View Switcher & Action Toolbar */}
               <div className="flex items-center gap-2 pb-2">
-                <CopyButton
-                  content={
-                    activeTab === "editor"
-                      ? input
-                      : activeTab === "canonical"
-                      ? canonicalOut
-                      : convertedOut
-                  }
-                />
+                {/* View Mode Switcher (Code vs Visual Summary) */}
+                {parsedInvoiceObj && (
+                  <div className="flex items-center rounded-lg border border-slate-300 dark:border-[#30363d] bg-slate-100 dark:bg-[#161b22] p-0.5">
+                    <button
+                      onClick={() => setViewMode("code")}
+                      className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold flex items-center gap-1 transition-all ${
+                        viewMode === "code"
+                          ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 shadow-sm"
+                          : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                      }`}
+                    >
+                      <Code2Icon className="w-3 h-3" /> Code
+                    </button>
+                    <button
+                      onClick={() => setViewMode("visual")}
+                      className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold flex items-center gap-1 transition-all ${
+                        viewMode === "visual"
+                          ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 shadow-sm"
+                          : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                      }`}
+                    >
+                      <EyeIcon className="w-3 h-3" /> Visual
+                    </button>
+                  </div>
+                )}
+
+                <CopyButton content={activeContent} />
+
                 <button
                   onClick={() => {
-                    const content =
-                      activeTab === "editor"
-                        ? input
-                        : activeTab === "canonical"
-                        ? canonicalOut
-                        : convertedOut;
-                    if (content) {
+                    if (activeContent) {
                       download(
                         `synclium-${activeTab}.${to === "canonical" ? "json" : "xml"}`,
-                        content,
+                        activeContent,
                       );
                     }
                   }}
@@ -690,9 +726,13 @@ export default function WorkbenchPage() {
               </div>
             </div>
 
-            {/* Code Matrix Body */}
-            <div className="flex-1 p-4 bg-white dark:bg-[#0d1117]">
-              {activeTab === "editor" ? (
+            {/* Code Matrix Body or Visual Inspection Summary */}
+            <div className="flex-1 p-4 bg-white dark:bg-[#0d1117] flex flex-col justify-between">
+              {viewMode === "visual" && parsedInvoiceObj ? (
+                <div className="max-h-[580px] overflow-auto">
+                  <InvoiceSummaryView data={parsedInvoiceObj} />
+                </div>
+              ) : activeTab === "editor" ? (
                 <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -709,6 +749,18 @@ export default function WorkbenchPage() {
                   {convertedOut || "// Transpile payload to generate target e-invoicing XML"}
                 </pre>
               )}
+
+              {/* Editor Telemetry Status Footer */}
+              <div className="mt-3 pt-2 border-t border-slate-200 dark:border-[#21262d] flex items-center justify-between font-mono text-[10px] text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-4">
+                  <span>LINES: {lineCount}</span>
+                  <span>BYTES: {byteSize.toLocaleString()} B</span>
+                  <span>ENCODING: UTF-8</span>
+                </div>
+                <div>
+                  <span>DIALECT: {activeTab === "editor" ? from.toUpperCase() : activeTab === "canonical" ? "CANONICAL_JSON" : to.toUpperCase()}</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
