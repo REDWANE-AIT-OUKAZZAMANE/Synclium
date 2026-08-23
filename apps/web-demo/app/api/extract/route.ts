@@ -115,9 +115,26 @@ export async function POST(req: Request) {
     }
 
     try {
-      const provider = createProvider(providerName);
+      let provider = createProvider(providerName);
       const data = Uint8Array.from(Buffer.from(contentBase64, "base64"));
-      const result = await provider.extract({ data, mimeType, filename });
+      
+      let result;
+      try {
+        result = await provider.extract({ data, mimeType, filename });
+      } catch (err: any) {
+        // If Gemini is rate-limited (429) and Anthropic is configured, auto-fallback to Anthropic
+        if (providerName === "gemini" && hasAnthropic) {
+          try {
+            const fallbackProvider = createProvider("anthropic");
+            result = await fallbackProvider.extract({ data, mimeType, filename });
+          } catch {
+            throw err;
+          }
+        } else {
+          throw err;
+        }
+      }
+
       return NextResponse.json(
         {
           needsReview: result.needsReview,

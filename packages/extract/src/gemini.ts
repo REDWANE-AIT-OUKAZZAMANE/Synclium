@@ -8,22 +8,31 @@ export interface GeminiProviderOptions {
   model?: string;
   reviewThreshold?: number;
   baseUrl?: string;
-  /** Request timeout in milliseconds (default: 30000). */
+  /** Request timeout in milliseconds (default: 60000). */
   timeoutMs?: number;
 }
 
 const SUPPORTED_MIME_PREFIXES = ["text/", "image/", "application/pdf"];
 
+// Default resilient fallback sequence across Google AI models
+const DEFAULT_MODEL_FALLBACKS = [
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-3.6-flash",
+  "gemini-1.5-pro",
+];
+
 /**
  * Google Gemini Flash-backed extraction (multimodal PDF, image, text)
  * using the Google AI Gemini REST API with structured JSON output.
  *
- * Implemented with zero external dependencies over native fetch().
+ * Includes automatic model fallback cascade to bypass per-model free-tier rate limits (429).
  */
 export class GeminiProvider implements ExtractionProvider {
   readonly name = "gemini";
   private readonly apiKey: string;
-  private readonly model: string;
+  private readonly models: string[];
   private readonly reviewThreshold: number;
   private readonly baseUrl: string;
   private readonly timeoutMs: number;
@@ -36,7 +45,9 @@ export class GeminiProvider implements ExtractionProvider {
       );
     }
     this.apiKey = key;
-    this.model = opts.model ?? process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
+
+    const primaryModel = opts.model ?? process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+    this.models = Array.from(new Set([primaryModel, ...DEFAULT_MODEL_FALLBACKS]));
     this.reviewThreshold = opts.reviewThreshold ?? DEFAULT_REVIEW_THRESHOLD;
     this.baseUrl = opts.baseUrl ?? "https://generativelanguage.googleapis.com/v1beta";
     this.timeoutMs = opts.timeoutMs ?? 60000;
@@ -62,45 +73,67 @@ export class GeminiProvider implements ExtractionProvider {
       },
     };
 
-    const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${encodeURIComponent(this.apiKey)}`;
-
     let lastError: Error | null = null;
     let payload: any = null;
 
-    // Retry loop for transient 429/503 errors (up to 3 attempts)
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(body),
-          signal: AbortSignal.timeout(this.timeoutMs),
-        });
+    // Try models in fallback cascade if rate-limited (429)
+    for (const model of this.models) {
+      const url = `${this.baseUrl}/models/${model}:generateContent?key=${encodeURIComponent(this.apiKey)}`;
 
-        if (!res.ok) {
-          const detail = await res.text().catch(() => "");
-          if ((res.status === 429 || res.status === 503) && attempt < 3) {
+      // Retry loop for transient 503/network errors
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(body),
+            signal: AbortSignal.timeout(this.timeoutMs),
+          });
+
+          if (!res.ok) {
+            const detail = await res.text().catch(() => "");
+
+            if (res.status === 429) {
+              // Rate-limited on this model: break to try next model in fallback cascade
+              const retryMatch = detail.match(/retry in ([0-9.]+)s/i);
+              const retrySecs = retryMatch ? Math.ceil(parseFloat(retryMatch[1])) : 60;
+              lastError = new Error(
+                `Google Gemini free tier quota exceeded. Please retry in ~${retrySecs}s or add billing in AI Studio.`,
+              );
+              break;
+            }
+
+            if (res.status === 503 && attempt < 2) {
+              await new Promise((r) => setTimeout(r, attempt * 1500));
+              continue;
+            }
+
+            throw new Error(`Google Gemini API error ${res.status}: ${detail.slice(0, 400)}`);
+          }
+
+          payload = await res.json();
+          break;
+        } catch (err: any) {
+          lastError = err;
+          if (attempt < 2 && err.message?.includes("503")) {
             await new Promise((r) => setTimeout(r, attempt * 1500));
             continue;
           }
-          throw new Error(`Google Gemini API error ${res.status}: ${detail.slice(0, 500)}`);
+          // If 429 was thrown or caught, break to next model
+          break;
         }
+      }
 
-        payload = await res.json();
-        break;
-      } catch (err: any) {
-        lastError = err;
-        if (attempt < 3 && err.message?.includes("503")) {
-          await new Promise((r) => setTimeout(r, attempt * 1500));
-          continue;
-        }
-        throw err;
+      if (payload) {
+        break; // Successfully got response from one of the models
       }
     }
 
-    if (!payload) throw lastError ?? new Error("Failed to receive response from Gemini.");
+    if (!payload) {
+      throw lastError ?? new Error("Failed to receive response from Gemini model cascade.");
+    }
 
     const candidate = payload.candidates?.[0];
     if (!candidate?.content?.parts?.length) {
