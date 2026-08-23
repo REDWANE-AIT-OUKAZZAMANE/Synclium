@@ -144,6 +144,7 @@ const REAL_WORLD_SAMPLES = [
 
 export default function WorkbenchPage() {
   const { data: session, status: authStatus } = useSession();
+  const isAuth = !!session?.user;
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [input, setInput] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
