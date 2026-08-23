@@ -5,9 +5,13 @@ out/
 .turbo/
 coverage/
 *.tsbuildinfo
+# Environment variables
 .env
+.env.*
+!.env.example
 .env.local
 .env.*.local
+
 .DS_Store
 Thumbs.db
 *.log
@@ -15,3 +19,4 @@ examples/eval/eval-report-*.json
 !.github/workflows/pnpm-lock.yaml
 apps/web-demo/.vercel
 packages/*/dist
+packages/formats/*/dist
