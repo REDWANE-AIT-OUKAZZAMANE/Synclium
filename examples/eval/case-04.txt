@@ -1,0 +1,14 @@
+CREDIT NOTE
+Invoice No: CN-2024-0451
+Date: 2024-09-02
+Seller: CloudMetrics SAS
+Seller VAT: FR40333217854
+Seller Address: 18 Rue de Rivoli, Paris, FR
+Buyer: Bakkerij Van Dijk BV
+Buyer VAT: NL803456789B01
+Buyer Address: Grote Markt 14, Haarlem, NL
+Currency: EUR
+
+1. Service credit June SLA | Qty: -1 | Price: 200.00 | Tax: 21%
+
+Notes: Credit for June 2024 SLA breach

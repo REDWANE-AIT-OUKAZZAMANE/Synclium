@@ -1,0 +1,27 @@
+{
+  "id": "CN-2024-0451",
+  "typeCode": "381",
+  "issueDate": "2024-09-02",
+  "currencyCode": "EUR",
+  "seller": {
+    "name": "CloudMetrics SAS",
+    "taxId": "FR40333217854",
+    "address": { "streetName": "18 Rue de Rivoli", "cityName": "Paris", "countryCode": "FR" }
+  },
+  "buyer": {
+    "name": "Bakkerij Van Dijk BV",
+    "taxId": "NL803456789B01",
+    "address": { "streetName": "Grote Markt 14", "cityName": "Haarlem", "countryCode": "NL" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": -1, "unitCode": "C62", "unitPriceAmount": "200.00", "lineExtensionAmount": "-200.00", "name": "Service credit June SLA", "taxes": [{ "categoryCode": "S", "rate": 21 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "-200.00",
+    "taxExclusiveAmount": "-200.00",
+    "taxInclusiveAmount": "-242.00",
+    "payableAmount": "-242.00",
+    "taxTotalAmount": "-42.00"
+  },
+  "notes": ["Credit for June 2024 SLA breach"]
+}

@@ -1,0 +1,12 @@
+INVOICE
+Invoice Number: FAC-2024-0771
+Date: 2024-03-03
+Seller: Boulangerie Moderne SARL
+Seller VAT: FR32123456789
+Seller Address: 8 Rue de la Paix, Lyon, FR
+Buyer: Cafe Central GmbH
+Buyer VAT: DE123456789
+Buyer Address: Hauptstrasse 3, Munich, DE
+Currency: EUR
+
+1. Croissants surgeles | Qty: 100 | Price: 1.20 | Tax: 7%

@@ -1,0 +1,26 @@
+{
+  "id": "US-2025-0091",
+  "typeCode": "380",
+  "issueDate": "2025-02-14",
+  "currencyCode": "USD",
+  "seller": {
+    "name": "Cascade Office Supply Inc",
+    "address": { "streetName": "1201 Pine St", "cityName": "Seattle", "countryCode": "US" }
+  },
+  "buyer": {
+    "name": "Rainier Coffee Roasters LLC",
+    "address": { "streetName": "456 Broadway", "cityName": "Tacoma", "countryCode": "US" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 12, "unitCode": "C62", "unitPriceAmount": "189.99", "lineExtensionAmount": "2279.88", "name": "Ergonomic chair model C300", "taxes": [{ "categoryCode": "S", "rate": 10.1 }] },
+    { "id": "2", "quantity": 8, "unitCode": "C62", "unitPriceAmount": "149.50", "lineExtensionAmount": "1196.00", "name": "Standing desk converter", "taxes": [{ "categoryCode": "S", "rate": 10.1 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "3475.88",
+    "taxExclusiveAmount": "3475.88",
+    "taxInclusiveAmount": "3826.94",
+    "payableAmount": "3826.94",
+    "taxTotalAmount": "351.06"
+  },
+  "notes": ["Net 15 payment terms"]
+}

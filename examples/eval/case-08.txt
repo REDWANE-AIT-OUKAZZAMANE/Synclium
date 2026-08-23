@@ -1,0 +1,13 @@
+INVOICE
+Invoice #: UK-INV-5521
+Date: 2024-10-10
+Due Date: 2024-11-09
+Seller: Bright Web Design Ltd
+Seller VAT: GB987654321
+Seller Address: 21 Old Gloucester St, London, GB
+Buyer: Manchester Print Co Ltd
+Buyer VAT: GB123456789
+Buyer Address: 8 Printworks Lane, Manchester, GB
+Currency: GBP
+
+1. Website redesign phase 2 | Qty: 1 | Price: 4500.00 | Tax: 20%

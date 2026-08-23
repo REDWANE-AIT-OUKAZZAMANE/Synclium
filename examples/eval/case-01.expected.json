@@ -1,0 +1,29 @@
+{
+  "id": "INV-10234",
+  "typeCode": "380",
+  "issueDate": "2024-05-12",
+  "dueDate": "2024-06-11",
+  "currencyCode": "SAR",
+  "seller": {
+    "name": "Acme Trading LLC",
+    "taxId": "300012345600003",
+    "address": { "streetName": "12 Industrial Ave", "cityName": "Riyadh", "countryCode": "SA" }
+  },
+  "buyer": {
+    "name": "Gulf Services Co",
+    "taxId": "310098765400003",
+    "address": { "streetName": "45 King Fahd Rd", "cityName": "Jeddah", "countryCode": "SA" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 10, "unitCode": "C62", "unitPriceAmount": "25.00", "lineExtensionAmount": "250.00", "name": "Widget A", "taxes": [{ "categoryCode": "S", "rate": 15 }] },
+    { "id": "2", "quantity": 5, "unitCode": "C62", "unitPriceAmount": "40.00", "lineExtensionAmount": "200.00", "name": "Widget B", "taxes": [{ "categoryCode": "S", "rate": 15 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "450.00",
+    "taxExclusiveAmount": "450.00",
+    "taxInclusiveAmount": "517.50",
+    "payableAmount": "517.50",
+    "taxTotalAmount": "67.50"
+  },
+  "notes": ["Payment due within 30 days"]
+}

@@ -1,0 +1,38 @@
+name: Bug report
+description: Something converts/validates wrong or crashes
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal input file + command (`oib convert …`) or API call that triggers it.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI
+        - REST API
+        - Web demo
+        - UBL importer/exporter
+        - Factur-X importer/exporter
+        - ZATCA importer/exporter
+        - AI extraction
+        - Canonical schema
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit

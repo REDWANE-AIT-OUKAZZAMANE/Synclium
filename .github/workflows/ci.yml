@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.29.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm -r build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Typecheck
+        run: pnpm -r typecheck
+
+      - name: Test
+        run: pnpm -r test
+
+      - name: Smoke-test CLI
+        run: |
+          node packages/cli/dist/bin.js detect examples/zatca/standard-invoice.xml
+          node packages/cli/dist/bin.js convert examples/ubl/invoice-basic.xml --to canonical > /tmp/canonical.json
+          node packages/cli/dist/bin.js validate examples/facturx/en16931-full.xml

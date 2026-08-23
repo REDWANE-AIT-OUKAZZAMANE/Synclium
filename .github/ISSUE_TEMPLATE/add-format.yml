@@ -1,0 +1,45 @@
+name: "Add support for a format"
+description: "Propose a new country/standard format (e.g. PINT MY, KSeF PL, CFDI MX, BPCOGET…)"
+labels: ["new format", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for wanting to add a format! This checklist is the full scope of a
+        format package — it usually takes less than a day. See
+        [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) for the step-by-step guide.
+
+  - type: input
+    id: format
+    attributes:
+      label: Format / standard
+      description: e.g. "Malaysia PINT (MyInvois)", "Poland KSeF FA(3)", "Mexico CFDI 4.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: base
+    attributes:
+      label: Base standard
+      description: Many formats extend UBL or CII — if so, an existing package may be reusable.
+      options:
+        - UBL 2.x based
+        - CII / Factur-X based
+        - JSON-based
+        - Other / custom XML
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Implementation checklist
+      description: The PR is complete when all boxes are ticked.
+      options:
+        - label: Schema research done (spec URL documented in the package README)
+        - label: Importer (format → canonical) with unit tests
+        - label: Exporter (canonical → format) with round-trip golden tests
+        - label: Validator (structural + business rules, no legal certification)
+        - label: ≥5 real-world-shaped examples in `examples/<format>/` (+1 invalid case)
+        - label: Registered in `packages/formats/registry`
+        - label: Docs page in `docs/formats/<format>.md` incl. lossy-field notes

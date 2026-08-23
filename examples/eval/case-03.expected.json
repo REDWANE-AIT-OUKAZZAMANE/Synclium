@@ -1,0 +1,28 @@
+{
+  "id": "INV-88123",
+  "typeCode": "380",
+  "issueDate": "2024-08-19",
+  "currencyCode": "EUR",
+  "seller": {
+    "name": "Studio Grafico Milano Srl",
+    "taxId": "IT09876543210",
+    "address": { "streetName": "Via Torino 44", "cityName": "Milan", "countryCode": "IT" }
+  },
+  "buyer": {
+    "name": "Nordwind Logistik GmbH",
+    "taxId": "DE812345678",
+    "address": { "streetName": "Hafenstrasse 112", "cityName": "Hamburg", "countryCode": "DE" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 1, "unitCode": "C62", "unitPriceAmount": "2400.00", "lineExtensionAmount": "2400.00", "name": "Freight service Hamburg-Milan", "taxes": [{ "categoryCode": "S", "rate": 22 }] },
+    { "id": "2", "quantity": 1, "unitCode": "C62", "unitPriceAmount": "96.00", "lineExtensionAmount": "96.00", "name": "Fuel surcharge", "taxes": [{ "categoryCode": "S", "rate": 22 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "2496.00",
+    "taxExclusiveAmount": "2496.00",
+    "taxInclusiveAmount": "3045.12",
+    "payableAmount": "3045.12",
+    "taxTotalAmount": "549.12"
+  },
+  "notes": ["Reverse charge does not apply"]
+}

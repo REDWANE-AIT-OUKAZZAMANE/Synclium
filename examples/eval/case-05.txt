@@ -1,0 +1,14 @@
+INVOICE
+Invoice No: EXP-2024-0087
+Date: 2025-01-06
+Seller: Gulf Petrochemical Supplies Ltd
+Seller VAT: 300765432100003
+Seller Address: Industrial City Road 4, Dammam, SA
+Buyer: Nile Polymers Trading SAE
+Buyer VAT: EG-123-456-789
+Buyer Address: Corniche El Nil, Cairo, EG
+Currency: SAR
+
+1. Polypropylene resin PP-H300 | Qty: 8000 | Price: 11.00 | Tax: 0% | Cat: G
+
+Notes: Export of goods outside GCC - zero rated

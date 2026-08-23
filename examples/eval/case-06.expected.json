@@ -1,0 +1,32 @@
+{
+  "id": "MULTI-2024-1188",
+  "typeCode": "380",
+  "issueDate": "2024-09-30",
+  "dueDate": "2024-10-31",
+  "currencyCode": "EUR",
+  "seller": {
+    "name": "Talleres Rodriguez SA",
+    "taxId": "ESA12345678",
+    "address": { "streetName": "Poligono Industrial Norte", "cityName": "Zaragoza", "countryCode": "ES" }
+  },
+  "buyer": {
+    "name": "FleetCare Deutschland GmbH",
+    "taxId": "DE298765432",
+    "address": { "streetName": "Industriering 3", "cityName": "Dortmund", "countryCode": "DE" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 32, "unitCode": "C62", "unitPriceAmount": "25.00", "lineExtensionAmount": "800.00", "name": "Heavy vehicle diagnostic labor", "taxes": [{ "categoryCode": "S", "rate": 21 }] },
+    { "id": "2", "quantity": 15, "unitCode": "C62", "unitPriceAmount": "30.00", "lineExtensionAmount": "450.00", "name": "Brake pads set", "taxes": [{ "categoryCode": "S", "rate": 10.5 }] },
+    { "id": "3", "quantity": 40, "unitCode": "C62", "unitPriceAmount": "5.00", "lineExtensionAmount": "200.00", "name": "Used steel parts", "taxes": [{ "categoryCode": "S", "rate": 12 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "1450.00",
+    "taxExclusiveAmount": "1450.00",
+    "taxInclusiveAmount": "1689.25",
+    "payableAmount": "1689.25",
+    "taxTotalAmount": "239.25"
+  },
+  "paymentTerms": {
+    "payeeFinancialAccount": "ES7620770024003102575766"
+  }
+}

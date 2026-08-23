@@ -1,0 +1,26 @@
+{
+  "id": "FAC-2024-0771",
+  "typeCode": "380",
+  "issueDate": "2024-03-03",
+  "currencyCode": "EUR",
+  "seller": {
+    "name": "Boulangerie Moderne SARL",
+    "taxId": "FR32123456789",
+    "address": { "streetName": "8 Rue de la Paix", "cityName": "Lyon", "countryCode": "FR" }
+  },
+  "buyer": {
+    "name": "Cafe Central GmbH",
+    "taxId": "DE123456789",
+    "address": { "streetName": "Hauptstrasse 3", "cityName": "Munich", "countryCode": "DE" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 100, "unitCode": "C62", "unitPriceAmount": "1.20", "lineExtensionAmount": "120.00", "name": "Croissants surgeles", "taxes": [{ "categoryCode": "S", "rate": 7 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "120.00",
+    "taxExclusiveAmount": "120.00",
+    "taxInclusiveAmount": "128.40",
+    "payableAmount": "128.40",
+    "taxTotalAmount": "8.40"
+  }
+}

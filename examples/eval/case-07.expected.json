@@ -1,0 +1,27 @@
+{
+  "id": "RC-2024-0521",
+  "typeCode": "380",
+  "issueDate": "2024-11-04",
+  "currencyCode": "EUR",
+  "seller": {
+    "name": "Konsultia OY Ab",
+    "taxId": "FI12345678",
+    "address": { "streetName": "Mannerheimintie 100", "cityName": "Helsinki", "countryCode": "FI" }
+  },
+  "buyer": {
+    "name": "Bergen Marine AS",
+    "taxId": "NO987654321MVA",
+    "address": { "streetName": "Strandgaten 50", "cityName": "Bergen", "countryCode": "NO" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 20, "unitCode": "C62", "unitPriceAmount": "300.00", "lineExtensionAmount": "6000.00", "name": "Marine systems consulting", "taxes": [{ "categoryCode": "AE", "rate": 0 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "6000.00",
+    "taxExclusiveAmount": "6000.00",
+    "taxInclusiveAmount": "6000.00",
+    "payableAmount": "6000.00",
+    "taxTotalAmount": "0.00"
+  },
+  "notes": ["Reverse charge - VAT accounted for by recipient per Article 196"]
+}

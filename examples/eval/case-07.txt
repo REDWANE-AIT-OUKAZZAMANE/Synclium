@@ -1,0 +1,14 @@
+INVOICE
+Invoice No: RC-2024-0521
+Date: 2024-11-04
+Seller: Konsultia OY Ab
+Seller VAT: FI12345678
+Seller Address: Mannerheimintie 100, Helsinki, FI
+Buyer: Bergen Marine AS
+Buyer VAT: NO987654321MVA
+Buyer Address: Strandgaten 50, Bergen, NO
+Currency: EUR
+
+1. Marine systems consulting | Qty: 20 | Price: 300.00 | Tax: 0% | Cat: AE
+
+Notes: Reverse charge - VAT accounted for by recipient per Article 196

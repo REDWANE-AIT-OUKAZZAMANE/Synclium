@@ -1,0 +1,15 @@
+INVOICE
+Invoice #: INV-88123
+Date: 2024-08-19
+Seller: Studio Grafico Milano Srl
+Seller VAT: IT09876543210
+Seller Address: Via Torino 44, Milan, IT
+Buyer: Nordwind Logistik GmbH
+Buyer VAT: DE812345678
+Buyer Address: Hafenstrasse 112, Hamburg, DE
+Currency: EUR
+
+1. Freight service Hamburg-Milan | Qty: 1 | Price: 2400.00 | Tax: 22%
+2. Fuel surcharge | Qty: 1 | Price: 96.00 | Tax: 22%
+
+Notes: Reverse charge does not apply

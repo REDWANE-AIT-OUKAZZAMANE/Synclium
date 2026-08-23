@@ -1,0 +1,14 @@
+INVOICE
+Invoice No: ZATCA-SMP-778
+Date: 2024-12-01
+Seller: Cafe Hijaz Trading Est.
+Seller VAT: 300123456700003
+Seller Address: Tahlia Street, Jeddah, SA
+Buyer: Walk-in customer
+Buyer Address: -, Jeddah, SA
+Currency: SAR
+
+1. Specialty coffee beans 250g | Qty: 2 | Price: 23.00 | Tax: 15%
+2. Bakery goods takeaway | Qty: 1 | Price: 25.00 | Tax: 0% | Cat: E
+
+Notes: Simplified B2C tax invoice

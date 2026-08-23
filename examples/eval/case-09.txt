@@ -1,0 +1,13 @@
+INVOICE
+Invoice Number: US-2025-0091
+Date: 2025-02-14
+Seller: Cascade Office Supply Inc
+Seller Address: 1201 Pine St, Seattle, US
+Buyer: Rainier Coffee Roasters LLC
+Buyer Address: 456 Broadway, Tacoma, US
+Currency: USD
+
+1. Ergonomic chair model C300 | Qty: 12 | Price: 189.99 | Tax: 10.1%
+2. Standing desk converter | Qty: 8 | Price: 149.50 | Tax: 10.1%
+
+Notes: Net 15 payment terms

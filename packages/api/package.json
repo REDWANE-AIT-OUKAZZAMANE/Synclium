@@ -1,0 +1,35 @@
+{
+  "name": "@openinvoicebridge/api",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "REST API for OpenInvoiceBridge â€” convert, validate and extract e-invoices",
+  "type": "module",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@openinvoicebridge/core": "workspace:*",
+    "@openinvoicebridge/registry": "workspace:*",
+    "@openinvoicebridge/extract": "workspace:*",
+    "@fastify/rate-limit": "^9.1.0",
+    "@fastify/swagger": "^8.15.0",
+    "@fastify/swagger-ui": "^4.1.0",
+    "fastify": "^4.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

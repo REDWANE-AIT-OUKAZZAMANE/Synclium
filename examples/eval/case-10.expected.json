@@ -1,0 +1,27 @@
+{
+  "id": "ZATCA-SMP-778",
+  "typeCode": "380",
+  "issueDate": "2024-12-01",
+  "currencyCode": "SAR",
+  "seller": {
+    "name": "Cafe Hijaz Trading Est.",
+    "taxId": "300123456700003",
+    "address": { "streetName": "Tahlia Street", "cityName": "Jeddah", "countryCode": "SA" }
+  },
+  "buyer": {
+    "name": "Walk-in customer",
+    "address": { "streetName": "-", "cityName": "Jeddah", "countryCode": "SA" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 2, "unitCode": "C62", "unitPriceAmount": "23.00", "lineExtensionAmount": "46.00", "name": "Specialty coffee beans 250g", "taxes": [{ "categoryCode": "S", "rate": 15 }] },
+    { "id": "2", "quantity": 1, "unitCode": "C62", "unitPriceAmount": "25.00", "lineExtensionAmount": "25.00", "name": "Bakery goods takeaway", "taxes": [{ "categoryCode": "E", "rate": 0 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "71.00",
+    "taxExclusiveAmount": "71.00",
+    "taxInclusiveAmount": "77.90",
+    "payableAmount": "77.90",
+    "taxTotalAmount": "6.90"
+  },
+  "notes": ["Simplified B2C tax invoice"]
+}

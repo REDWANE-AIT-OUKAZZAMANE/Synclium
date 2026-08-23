@@ -1,0 +1,27 @@
+{
+  "id": "UK-INV-5521",
+  "typeCode": "380",
+  "issueDate": "2024-10-10",
+  "dueDate": "2024-11-09",
+  "currencyCode": "GBP",
+  "seller": {
+    "name": "Bright Web Design Ltd",
+    "taxId": "GB987654321",
+    "address": { "streetName": "21 Old Gloucester St", "cityName": "London", "countryCode": "GB" }
+  },
+  "buyer": {
+    "name": "Manchester Print Co Ltd",
+    "taxId": "GB123456789",
+    "address": { "streetName": "8 Printworks Lane", "cityName": "Manchester", "countryCode": "GB" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 1, "unitCode": "C62", "unitPriceAmount": "4500.00", "lineExtensionAmount": "4500.00", "name": "Website redesign phase 2", "taxes": [{ "categoryCode": "S", "rate": 20 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "4500.00",
+    "taxExclusiveAmount": "4500.00",
+    "taxInclusiveAmount": "5400.00",
+    "payableAmount": "5400.00",
+    "taxTotalAmount": "900.00"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@openinvoicebridge/cli",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "oib â€” command-line tool for converting and validating e-invoices across formats",
+  "type": "module",
+  "bin": {
+    "oib": "./dist/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openinvoicebridge/core": "workspace:*",
+    "@openinvoicebridge/registry": "workspace:*",
+    "@openinvoicebridge/extract": "workspace:*",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "EXP-2024-0087",
+  "typeCode": "380",
+  "issueDate": "2025-01-06",
+  "currencyCode": "SAR",
+  "seller": {
+    "name": "Gulf Petrochemical Supplies Ltd",
+    "taxId": "300765432100003",
+    "address": { "streetName": "Industrial City Road 4", "cityName": "Dammam", "countryCode": "SA" }
+  },
+  "buyer": {
+    "name": "Nile Polymers Trading SAE",
+    "taxId": "EG-123-456-789",
+    "address": { "streetName": "Corniche El Nil", "cityName": "Cairo", "countryCode": "EG" }
+  },
+  "lineItems": [
+    { "id": "1", "quantity": 8000, "unitCode": "C62", "unitPriceAmount": "11.00", "lineExtensionAmount": "88000.00", "name": "Polypropylene resin PP-H300", "taxes": [{ "categoryCode": "G", "rate": 0 }] }
+  ],
+  "totals": {
+    "lineExtensionAmount": "88000.00",
+    "taxExclusiveAmount": "88000.00",
+    "taxInclusiveAmount": "88000.00",
+    "payableAmount": "88000.00",
+    "taxTotalAmount": "0.00"
+  },
+  "notes": ["Export of goods outside GCC - zero rated"]
+}

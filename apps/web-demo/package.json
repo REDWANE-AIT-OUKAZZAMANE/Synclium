@@ -1,0 +1,30 @@
+{
+  "name": "@openinvoicebridge/web-demo",
+  "version": "0.1.0",
+  "license": "MIT",
+  "private": true,
+  "description": "Browser demo for OpenInvoiceBridge â€” drag an invoice in, convert & validate it live",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openinvoicebridge/core": "workspace:*",
+    "@openinvoicebridge/extract": "workspace:*",
+    "@openinvoicebridge/registry": "workspace:*",
+    "next": "^14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.7.3"
+  }
+}

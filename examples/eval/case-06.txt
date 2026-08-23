@@ -1,0 +1,17 @@
+INVOICE
+Invoice Number: MULTI-2024-1188
+Date: 2024-09-30
+Due Date: 2024-10-31
+Seller: Talleres Rodriguez SA
+Seller VAT: ESA12345678
+Seller Address: Poligono Industrial Norte, Zaragoza, ES
+Buyer: FleetCare Deutschland GmbH
+Buyer VAT: DE298765432
+Buyer Address: Industriering 3, Dortmund, DE
+Currency: EUR
+
+1. Heavy vehicle diagnostic labor | Qty: 32 | Price: 25.00 | Tax: 21%
+2. Brake pads set | Qty: 15 | Price: 30.00 | Tax: 10.5%
+3. Used steel parts | Qty: 40 | Price: 5.00 | Tax: 12%
+
+IBAN: ES7620770024003102575766

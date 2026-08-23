@@ -1,0 +1,29 @@
+{
+  "name": "@openinvoicebridge/registry",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Registry of supported invoice format implementations (shared by CLI and API)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@openinvoicebridge/core": "workspace:*",
+    "@openinvoicebridge/ubl": "workspace:*",
+    "@openinvoicebridge/facturx": "workspace:*",
+    "@openinvoicebridge/zatca": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "typescript": "^5.7.3"
+  }
+}
