@@ -444,8 +444,6 @@ export default function WorkbenchPage() {
   const lineCount = activeContent ? activeContent.split("\n").length : 0;
   const byteSize = activeContent ? new Blob([activeContent]).size : 0;
 
-  const isAuth = !!session?.user;
-
   return (
     <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"}`}>
       {/* Top Status & Telemetry Header */}
