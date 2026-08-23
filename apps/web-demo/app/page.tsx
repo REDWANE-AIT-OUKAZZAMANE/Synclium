@@ -464,9 +464,9 @@ export default function WorkbenchPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             {/* Rate Limit Token Shield */}
-            <div className="flex items-center gap-2 px-3 py-1 rounded bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-700 dark:text-slate-300">
+            <div className="h-8 px-3 inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-700 dark:text-slate-300">
               <ShieldCheckIcon className={`w-3.5 h-3.5 ${isAuth ? "text-blue-500" : "text-emerald-500"}`} />
               <span className="text-slate-500 dark:text-slate-400">
                 {isAuth ? "GitHub Tier:" : "Daily Scans:"}
@@ -483,14 +483,16 @@ export default function WorkbenchPage() {
 
             {/* GitHub Authentication Controls */}
             {authStatus === "loading" ? (
-              <span className="font-mono text-xs text-slate-400">...</span>
+              <div className="h-8 px-3 inline-flex items-center rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-400">
+                ...
+              </div>
             ) : isAuth ? (
-              <div className="flex items-center gap-2">
+              <div className="h-8 px-2.5 inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d]">
                 {session?.user?.image ? (
                   <img
                     src={session.user.image}
                     alt={session.user.name || "User"}
-                    className="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-700"
+                    className="w-4.5 h-4.5 rounded-full border border-slate-300 dark:border-slate-700 object-cover"
                   />
                 ) : null}
                 <span className="hidden sm:inline font-mono text-xs text-slate-700 dark:text-slate-300 font-semibold">
@@ -498,7 +500,7 @@ export default function WorkbenchPage() {
                 </span>
                 <button
                   onClick={() => signOut()}
-                  className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-200 dark:bg-[#161b22] hover:bg-slate-300 dark:hover:bg-[#21262d] text-slate-600 dark:text-slate-400"
+                  className="h-5 px-1.5 inline-flex items-center rounded bg-slate-200 dark:bg-[#21262d] hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 font-mono text-[10px] text-slate-600 dark:text-slate-400 transition-colors"
                 >
                   Sign out
                 </button>
@@ -506,7 +508,7 @@ export default function WorkbenchPage() {
             ) : (
               <button
                 onClick={() => signIn("github")}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity"
+                className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity"
               >
                 <span>Sign in (3 Scans/Day)</span>
               </button>
@@ -516,7 +518,7 @@ export default function WorkbenchPage() {
             <button
               onClick={toggleTheme}
               aria-label="Toggle Theme"
-              className="p-1.5 rounded bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 hover:text-blue-500 transition-colors"
+              className="h-8 w-8 inline-flex items-center justify-center rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 hover:text-blue-500 hover:border-blue-500/40 transition-colors"
             >
               {theme === "dark" ? <SunIcon className="w-4 h-4" /> : <MoonIcon className="w-4 h-4" />}
             </button>
@@ -526,7 +528,7 @@ export default function WorkbenchPage() {
               href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium"
               target="_blank"
               rel="noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 font-mono text-xs font-semibold hover:border-blue-500 transition-colors"
+              className="h-8 px-3 hidden sm:inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 font-mono text-xs font-semibold hover:border-blue-500 transition-colors"
             >
               <span>GitHub</span>
               <ExternalLinkIcon className="w-3 h-3 opacity-75" />
