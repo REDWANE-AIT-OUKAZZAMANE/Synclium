@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <defs>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="100%" stop-color="#0080ff" />
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0055ff" />
+      <stop offset="50%" stop-color="#2d7ff9" />
+      <stop offset="100%" stop-color="#00f0ff" />
+    </linearGradient>
+    <linearGradient id="facetHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.2" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <g filter="url(#glow)">
+    <!-- Left Hexagon Outer Loop -->
+    <path d="M250 80 L100 250 L250 420 L380 270 L330 215 L250 310 L170 250 L250 160 L330 250 L380 195 Z" fill="url(#cyanGrad)" />
+    
+    <!-- Right Hexagon Outer Loop -->
+    <path d="M550 80 L420 230 L470 285 L550 190 L630 250 L550 340 L470 250 L420 305 L550 420 L700 250 Z" fill="url(#blueGrad)" />
+
+    <!-- Central Interlocking Bridge Key -->
+    <path d="M380 195 L420 230 L380 270 L340 230 Z" fill="#00f0ff" opacity="0.9" />
+    
+    <!-- Facet Inner Rim Bevel (Left) -->
+    <path d="M250 100 L120 250 L250 400 L270 375 L160 250 L250 145 Z" fill="url(#facetHighlight)" opacity="0.4" />
+    
+    <!-- Facet Inner Rim Bevel (Right) -->
+    <path d="M550 100 L680 250 L550 400 L530 375 L640 250 L550 145 Z" fill="url(#facetHighlight)" opacity="0.4" />
+  </g>
+</svg>
