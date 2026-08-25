@@ -60,7 +60,7 @@ export function detectFormat(content: string): Exclude<FormatId, "canonical"> {
   const zatcaMarkers = [
     /clearance:\s*1/i,
     /reporting:\s*1/i,
-    /name="0[12]10000"/,
+    /name="0[12]00000"/,
     /<cbc:ID>ICV<\/cbc:ID>/,
     /<cbc:ID>PIH<\/cbc:ID>/,
   ];

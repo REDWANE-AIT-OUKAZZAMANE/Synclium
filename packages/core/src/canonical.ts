@@ -265,10 +265,12 @@ export const CanonicalInvoiceSchema = z.object({
     .optional()
     .describe("Format-specific fields with no canonical equivalent. Keys should be namespaced, e.g. zatca:invoiceCounter"),
   profileId: z.string().optional().describe("PEPPOL profile / Factur-X profile / ZATCA compliance hint"),
+  invoiceSubtype: z.enum(["standard", "simplified"]).optional().describe("Invoice subtype e.g. standard (B2B tax invoice) or simplified (B2C retail invoice)"),
   customizationId: z.string().optional(),
 });
 
 export type CanonicalInvoice = z.infer<typeof CanonicalInvoiceSchema>;
+export type InvoiceSubtype = "standard" | "simplified";
 
 // helper to parse & throw with nice errors
 export function parseCanonicalInvoice(data: unknown): CanonicalInvoice {

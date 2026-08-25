@@ -64,8 +64,18 @@ export function importZATCA(xml: string): CanonicalInvoice {
     }
   }
 
+  // Subtype from InvoiceTypeCode name attribute (01... standard vs 02... simplified)
+  const typeCodeNode = inv["cbc:InvoiceTypeCode"];
+  let invoiceSubtype: "standard" | "simplified" | undefined = base.invoiceSubtype;
+  if (typeCodeNode && typeof typeCodeNode === "object" && "@_name" in typeCodeNode) {
+    const nameAttr = String(typeCodeNode["@_name"]);
+    if (nameAttr.startsWith("02")) invoiceSubtype = "simplified";
+    else if (nameAttr.startsWith("01")) invoiceSubtype = "standard";
+  }
+
   return {
     ...base,
+    invoiceSubtype,
     profileId: (extensions["zatca:profileId"] as string) ?? base.profileId ?? "reporting:1.0",
     extensions: Object.keys(extensions).length ? extensions : undefined,
   };

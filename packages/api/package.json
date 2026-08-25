@@ -2,18 +2,28 @@
   "name": "@synclium/api",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "REST API for OpenInvoiceBridge â€” convert, validate and extract e-invoices",
+  "description": "REST API for OpenInvoiceBridge — convert, validate and extract e-invoices",
   "type": "module",
-  "main": "./dist/server.js",
+  "main": "./dist/server.cjs",
+  "module": "./dist/server.js",
   "types": "./dist/server.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/server.d.ts",
-      "import": "./dist/server.js"
+      "import": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      },
+      "require": {
+        "types": "./dist/server.d.cts",
+        "default": "./dist/server.cjs"
+      }
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup src/server.ts --format esm,cjs --dts --clean",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "dev": "tsx watch src/server.ts",

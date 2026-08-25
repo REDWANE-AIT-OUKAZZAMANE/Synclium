@@ -115,4 +115,51 @@ describe("ZATCA exporter", () => {
     expect(xml).toContain("<cbc:ProfileID>reporting:1.0</cbc:ProfileID>");
     expect(validate(xml).valid).toBe(true);
   });
+
+  it("sets name per ZATCA NNPNESB spec: 01=standard, 02=simplified, regardless of document type (388/381/383)", () => {
+    // ZATCA Data Dictionary & XML Implementation Standard:
+    // name attribute is a 7-digit NNPNESB bitmask.
+    // NN (positions 1-2): 01 = Standard (B2B), 02 = Simplified (B2C).
+    // P/N/E/S/B (positions 3-7): flags for 3rd-party/nominal/export/summary/self-billed.
+    // The UNCL1001 element body (388/381/383) encodes invoice vs credit vs debit note.
+    // The name attribute does NOT change per document type — only per subtype.
+    const baseInv = {
+      id: "SUBTYPE-TEST",
+      typeCode: "380",
+      issueDate: "2026-08-24",
+      currencyCode: "SAR",
+      seller: { name: "Seller Co", address: { countryCode: "SA", cityName: "Riyadh" }, taxId: "300000000000003" },
+      buyer: { name: "Consumer", address: { countryCode: "SA", cityName: "Riyadh" } },
+      lineItems: [{ id: "1", quantity: 1, unitPriceAmount: "50.00", lineExtensionAmount: "50.00", taxes: [{ categoryCode: "S", rate: 15 }] }],
+      totals: { lineExtensionAmount: "50.00", taxExclusiveAmount: "50.00", taxInclusiveAmount: "57.50", payableAmount: "57.50", taxTotalAmount: "7.50" },
+    };
+
+    // Simplified tax invoice (B2C) -> name="0200000", body=380
+    const simplifiedXml = exportZATCA({ ...baseInv, invoiceSubtype: "simplified" });
+    expect(simplifiedXml).toContain('<cbc:InvoiceTypeCode name="0200000">380</cbc:InvoiceTypeCode>');
+
+    // Simplified credit note (B2C) -> name="0200000", body=381 (same prefix, different body)
+    const simplifiedCnXml = exportZATCA({ ...baseInv, typeCode: "381", invoiceSubtype: "simplified" });
+    expect(simplifiedCnXml).toContain('<cbc:InvoiceTypeCode name="0200000">381</cbc:InvoiceTypeCode>');
+
+    // Standard credit note (B2B) -> name="0100000", body=381
+    const standardCnXml = exportZATCA({ ...baseInv, typeCode: "381" });
+    expect(standardCnXml).toContain('<cbc:InvoiceTypeCode name="0100000">381</cbc:InvoiceTypeCode>');
+
+    // Standard debit note (B2B) -> name="0100000", body=383
+    const standardDnXml = exportZATCA({ ...baseInv, typeCode: "383" });
+    expect(standardDnXml).toContain('<cbc:InvoiceTypeCode name="0100000">383</cbc:InvoiceTypeCode>');
+
+    // Simplified debit note (B2C) -> name="0200000", body=383
+    const simplifiedDnXml = exportZATCA({ ...baseInv, typeCode: "383", invoiceSubtype: "simplified" });
+    expect(simplifiedDnXml).toContain('<cbc:InvoiceTypeCode name="0200000">383</cbc:InvoiceTypeCode>');
+
+    // Unset defaults to standard
+    const defaultXml = exportZATCA(baseInv);
+    expect(defaultXml).toContain('<cbc:InvoiceTypeCode name="0100000">380</cbc:InvoiceTypeCode>');
+
+    // Round-trip imports simplified subtype
+    const reimported = importZATCA(simplifiedXml);
+    expect(reimported.invoiceSubtype).toBe("simplified");
+  });
 });

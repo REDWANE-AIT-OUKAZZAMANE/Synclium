@@ -104,4 +104,70 @@ describe("Factur-X exporter", () => {
     expect(xml).toContain("rsm:CrossIndustryInvoice");
     expect(xml).toContain("urn:factur-x.eu:1p0:en16931");
   });
+
+  it("synthesizes tax breakdown reconciling document allowances per BR-S-08", () => {
+    const invoiceWithoutBreakdowns: any = {
+      schemaVersion: "1.0",
+      id: "AUDIT-ALLOW-001",
+      typeCode: "380",
+      issueDate: "2026-08-23",
+      currencyCode: "EUR",
+      seller: {
+        name: "Nordwind Transit Systems GmbH",
+        taxId: "DE314982711",
+        taxScheme: "VAT",
+        address: { streetName: "Hauptstr. 12", cityName: "Berlin", postalZone: "10115", countryCode: "DE" },
+      },
+      buyer: {
+        name: "Europa Rail Networks AG",
+        taxId: "DE987654321",
+        taxScheme: "VAT",
+        address: { streetName: "Bahnhofstr. 1", cityName: "Munich", postalZone: "80331", countryCode: "DE" },
+      },
+      lineItems: [
+        {
+          id: "1",
+          name: "Engineering Consulting",
+          quantity: 10,
+          unitCode: "HUR",
+          unitPriceAmount: "100.00",
+          lineExtensionAmount: "900.00",
+          taxes: [{ categoryCode: "S", rate: 19 }],
+          allowanceCharges: [
+            { chargeIndicator: false, reason: "10% line discount", amount: "100.00", multiplierFactor: 10 },
+          ],
+        },
+        {
+          id: "2",
+          name: "Hardware Components",
+          quantity: 5,
+          unitCode: "C62",
+          unitPriceAmount: "200.00",
+          lineExtensionAmount: "1000.00",
+          taxes: [{ categoryCode: "S", rate: 19 }],
+        },
+      ],
+      allowanceCharges: [
+        {
+          chargeIndicator: false,
+          reason: "5% bulk order discount",
+          amount: "95.00",
+          multiplierFactor: 5,
+          taxCategory: { categoryCode: "S", rate: 19 },
+        },
+      ],
+      totals: {
+        lineExtensionAmount: "1900.00",
+        taxExclusiveAmount: "1805.00",
+        taxInclusiveAmount: "2147.95",
+        allowanceTotalAmount: "95.00",
+        payableAmount: "2147.95",
+        taxTotalAmount: "342.95",
+      },
+    };
+
+    const xml = exportFX(invoiceWithoutBreakdowns);
+    expect(xml).toContain("<ram:BasisAmount>1805.00</ram:BasisAmount>");
+    expect(xml).toContain("<ram:CalculatedAmount>342.95</ram:CalculatedAmount>");
+  });
 });

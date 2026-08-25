@@ -7,7 +7,7 @@
   <cbc:UUID>b7c9d1e3-f5a7-4b69-8c02-d3e4f5a6b7c8</cbc:UUID>
   <cbc:IssueDate>2024-11-20</cbc:IssueDate>
   <cbc:IssueTime>10:15:30</cbc:IssueTime>
-  <cbc:InvoiceTypeCode name="0110000">381</cbc:InvoiceTypeCode>
+  <cbc:InvoiceTypeCode name="0100000">381</cbc:InvoiceTypeCode>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cac:BillingReference>
     <cac:InvoiceDocumentReference>

@@ -6,8 +6,9 @@ import = UBL import + KSA extension extraction; export = UBL export + extension 
 
 ## Scope
 
-- Standard tax invoices (`0100000`, clearance) and credit notes (`0110000`)
-- Simplified invoices (`0200000`, reporting) and their credit notes (`0210000`)
+- Standard tax invoices, credit notes, debit notes (name=`0100000`, clearance)
+- Simplified invoices, credit notes, debit notes (name=`0200000`, reporting)
+- Document type encoded via UNCL1001 body code: `388` invoice, `381` credit note, `383` debit note
 - Profiles `clearance:1.0` / `reporting:1.0` preserved via extensions + ProfileID
 
 ## ZATCA-specific handling
@@ -17,7 +18,7 @@ import = UBL import + KSA extension extraction; export = UBL export + extension 
 | Invoice UUID | `cbc:UUID` | `extensions["zatca:uuid"]`; generated on export if absent |
 | Invoice counter (ICV) | AdditionalDocumentReference ID=ICV | `extensions["zatca:ICV"]` |
 | Previous invoice hash (PIH) | AdditionalDocumentReference ID=PIH | `extensions["zatca:PIH"]` |
-| Invoice subtype | `cbc:InvoiceTypeCode/@name` | injected on export from typeCode (388→0100000, 381→0110000) |
+| Invoice subtype | `cbc:InvoiceTypeCode/@name` | 7-digit NNPNESB bitmask: `01`=standard, `02`=simplified (positions 3-7 reserved for 3rd-party/nominal/export/summary/self-billed flags) |
 | Signature placeholder | `ext:UBLExtensions` | stub injected on export (real signing requires certs — out of scope) |
 
 ## Lossy fields

@@ -62,12 +62,82 @@ git clone https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium.git
 cd Synclium
 pnpm install
 
-# Build all packages topologically
+# Build all packages topologically (dual ESM/CJS)
 pnpm build
 
 # Run full test suite across workspace
 pnpm test
 ```
+
+---
+
+## Use as a Library (TypeScript / JavaScript SDK)
+
+Synclium packages provide first-class dual **ESM** (`import`) and **CommonJS** (`require()`) builds with bundled TypeScript declaration maps (`.d.ts` / `.d.cts`).
+
+### Installation
+
+```bash
+# All-in-one SDK (recommended)
+npm install synclium
+
+# Or install modular packages individually
+npm install @synclium/registry @synclium/core
+```
+
+<details>
+<summary>Building and linking from source (local development)</summary>
+
+```bash
+# Clone and build
+git clone https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium.git
+cd Synclium && pnpm install && pnpm build
+
+# Link globally into your local development project
+cd packages/synclium && pnpm link --global
+# Then in your consumer project:
+pnpm link --global synclium
+```
+</details>
+
+### Programmatic Conversion & Validation
+
+```typescript
+import {
+  convert,
+  validateFormat,
+  detectFormat,
+  CanonicalInvoiceSchema,
+  type CanonicalInvoice,
+} from "synclium";
+
+const ublXml = `<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">...`;
+
+// 1. Auto-detect dialect
+const dialect = detectFormat(ublXml); // "ubl"
+
+// 2. Validate structural and business rules
+const validation = validateFormat(ublXml, "ubl");
+if (!validation.valid) {
+  console.error("Compliance violations:", validation.errors);
+}
+
+// 3. Transpile directly across formats (UBL -> ZATCA Phase 2)
+const zatcaXml = convert(ublXml, "ubl", "zatca");
+
+// 4. Or parse to intermediate Canonical AST for ERP business logic
+const canonicalInvoice: CanonicalInvoice = JSON.parse(
+  convert(ublXml, "ubl", "canonical")
+);
+console.log(`Invoice ID: ${canonicalInvoice.id}, Total: ${canonicalInvoice.totals.payableAmount}`);
+```
+
+### Format Specifications & Dialect Guides
+
+Deep dive into exact compliance boundaries, lossy mappings, and Schematron rules:
+- [UBL 2.1 / PEPPOL BIS 3.0 Guide](docs/formats/ubl.md) — EN16931 validation, VAT categories, and allowance mechanics.
+- [Factur-X / ZUGFeRD (CII) Guide](docs/formats/facturx.md) — Cross-Industry Invoice profiles (MINIMUM to EXTENDED).
+- [ZATCA Fatoora Phase 2 Guide](docs/formats/zatca.md) — Clearance vs. reporting profiles, simplified subtypes (`0200000`), UUIDs, and PIH/ICV hashes.
 
 ---
 

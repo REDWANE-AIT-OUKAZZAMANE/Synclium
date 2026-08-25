@@ -117,28 +117,65 @@ export function exportUBL(invoice: CanonicalInvoice): string {
 
   // TaxTotal — one block containing all subtotals, TaxAmount = sum (document total)
   const taxTotals: TaxBreakdown[] = invoice.taxBreakdowns ?? (() => {
-    // Synthesize a breakdown from line taxes. Out-of-scope lines ("O", no VAT
-    // treatment) do not get a TaxTotal — mirroring EN 16931 semantics.
+    // Synthesize a breakdown from line taxes and document-level allowances/charges.
+    // Out-of-scope lines ("O", no VAT treatment) do not get a TaxTotal — mirroring EN 16931 semantics.
     const hasTaxableLines = invoice.lineItems.some((li) =>
       li.taxes.some((t) => t.categoryCode !== "O"),
     );
     if (!hasTaxableLines) return [];
-    const map = new Map<string, { taxable: number; tax: number; rate: number; code: string }>();
+    const map = new Map<string, { taxable: number; rate: number; code: string; exemptionReason?: string; exemptionReasonCode?: string }>();
     for (const li of invoice.lineItems) {
       for (const t of li.taxes) {
+        if (t.categoryCode === "O") continue;
         const key = `${t.categoryCode}:${t.rate}`;
-        const existing = map.get(key) ?? { taxable: 0, tax: 0, rate: t.rate, code: t.categoryCode };
+        const existing = map.get(key) ?? {
+          taxable: 0,
+          rate: t.rate,
+          code: t.categoryCode,
+          exemptionReason: t.exemptionReason,
+          exemptionReasonCode: t.exemptionReasonCode,
+        };
         const taxable = parseFloat(li.lineExtensionAmount);
         existing.taxable += taxable;
-        existing.tax += taxable * (t.rate / 100);
         map.set(key, existing);
       }
     }
+
+    // BR-S-08 / BR-Z-08 / BR-E-08: Reconcile document-level allowances and charges into the category taxable base
+    if (invoice.allowanceCharges) {
+      for (const ac of invoice.allowanceCharges) {
+        let key = ac.taxCategory ? `${ac.taxCategory.categoryCode}:${ac.taxCategory.rate}` : undefined;
+        if (!key && map.size === 1) {
+          key = Array.from(map.keys())[0];
+        }
+        if (key) {
+          const existing = map.get(key) ?? (ac.taxCategory ? {
+            taxable: 0,
+            rate: ac.taxCategory.rate,
+            code: ac.taxCategory.categoryCode,
+            exemptionReason: ac.taxCategory.exemptionReason,
+            exemptionReasonCode: ac.taxCategory.exemptionReasonCode,
+          } : undefined);
+          if (existing) {
+            const amt = parseFloat(ac.amount);
+            if (ac.chargeIndicator) {
+              existing.taxable += amt;
+            } else {
+              existing.taxable -= amt;
+            }
+            map.set(key, existing);
+          }
+        }
+      }
+    }
+
     return Array.from(map.values()).map<TaxBreakdown>((v) => ({
-      categoryCode: v.code,
+      categoryCode: v.code as any,
       rate: v.rate,
       taxableAmount: v.taxable.toFixed(2),
-      taxAmount: v.tax.toFixed(2),
+      taxAmount: (v.taxable * (v.rate / 100)).toFixed(2),
+      exemptionReason: v.exemptionReason,
+      exemptionReasonCode: v.exemptionReasonCode,
     }));
   })();
 

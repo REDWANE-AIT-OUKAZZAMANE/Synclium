@@ -1,0 +1,78 @@
+name: Publish Packages to npm
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (do not publish to npm)"
+        type: boolean
+        required: false
+        default: false
+      tag:
+        description: "npm dist-tag (default: latest)"
+        type: string
+        required: false
+        default: "latest"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build, test, and publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.29.2
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages (dual ESM/CJS + .d.ts)
+        run: pnpm -r build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Typecheck
+        run: pnpm -r typecheck
+
+      - name: Run test suite
+        run: pnpm -r test
+
+      - name: Smoke-test CLI binary
+        run: |
+          node packages/cli/dist/bin.js detect examples/zatca/standard-invoice.xml
+          node packages/cli/dist/bin.js convert examples/ubl/invoice-basic.xml --to canonical
+          node packages/cli/dist/bin.js validate examples/facturx/en16931-full.xml
+
+      - name: Publish to npm (dry run)
+        if: ${{ inputs.dry_run == true }}
+        run: pnpm -r publish --access public --no-git-checks --tag ${{ inputs.tag || 'latest' }} --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        if: ${{ inputs.dry_run != true }}
+        run: pnpm -r publish --access public --no-git-checks --tag ${{ inputs.tag || 'latest' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

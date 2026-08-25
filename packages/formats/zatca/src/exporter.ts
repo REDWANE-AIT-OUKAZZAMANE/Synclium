@@ -47,12 +47,14 @@ function injectZATCAExtensions(xml: string, invoice: CanonicalInvoice): string {
   }
 
   // Ensure InvoiceTypeCode has name attribute for ZATCA (simplified vs standard)
-  // If seller VAT starts with 3 and has 15 digits, likely simplified? For demo, keep 0100000 if standard, 0200000 if simplified
-  // Keep existing but add name if missing
-  xml = xml.replace(/<cbc:InvoiceTypeCode>([^<]+)<\/cbc:InvoiceTypeCode>/, (match, code) => {
-    if (match.includes("name=")) return match;
-    // Default name attribute per ZATCA: standard credit note 0110000, otherwise standard tax invoice
-    const name = code.trim() === "381" ? "0110000" : "0100000";
+  // ZATCA NNPNESB spec: 7-digit bitmask where positions 1-2 encode the subtype:
+  //   01 = Standard (B2B), 02 = Simplified (B2C)
+  //   Positions 3-7 (P/N/E/S/B) are flags for 3rd-party/nominal/export/summary/self-billed.
+  // The document type (invoice 388, credit note 381, debit note 383) is the element body value,
+  // NOT encoded in the name attribute. All standard documents use 0100000, all simplified use 0200000.
+  xml = xml.replace(/<cbc:InvoiceTypeCode(?:\s+name="[^"]*")?>([^<]+)<\/cbc:InvoiceTypeCode>/, (_match, code) => {
+    const subtype = invoice.invoiceSubtype ?? "standard";
+    const name = subtype === "simplified" ? "0200000" : "0100000";
     return `<cbc:InvoiceTypeCode name="${name}">${code}</cbc:InvoiceTypeCode>`;
   });
 
