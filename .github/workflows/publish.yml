@@ -65,6 +65,11 @@ jobs:
           node packages/cli/dist/bin.js convert examples/ubl/invoice-basic.xml --to canonical
           node packages/cli/dist/bin.js validate examples/facturx/en16931-full.xml
 
+      - name: Configure npm authentication
+        run: pnpm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish to npm (dry run)
         if: ${{ inputs.dry_run == true }}
         run: pnpm -r publish --access public --no-git-checks --tag ${{ inputs.tag || 'latest' }} --dry-run
