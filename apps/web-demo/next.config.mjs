@@ -38,12 +38,12 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA",
   },
   transpilePackages: [
-    "@synclium/core",
-    "@synclium/extract",
-    "@synclium/registry",
-    "@synclium/ubl",
-    "@synclium/facturx",
-    "@synclium/zatca",
+    "@synclium-com/core",
+    "@synclium-com/extract",
+    "@synclium-com/registry",
+    "@synclium-com/ubl",
+    "@synclium-com/facturx",
+    "@synclium-com/zatca",
   ],
 };
 

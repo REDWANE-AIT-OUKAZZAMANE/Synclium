@@ -23,13 +23,13 @@ importers:
       '@marsidev/react-turnstile':
         specifier: ^1.6.0
         version: 1.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@synclium/extract':
+      '@synclium-com/extract':
         specifier: workspace:*
         version: link:../../packages/extract
-      '@synclium/registry':
+      '@synclium-com/registry':
         specifier: workspace:*
         version: link:../../packages/formats/registry
       '@upstash/redis':
@@ -84,13 +84,13 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^4.1.0
         version: 4.2.0
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../core
-      '@synclium/extract':
+      '@synclium-com/extract':
         specifier: workspace:*
         version: link:../extract
-      '@synclium/registry':
+      '@synclium-com/registry':
         specifier: workspace:*
         version: link:../formats/registry
       fastify:
@@ -109,13 +109,13 @@ importers:
 
   packages/cli:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../core
-      '@synclium/extract':
+      '@synclium-com/extract':
         specifier: workspace:*
         version: link:../extract
-      '@synclium/registry':
+      '@synclium-com/registry':
         specifier: workspace:*
         version: link:../formats/registry
       commander:
@@ -153,7 +153,7 @@ importers:
 
   packages/extract:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../core
       zod:
@@ -175,7 +175,7 @@ importers:
 
   packages/formats/facturx:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../../core
       fast-xml-parser:
@@ -194,16 +194,16 @@ importers:
 
   packages/formats/registry:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../../core
-      '@synclium/facturx':
+      '@synclium-com/facturx':
         specifier: workspace:*
         version: link:../facturx
-      '@synclium/ubl':
+      '@synclium-com/ubl':
         specifier: workspace:*
         version: link:../ubl
-      '@synclium/zatca':
+      '@synclium-com/zatca':
         specifier: workspace:*
         version: link:../zatca
     devDependencies:
@@ -216,7 +216,7 @@ importers:
 
   packages/formats/ubl:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../../core
       ajv:
@@ -238,10 +238,10 @@ importers:
 
   packages/formats/zatca:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../../core
-      '@synclium/ubl':
+      '@synclium-com/ubl':
         specifier: workspace:*
         version: link:../ubl
       fast-xml-parser:
@@ -260,10 +260,10 @@ importers:
 
   packages/synclium:
     dependencies:
-      '@synclium/core':
+      '@synclium-com/core':
         specifier: workspace:*
         version: link:../core
-      '@synclium/registry':
+      '@synclium-com/registry':
         specifier: workspace:*
         version: link:../formats/registry
     devDependencies:

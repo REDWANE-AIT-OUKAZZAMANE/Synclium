@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { validateFormat, FormatError, type FormatId } from "@synclium/registry";
-import { validateCanonicalInvoice } from "@synclium/core";
+import { validateFormat, FormatError, type FormatId } from "@synclium-com/registry";
+import { validateCanonicalInvoice } from "@synclium-com/core";
 import { getClientIp, checkGeneralRateLimit, buildRateLimitHeaders } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";

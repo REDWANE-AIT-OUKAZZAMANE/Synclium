@@ -1,7 +1,7 @@
 # ZATCA Fatoora XML (Saudi Arabia) — implementation notes
 
 ZATCA e-invoicing (Phase 2 "Integration") uses UBL 2.1 with mandatory KSA extensions.
-This package **composes** `@synclium/ubl` rather than duplicating it:
+This package **composes** `@synclium-com/ubl` rather than duplicating it:
 import = UBL import + KSA extension extraction; export = UBL export + extension injection.
 
 ## Scope

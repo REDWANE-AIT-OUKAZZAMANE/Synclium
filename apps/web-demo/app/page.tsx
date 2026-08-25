@@ -859,8 +859,8 @@ export default function LandingPage() {
                   {activeDevTab === "sdk" && (
                     <pre className="space-y-1">
                       <span className="text-slate-400">// Pure TypeScript in-memory transpilation</span>
-                      <p><span className="text-purple-400">import</span> &#123; importUBL &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;@synclium/ubl&quot;</span>;</p>
-                      <p><span className="text-purple-400">import</span> &#123; exportZATCA &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;@synclium/zatca&quot;</span>;</p>
+                      <p><span className="text-purple-400">import</span> &#123; importUBL &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;@synclium-com/ubl&quot;</span>;</p>
+                      <p><span className="text-purple-400">import</span> &#123; exportZATCA &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;@synclium-com/zatca&quot;</span>;</p>
                       <br />
                       <p><span className="text-purple-400">const</span> canonical = <span className="text-purple-400">await</span> importUBL(rawXml);</p>
                       <p><span className="text-purple-400">const</span> zatcaXml = <span className="text-purple-400">await</span> exportZATCA(canonical);</p>

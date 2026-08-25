@@ -1,5 +1,5 @@
 {
-  "name": "@synclium/facturx",
+  "name": "@synclium-com/facturx",
   "version": "0.1.0",
   "license": "MIT",
   "description": "Factur-X / ZUGFeRD (CII) importer, exporter, validator",
@@ -28,7 +28,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@synclium/core": "workspace:*",
+    "@synclium-com/core": "workspace:*",
     "fast-xml-parser": "^4.5.1",
     "xmlbuilder2": "^3.1.1"
   },

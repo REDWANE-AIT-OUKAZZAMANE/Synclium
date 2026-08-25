@@ -1,8 +1,8 @@
 /**
  * Extraction eval runner.
  *
- *   pnpm --filter @synclium/extract eval
- *   pnpm --filter @synclium/extract eval:anthropic   # needs ANTHROPIC_API_KEY
+ *   pnpm --filter @synclium-com/extract eval
+ *   pnpm --filter @synclium-com/extract eval:anthropic   # needs ANTHROPIC_API_KEY
  *
  * Scores field-level accuracy across examples/eval/*.txt against their
  * hand-verified *.expected.json files.

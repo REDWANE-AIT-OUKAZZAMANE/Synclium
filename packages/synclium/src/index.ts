@@ -8,7 +8,7 @@
  */
 
 // Format registry and conversion engine
-export * from "@synclium/registry";
+export * from "@synclium-com/registry";
 
 // Canonical AST, validation, schemas, and utility types
-export * from "@synclium/core";
+export * from "@synclium-com/core";

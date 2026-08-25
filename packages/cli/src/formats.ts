@@ -1,1 +1,1 @@
-export * from "@synclium/registry";
+export * from "@synclium-com/registry";

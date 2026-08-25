@@ -19,8 +19,8 @@
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
-    "dev:api": "pnpm --filter @synclium/api dev",
-    "dev:web": "pnpm --filter @synclium/web-demo dev"
+    "dev:api": "pnpm --filter @synclium-com/api dev",
+    "dev:web": "pnpm --filter @synclium-com/web-demo dev"
   },
   "devDependencies": {
     "tsup": "^8.5.1",

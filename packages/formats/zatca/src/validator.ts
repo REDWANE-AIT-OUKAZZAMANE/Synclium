@@ -1,5 +1,5 @@
-import type { FormatValidationResult } from "@synclium/core";
-import { validate as validateUBL } from "@synclium/ubl";
+import type { FormatValidationResult } from "@synclium-com/core";
+import { validate as validateUBL } from "@synclium-com/ubl";
 
 export type ValidationResult = FormatValidationResult;
 

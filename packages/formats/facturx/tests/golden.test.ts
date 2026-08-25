@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { CanonicalInvoiceSchema } from "@synclium/core";
+import { CanonicalInvoiceSchema } from "@synclium-com/core";
 import { import as importFX, export as exportFX, validate } from "../src/index.js";
 
 const examplesDir = join(__dirname, "../../../../examples/facturx");

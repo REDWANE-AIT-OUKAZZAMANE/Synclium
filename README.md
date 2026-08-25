@@ -82,7 +82,7 @@ Synclium packages provide first-class dual **ESM** (`import`) and **CommonJS** (
 npm install synclium
 
 # Or install modular packages individually
-npm install @synclium/registry @synclium/core
+npm install @synclium-com/registry @synclium-com/core
 ```
 
 <details>
@@ -207,9 +207,9 @@ Tested across 10 multi-lingual enterprise invoices (**554 verified data fields**
 | **Anthropic Claude 3.5 Sonnet** | **97.8%** (542/554) | Requires `ANTHROPIC_API_KEY` |
 
 ```bash
-pnpm --filter @synclium/extract eval            # Run mock baseline
-pnpm --filter @synclium/extract eval:gemini     # Run Google Gemini Flash benchmark
-pnpm --filter @synclium/extract eval:anthropic  # Run Claude benchmark
+pnpm --filter @synclium-com/extract eval            # Run mock baseline
+pnpm --filter @synclium-com/extract eval:gemini     # Run Google Gemini Flash benchmark
+pnpm --filter @synclium-com/extract eval:anthropic  # Run Claude benchmark
 ```
 
 ---

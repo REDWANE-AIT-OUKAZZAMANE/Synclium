@@ -5,7 +5,7 @@
   ],
   "packageRules": [
     {
-      "matchPackageNames": ["@synclium/*"],
+      "matchPackageNames": ["@synclium-com/*"],
       "enabled": false
     }
   ]

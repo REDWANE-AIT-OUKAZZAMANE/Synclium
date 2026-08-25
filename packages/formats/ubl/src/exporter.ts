@@ -1,5 +1,5 @@
 import { create } from "xmlbuilder2";
-import type { CanonicalInvoice, Party, TaxBreakdown } from "@synclium/core";
+import type { CanonicalInvoice, Party, TaxBreakdown } from "@synclium-com/core";
 
 function partyToXml(party: Party, tagName: string, builder: any) {
   const partyEl = builder.ele(tagName).ele("cac:Party");

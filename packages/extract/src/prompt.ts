@@ -1,4 +1,4 @@
-import { CanonicalInvoiceSchema, type CanonicalInvoice } from "@synclium/core";
+import { CanonicalInvoiceSchema, type CanonicalInvoice } from "@synclium-com/core";
 import { z } from "zod";
 import { DEFAULT_REVIEW_THRESHOLD } from "./types.js";
 

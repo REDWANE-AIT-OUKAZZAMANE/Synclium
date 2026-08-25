@@ -28,8 +28,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@synclium/core": "workspace:*",
-    "@synclium/registry": "workspace:*"
+    "@synclium-com/core": "workspace:*",
+    "@synclium-com/registry": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.17.10",

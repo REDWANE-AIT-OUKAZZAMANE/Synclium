@@ -1,4 +1,4 @@
-import type { FormatValidationResult } from "@synclium/core";
+import type { FormatValidationResult } from "@synclium-com/core";
 
 export type ValidationResult = FormatValidationResult;
 

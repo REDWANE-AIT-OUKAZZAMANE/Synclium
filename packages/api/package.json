@@ -1,5 +1,5 @@
 {
-  "name": "@synclium/api",
+  "name": "@synclium-com/api",
   "version": "0.1.0",
   "license": "MIT",
   "description": "REST API for OpenInvoiceBridge — convert, validate and extract e-invoices",
@@ -30,9 +30,9 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
-    "@synclium/core": "workspace:*",
-    "@synclium/registry": "workspace:*",
-    "@synclium/extract": "workspace:*",
+    "@synclium-com/core": "workspace:*",
+    "@synclium-com/registry": "workspace:*",
+    "@synclium-com/extract": "workspace:*",
     "@fastify/rate-limit": "^9.1.0",
     "@fastify/swagger": "^8.15.0",
     "@fastify/swagger-ui": "^4.1.0",

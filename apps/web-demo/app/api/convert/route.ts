@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { convert, FormatError, isFormatId, type FormatId } from "@synclium/registry";
+import { convert, FormatError, isFormatId, type FormatId } from "@synclium-com/registry";
 import { getClientIp, checkGeneralRateLimit, buildRateLimitHeaders } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";

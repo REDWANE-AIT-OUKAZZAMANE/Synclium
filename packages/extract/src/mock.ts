@@ -1,4 +1,4 @@
-import type { CanonicalInvoice, LineItem } from "@synclium/core";
+import type { CanonicalInvoice, LineItem } from "@synclium-com/core";
 import type { ExtractionProvider } from "./types.js";
 import { finalizeResult, type ExtractionInput, type ExtractionResult } from "./types.js";
 

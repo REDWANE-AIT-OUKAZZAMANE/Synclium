@@ -12,9 +12,9 @@ import {
   isFormatId,
   FORMATS,
   type FormatId,
-} from "@synclium/registry";
-import { createProvider } from "@synclium/extract";
-import { validateCanonicalInvoice } from "@synclium/core";
+} from "@synclium-com/registry";
+import { createProvider } from "@synclium-com/extract";
+import { validateCanonicalInvoice } from "@synclium-com/core";
 
 // Auto-load .env if available
 if (typeof process.loadEnvFile === "function") {

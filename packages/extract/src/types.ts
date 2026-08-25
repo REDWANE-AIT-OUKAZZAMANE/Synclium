@@ -1,4 +1,4 @@
-import type { CanonicalInvoice } from "@synclium/core";
+import type { CanonicalInvoice } from "@synclium-com/core";
 
 /** Confidence for a single extracted field, keyed by canonical path (e.g. "seller.name"). */
 export type FieldConfidence = Record<string, number>;

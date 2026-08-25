@@ -1,5 +1,5 @@
 {
-  "name": "@synclium/extract",
+  "name": "@synclium-com/extract",
   "version": "0.1.0",
   "license": "MIT",
   "description": "AI-powered invoice extraction into the canonical schema (provider-agnostic)",
@@ -31,7 +31,7 @@
     "eval:anthropic": "tsx scripts/eval.ts --provider anthropic"
   },
   "dependencies": {
-    "@synclium/core": "workspace:*",
+    "@synclium-com/core": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {

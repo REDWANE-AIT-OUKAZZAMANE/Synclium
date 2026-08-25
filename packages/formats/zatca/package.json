@@ -1,5 +1,5 @@
 {
-  "name": "@synclium/zatca",
+  "name": "@synclium-com/zatca",
   "version": "0.1.0",
   "license": "MIT",
   "description": "ZATCA (Saudi Arabia) e-invoicing — Fatoora XML importer, exporter, validator",
@@ -28,8 +28,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@synclium/core": "workspace:*",
-    "@synclium/ubl": "workspace:*",
+    "@synclium-com/core": "workspace:*",
+    "@synclium-com/ubl": "workspace:*",
     "fast-xml-parser": "^4.5.1",
     "xmlbuilder2": "^3.1.1"
   },

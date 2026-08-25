@@ -10,8 +10,8 @@ import {
   isFormatId,
   loadCanonical,
   type FormatId,
-} from "@synclium/registry";
-import { createProvider } from "@synclium/extract";
+} from "@synclium-com/registry";
+import { createProvider } from "@synclium-com/extract";
 
 const MAX_STRING_PAYLOAD_BYTES = 3 * 1024 * 1024; // 3MB maximum string length
 
@@ -172,7 +172,7 @@ export function buildRoutes(app: FastifyInstance) {
 
         if (format === "canonical") {
           const inv = loadCanonical(input);
-          const { validateCanonicalInvoice } = await import("@synclium/core");
+          const { validateCanonicalInvoice } = await import("@synclium-com/core");
           result = validateCanonicalInvoice(inv);
           fmt = "canonical";
         } else {

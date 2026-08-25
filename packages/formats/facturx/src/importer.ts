@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import type { CanonicalInvoice, Party, LineItem, Tax, Totals, TaxBreakdown } from "@synclium/core";
+import type { CanonicalInvoice, Party, LineItem, Tax, Totals, TaxBreakdown } from "@synclium-com/core";
 
 const parser = new XMLParser({
   ignoreAttributes: false,

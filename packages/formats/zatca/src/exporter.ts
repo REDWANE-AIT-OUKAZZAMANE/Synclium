@@ -1,5 +1,5 @@
-import type { CanonicalInvoice } from "@synclium/core";
-import { export as exportUBL } from "@synclium/ubl";
+import type { CanonicalInvoice } from "@synclium-com/core";
+import { export as exportUBL } from "@synclium-com/ubl";
 
 function injectZATCAExtensions(xml: string, invoice: CanonicalInvoice): string {
   const uuid = (invoice.extensions?.["zatca:uuid"] as string) ?? cryptoRandomUUID();
