@@ -165,22 +165,56 @@ oib extract ocr.txt --provider mock                     # Offline heuristic base
 
 ```bash
 # Start the Fastify API server
-pnpm dev:api         # Listens on http://localhost:3000 (OpenAPI docs at /docs)
+pnpm dev:api         # Listens on http://localhost:3001 (OpenAPI docs at /docs)
 ```
 
+#### API Versioning
+
+The API is versioned via URL path prefix. Both the **Next.js** web frontend and the **Fastify** standalone daemon follow the same convention:
+
+| Base URL | Notes |
+|---|---|
+| `https://synclium.com/api/v1` | **Current — use this** |
+| `https://synclium.com/api` | Legacy aliases (permanently forwards to v1, no breaking changes) |
+| `http://localhost:3001/v1` | Fastify daemon v1 |
+| `http://localhost:3001` | Fastify daemon legacy root |
+
+All `/v1/*` responses include:
+```
+X-API-Version: 1.0
+X-API-Deprecated: false
+```
+
+The OpenAPI 3.1 specification is available at [`/api/v1/openapi.json`](https://synclium.com/api/v1/openapi.json) (interactive Swagger UI at `/docs` on the Fastify daemon).
+
+#### Endpoints
+
 ```bash
-# Transpile payload via REST
-curl -X POST http://localhost:3000/convert \
+# Transpile — UBL to ZATCA
+curl -X POST https://synclium.com/api/v1/convert \
   -H 'Content-Type: application/json' \
-  -d '{"input":"<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\">...","to":"canonical"}'
+  -d '{"input":"<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\">...","to":"zatca"}'
+
+# Validate against Schematron / EN16931 rules
+curl -X POST https://synclium.com/api/v1/validate \
+  -H 'Content-Type: application/json' \
+  -d '{"input":"<Invoice>...","format":"auto"}'
+
+# Query extraction quota (no cost)
+curl https://synclium.com/api/v1/extract
+
+# Fetch sample invoice fixtures
+curl https://synclium.com/api/v1/samples
 ```
 
 **Key Endpoints**:
-- `POST /convert` — Transpile between any supported dialect or canonical JSON.
-- `POST /validate` — Run Schematron and structural rule validation.
-- `POST /extract` — AI document parsing (PDF, image, text).
-- `GET /formats` — List active dialect specifications.
-- `GET /healthz` — Service health telemetry.
+- `POST /v1/convert` — Transpile between any supported dialect or canonical JSON.
+- `POST /v1/validate` — Run Schematron and structural rule validation.
+- `GET/POST /v1/extract` — Quota query / AI document parsing (PDF, image, text).
+- `GET /v1/samples` — Curated UBL, Factur-X, and ZATCA fixture invoices.
+- `GET /v1/openapi.json` — Machine-readable OpenAPI 3.1 specification.
+- `GET /formats` — List active dialect specifications (root-only utility).
+- `GET /healthz` — Service health telemetry (root-only utility).
 
 ---
 
