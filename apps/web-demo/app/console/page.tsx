@@ -174,6 +174,7 @@ export default function WorkbenchPage() {
   const [quotaRemaining, setQuotaRemaining] = useState<number>(1);
   const [quotaLimit, setQuotaLimit] = useState<number>(1);
   const [quotaTier, setQuotaTier] = useState<"anon" | "auth">("anon");
+  const [resetTargetTime, setResetTargetTime] = useState<number | null>(null);
   const [resetCountdown, setResetCountdown] = useState<string>("");
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
 
@@ -207,15 +208,53 @@ export default function WorkbenchPage() {
           setQuotaRemaining(d.remaining);
           setQuotaLimit(d.limit || 1);
           setQuotaTier(d.tier || "anon");
-          if (d.resetInSec) {
-            const h = Math.floor(d.resetInSec / 3600);
-            const m = Math.floor((d.resetInSec % 3600) / 60);
-            setResetCountdown(h > 0 ? `${h}h ${m}m` : `${m}m`);
+          if (typeof d.resetInSec === "number" && d.resetInSec > 0 && (d.used > 0 || d.remaining < (d.limit || 1) || d.resetInSec < 14400)) {
+            setResetTargetTime(Date.now() + d.resetInSec * 1000);
+          } else {
+            setResetTargetTime(null);
+            setResetCountdown("");
           }
         }
       })
       .catch(() => { });
   }, []);
+
+  // Live 1-second countdown ticker
+  useEffect(() => {
+    if (!resetTargetTime) {
+      setResetCountdown("");
+      return;
+    }
+
+    const tick = () => {
+      const now = Date.now();
+      const diffMs = resetTargetTime - now;
+      const diffSec = Math.max(0, Math.ceil(diffMs / 1000));
+
+      if (diffSec <= 0) {
+        setResetCountdown("");
+        setResetTargetTime(null);
+        refreshQuota();
+        return;
+      }
+
+      const h = Math.floor(diffSec / 3600);
+      const m = Math.floor((diffSec % 3600) / 60);
+      const s = diffSec % 60;
+
+      if (h > 0) {
+        setResetCountdown(`${h}h ${m}m ${s < 10 ? "0" : ""}${s}s`);
+      } else if (m > 0) {
+        setResetCountdown(`${m}m ${s < 10 ? "0" : ""}${s}s`);
+      } else {
+        setResetCountdown(`${s}s`);
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [resetTargetTime, refreshQuota]);
 
   useEffect(() => {
     fetch("/api/samples")
@@ -315,6 +354,9 @@ export default function WorkbenchPage() {
         setQuotaRemaining(data.remaining);
         setQuotaLimit(data.limit || 1);
         setQuotaTier(data.tier || "anon");
+        if (typeof data.resetInSec === "number" && data.resetInSec > 0) {
+          setResetTargetTime(Date.now() + data.resetInSec * 1000);
+        }
       }
 
       if (res.status === 429) {
@@ -489,9 +531,13 @@ export default function WorkbenchPage() {
                 <span className="font-bold text-blue-600 dark:text-blue-400">
                   {quotaRemaining}/{quotaLimit}
                 </span>
-                {resetCountdown && (
-                  <span className="hidden md:inline text-[10px] text-slate-400">
+                {resetCountdown ? (
+                  <span className="hidden md:inline text-[10px] text-slate-400 font-mono tracking-tight">
                     (resets in {resetCountdown})
+                  </span>
+                ) : (
+                  <span className="hidden md:inline text-[10px] text-slate-400 font-mono">
+                    (4h window)
                   </span>
                 )}
               </div>
