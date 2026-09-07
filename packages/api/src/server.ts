@@ -50,16 +50,16 @@ export async function buildServer(opts: ServerOptions = {}) {
     await app.register(swagger, {
       openapi: {
         info: {
-          title: "OpenInvoiceBridge API",
+          title: "Synclium API",
           description:
-            "Convert and validate e-invoices across formats (UBL/PEPPOL BIS, Factur-X/ZUGFeRD, ZATCA) via a canonical hub. " +
-            "**This is a technical utility, not certified compliance software** — validation covers structural and business-rule checks only. " +
-            "**No uploaded invoice data is persisted** — everything is processed in memory.",
+            "High-performance, compiler-grade e-invoice transpiler and validation engine. Converts between European UBL / PEPPOL BIS 3.0, Franco-German Factur-X / ZUGFeRD, Saudi ZATCA Phase 2 (Fatoora), and Canonical AST with strict Schematron rule verification. All operations are strictly stateless and memory-isolated.",
           version: "0.1.0",
         },
         tags: [
-          { name: "invoice", description: "Convert / validate / extract operations" },
-          { name: "meta", description: "Service metadata" },
+          { name: "Transpilation", description: "Convert / transpile invoice standards" },
+          { name: "Validation", description: "Schematron and business rule verification" },
+          { name: "Extraction", description: "Multimodal AI extraction operations" },
+          { name: "Metadata", description: "Service and format metadata" },
         ],
       },
     });

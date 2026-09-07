@@ -366,12 +366,12 @@ export default function LandingPage() {
               >
                 Benchmarks
               </a>
-              <a
-                href="#developers"
+              <Link
+                href="/docs"
                 className="hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors"
               >
-                Developers
-              </a>
+                API Docs &amp; Playground
+              </Link>
               <Link
                 href="/console"
                 className="text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-[#58a6ff] font-semibold transition-colors"
@@ -818,7 +818,7 @@ export default function LandingPage() {
                         : "border-slate-300 dark:border-[#30363d] text-slate-600 dark:text-slate-400"
                         }`}
                     >
-                      CLI (oib)
+                      CLI (synclium)
                     </button>
                     <button
                       onClick={() => setActiveDevTab("sdk")}
@@ -839,39 +839,44 @@ export default function LandingPage() {
                       REST API
                     </button>
                   </div>
-                  <span className="text-slate-500">Node &gt;= 18</span>
+                  <Link
+                    href="/docs"
+                    className="text-xs text-blue-600 dark:text-[#58a6ff] hover:underline font-bold"
+                  >
+                    Launch Playground ➔
+                  </Link>
                 </div>
 
                 <div className="p-4 text-xs leading-relaxed overflow-x-auto text-slate-800 dark:text-slate-200">
                   {activeDevTab === "cli" && (
                     <pre className="space-y-2">
                       <span className="text-slate-400"># Transpile with auto-detected format signature</span>
-                      <p className="text-blue-600 dark:text-[#58a6ff] font-bold">$ oib convert invoice.xml --to zatca</p>
+                      <p className="text-blue-600 dark:text-[#58a6ff] font-bold">$ npx synclium convert invoice.xml --to zatca</p>
 
                       <span className="text-slate-400"># Execute Schematron compliance validation</span>
-                      <p className="text-emerald-600 dark:text-emerald-400 font-bold">$ oib validate invoice.xml --format facturx</p>
+                      <p className="text-emerald-600 dark:text-emerald-400 font-bold">$ npx synclium validate invoice.xml --format facturx</p>
 
                       <span className="text-slate-400"># AI multimodal extraction from scan PDF or image</span>
-                      <p className="text-purple-600 dark:text-purple-400 font-bold">$ oib extract scan.pdf --json-out report.json</p>
+                      <p className="text-purple-600 dark:text-purple-400 font-bold">$ npx synclium extract scan.pdf --json-out report.json</p>
                     </pre>
                   )}
 
                   {activeDevTab === "sdk" && (
                     <pre className="space-y-1">
                       <span className="text-slate-400">// Pure TypeScript in-memory transpilation</span>
-                      <p><span className="text-purple-400">import</span> &#123; importUBL &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;@synclium-com/ubl&quot;</span>;</p>
-                      <p><span className="text-purple-400">import</span> &#123; exportZATCA &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;@synclium-com/zatca&quot;</span>;</p>
+                      <p><span className="text-purple-400">import</span> &#123; convert, validateFormat &#125; <span className="text-purple-400">from</span> <span className="text-emerald-400">&quot;synclium&quot;</span>;</p>
                       <br />
-                      <p><span className="text-purple-400">const</span> canonical = <span className="text-purple-400">await</span> importUBL(rawXml);</p>
-                      <p><span className="text-purple-400">const</span> zatcaXml = <span className="text-purple-400">await</span> exportZATCA(canonical);</p>
+                      <p><span className="text-purple-400">const</span> outputXml = convert(rawXml, <span className="text-emerald-400">&quot;auto&quot;</span>, <span className="text-emerald-400">&quot;zatca&quot;</span>);</p>
+                      <p><span className="text-purple-400">const</span> check = validateFormat(outputXml, <span className="text-emerald-400">&quot;zatca&quot;</span>);</p>
+                      <p>console.log(check.valid); <span className="text-slate-500">// true</span></p>
                     </pre>
                   )}
 
                   {activeDevTab === "api" && (
                     <pre className="space-y-2">
-                      <span className="text-slate-400"># Fastify In-Memory Transpile Endpoint</span>
+                      <span className="text-slate-400"># Stateless In-Memory Transpile Endpoint</span>
                       <p className="text-slate-800 dark:text-slate-200">
-                        curl -X POST http://localhost:3000/convert \<br />
+                        curl -X POST https://synclium.com/api/convert \<br />
                         &nbsp;&nbsp;-H &quot;Content-Type: application/json&quot; \<br />
                         &nbsp;&nbsp;-d &apos;&#123;&quot;input&quot;: &quot;...&quot;, &quot;to&quot;: &quot;zatca&quot;&#125;&apos;
                       </p>

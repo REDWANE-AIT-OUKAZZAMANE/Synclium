@@ -469,7 +469,14 @@ export default function WorkbenchPage() {
               href="/"
               className="hidden sm:inline-flex items-center gap-1 font-mono text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors border border-slate-200 dark:border-[#30363d] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161b22]"
             >
-              <span>← Back to Overview</span>
+              <span>← Overview</span>
+            </Link>
+
+            <Link
+              href="/docs"
+              className="hidden sm:inline-flex items-center gap-1 font-mono text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors border border-slate-200 dark:border-[#30363d] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161b22]"
+            >
+              <span>API Docs &amp; Playground</span>
             </Link>
           </div>
 
