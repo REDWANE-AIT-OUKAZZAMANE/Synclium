@@ -53,7 +53,7 @@ export async function buildServer(opts: ServerOptions = {}) {
           title: "Synclium API",
           description:
             "High-performance, compiler-grade e-invoice transpiler and validation engine. Converts between European UBL / PEPPOL BIS 3.0, Franco-German Factur-X / ZUGFeRD, Saudi ZATCA Phase 2 (Fatoora), and Canonical AST with strict Schematron rule verification. All operations are strictly stateless and memory-isolated.",
-          version: "0.1.0",
+          version: "1.0.0",
         },
         tags: [
           { name: "Transpilation", description: "Convert / transpile invoice standards" },
@@ -73,7 +73,21 @@ export async function buildServer(opts: ServerOptions = {}) {
     });
   }
 
+  // Legacy root routes (backward-compatible, no version header)
   buildRoutes(app);
+
+  // Versioned /v1/* routes with automatic X-API-Version response header
+  app.register(
+    async (v1) => {
+      v1.addHook("onSend", (_req, reply, _payload, done) => {
+        reply.header("X-API-Version", "1.0");
+        reply.header("X-API-Deprecated", "false");
+        done();
+      });
+      buildRoutes(v1);
+    },
+    { prefix: "/v1" },
+  );
 
   return app;
 }
