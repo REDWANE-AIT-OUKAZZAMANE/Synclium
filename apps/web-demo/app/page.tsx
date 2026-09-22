@@ -326,13 +326,13 @@ export default function LandingPage() {
   };
 
   return (
-    <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"} text-slate-900 dark:text-[#e2e8f0]`}>
+    <div className="min-h-screen bg-[#eef5fe] text-slate-900 dark:text-[#e2e8f0] dark:bg-[#07090e] font-sans">
 
       {/* -------------------------------------------------------------------- */}
       {/* 1. Header Bar                                                        */}
       {/* -------------------------------------------------------------------- */}
-      <header className="sticky top-0 z-50 border-b border-slate-300 dark:border-[#21262d] bg-white/95 dark:bg-[#07090e]/95 backdrop-blur font-mono">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-2.5 flex items-center justify-between">
+      <header className="sticky top-3 z-50 px-4 sm:px-6">
+        <div className="supaste-glass-nav mx-auto max-w-[1600px] rounded-2xl border px-4 sm:px-5 py-2.5 flex items-center justify-between dark:bg-[#07090e]/80 dark:border-[#21262d]">
           <div className="flex items-center gap-6 sm:gap-8">
             <Link href="/" className="flex items-center group">
               <img src="/logo.png" alt="Synclium" className="h-12 sm:h-12 w-auto object-contain drop-shadow-sm" />
@@ -384,7 +384,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2.5">
             <Link
               href="/console"
-              className="h-7 px-3 inline-flex items-center gap-1.5 border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
+              className="h-8 px-4 inline-flex items-center gap-1.5 rounded-full bg-[#087cf8] hover:bg-[#0a63c4] text-white text-xs font-bold transition-all shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)]"
             >
               <span>Launch Console</span>
               <span>➔</span>
@@ -394,7 +394,7 @@ export default function LandingPage() {
               href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium"
               target="_blank"
               rel="noreferrer"
-              className="h-7 px-2.5 inline-flex items-center gap-1 border border-slate-300 dark:border-[#30363d] bg-slate-100 dark:bg-[#161b22] text-xs font-semibold text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-slate-500 transition-colors"
+              className="h-8 px-3.5 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/70 text-xs font-semibold text-slate-700 hover:border-[#087cf8]/40 hover:text-[#0a508f] transition-colors dark:border-[#30363d] dark:bg-[#161b22] dark:text-slate-300"
             >
               <span>GitHub</span>
               <ExternalLinkIcon className="w-3 h-3 opacity-80" />
@@ -415,39 +415,36 @@ export default function LandingPage() {
       {/* 2. Hero Diagnostic Console & Dual-Pane Transpiler Sandbox            */}
       {/* -------------------------------------------------------------------- */}
       <main>
-        <section className="pt-8 pb-12 sm:pt-12 sm:pb-16 border-b border-slate-300 dark:border-[#21262d]">
-          <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
+        {/* Supaste Marquee Hero — centered white type on cobalt gradient */}
+        <section className="px-4 sm:px-6 pt-6">
+          <div className="supaste-hero mx-auto max-w-[1600px] rounded-[28px] px-4 sm:px-6 pt-12 pb-10 sm:pt-16 sm:pb-14 overflow-hidden relative">
+            <div className="mx-auto max-w-[710px] text-center">
 
-            {/* System Specification Monospace Breadcrumb */}
-            <div className="font-mono text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
-              <span className="text-blue-600 dark:text-[#58a6ff] font-bold">SYS_SPEC</span>
-              <span>//</span>
-              <span>KERNEL: IN-MEMORY CANONICAL AST</span>
-              <span>//</span>
-              <span>SECURITY: ZERO DISK WRITE GUARANTEE</span>
-              <span>//</span>
-              <span>LICENSE: MIT OPEN SOURCE</span>
+            {/* Glass pill breadcrumb */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/30 backdrop-blur px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 inline-block" />
+              <span>SYNCLIUM // UBL · CII · ZATCA — MIT OPEN SOURCE</span>
             </div>
 
-            {/* Hard Monospace Editorial Headline (No Generic Gradients) */}
-            <div className="mt-4 max-w-5xl">
-              <h1 className="font-mono text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase leading-[1.15]">
-                THE 2026–2027 MANDATE WAVE BREAKS POINT-TO-POINT TRANSLATORS.
+            {/* Centered Inter Display headline (Supaste h2: 60px/700/-3px) */}
+            <div className="mt-5">
+              <h1 className="font-sans text-4xl sm:text-6xl font-bold tracking-[-0.04em] text-white leading-[1.02]">
+                E-invoicing that just converts.
               </h1>
-              <p className="mt-3 font-mono text-sm sm:text-base text-slate-700 dark:text-slate-300 max-w-4xl leading-relaxed">
-                Belgium, France, Poland, and Saudi Arabia mandate incompatible e-invoicing schemas.
-                Synclium is a stateless, pure-TypeScript compiler that validates and transpiles across
-                <span className="font-bold text-slate-900 dark:text-white"> UBL 2.1 (PEPPOL)</span>,
-                <span className="font-bold text-slate-900 dark:text-white"> Factur-X / ZUGFeRD (CII)</span>, and
-                <span className="font-bold text-slate-900 dark:text-white"> ZATCA Phase 2</span> via a lossless intermediate hub AST.
+              <p className="mt-4 text-sm sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed">
+                Belgium, France, Poland, and Saudi Arabia mandate incompatible schemas.
+                Synclium is a stateless, pure-TypeScript compiler across
+                <span className="font-semibold text-white"> UBL 2.1 (PEPPOL)</span>,
+                <span className="font-semibold text-white"> Factur-X (CII)</span>, and
+                <span className="font-semibold text-white"> ZATCA Phase 2</span> via a lossless hub AST.
               </p>
             </div>
 
-            {/* Direct Action Bar */}
-            <div className="mt-6 flex flex-wrap items-center gap-3 font-mono">
+            {/* Centered CTA bar — white primary + glass secondary */}
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/console"
-                className="h-9 px-4 inline-flex items-center gap-2 border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-sm transition-all"
+                className="h-11 px-6 inline-flex items-center gap-2 rounded-full bg-white text-[#0a508f] text-sm font-bold shadow-[0_16px_40px_-12px_rgba(0,0,0,0.4)] hover:bg-[#8ad8fc] hover:text-[#0a508f] transition-all"
               >
                 <span>OPEN INTERACTIVE WORKBENCH</span>
                 <span>➔</span>
@@ -455,33 +452,35 @@ export default function LandingPage() {
 
               <a
                 href="#mandates"
-                className="h-9 px-3.5 inline-flex items-center gap-1.5 border border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#0d1117] text-xs font-semibold text-slate-800 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500"
+                className="h-11 px-5 inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 backdrop-blur text-sm font-semibold text-white hover:bg-white/25 transition-all"
               >
                 <span>INSPECT MANDATE MATRIX</span>
                 <span>↓</span>
               </a>
+            </div>
 
-              <div className="hidden md:flex items-center gap-4 ml-auto text-xs text-slate-500 dark:text-slate-400">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-emerald-500 inline-block" />
-                  <span>67/67 TEST SUITES GREEN</span>
-                </span>
-                <span>•</span>
-                <span>&lt; 5 MS STREAMING LATENCY</span>
-                <span>•</span>
-                <span>90.8% MULTIMODAL EXTRACTION EVAL</span>
-              </div>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-semibold tracking-wide text-white/75">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-300 inline-block" />
+                <span>67/67 TEST SUITES GREEN</span>
+              </span>
+              <span className="opacity-50">•</span>
+              <span>&lt; 5 MS STREAMING LATENCY</span>
+              <span className="opacity-50">•</span>
+              <span>90.8% MULTIMODAL EXTRACTION EVAL</span>
+            </div>
+
             </div>
 
             {/* ---------------------------------------------------------------- */}
-            {/* The Live Interactive Dual-Pane Compiler Instrument (Hero Core)   */}
+            {/* Floating glass app preview (Supaste: app interface floating over gradient) */}
             {/* ---------------------------------------------------------------- */}
-            <div className="mt-8 border border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#0d1117] shadow-xl">
+            <div className="mt-10 mx-auto max-w-6xl text-left rounded-2xl bg-white/85 backdrop-blur-xl border border-white/60 shadow-[0_32px_90px_-24px_rgba(3,40,90,0.55)] overflow-hidden dark:bg-[#0d1117]/90 dark:border-[#21262d]">
 
               {/* Terminal Control Strip & Test Case Selector */}
-              <div className="px-4 py-2.5 bg-slate-100 dark:bg-[#161b22] border-b border-slate-300 dark:border-[#21262d] flex flex-wrap items-center justify-between gap-3 font-mono">
+              <div className="px-4 py-2.5 bg-white/60 backdrop-blur border-b border-white/50 dark:bg-[#161b22] dark:border-[#21262d] flex flex-wrap items-center justify-between gap-3 font-mono">
                 <div className="flex items-center gap-2">
-                  <span className="text-blue-600 dark:text-[#58a6ff] font-bold text-xs">◆ RUNTIME BENCHMARK</span>
+                  <span className="text-[#087cf8] font-bold text-xs">◆ RUNTIME BENCHMARK</span>
                   <span className="text-slate-400 dark:text-slate-600">|</span>
                   <span className="text-xs text-slate-700 dark:text-slate-300 font-semibold">{activeCase.name}</span>
                 </div>
@@ -491,9 +490,9 @@ export default function LandingPage() {
                     <button
                       key={tc.id}
                       onClick={() => setSelectedCaseIdx(idx)}
-                      className={`px-2.5 py-1 text-[11px] font-bold border transition-all ${selectedCaseIdx === idx
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#07090e] text-slate-700 dark:text-slate-300 hover:border-slate-400"
+                      className={`px-2.5 py-1 text-[11px] font-bold rounded-full border transition-all ${selectedCaseIdx === idx
+                        ? "border-[#087cf8] bg-[#087cf8] text-white shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)]"
+                        : "border-slate-200 bg-white/70 text-slate-700 hover:border-[#087cf8]/50 hover:text-[#0a508f] dark:border-[#30363d] dark:bg-[#07090e] dark:text-slate-300"
                         }`}
                     >
                       Case {idx + 1}
@@ -507,7 +506,7 @@ export default function LandingPage() {
 
                 {/* Left Pane: Source Dialect */}
                 <div className="flex flex-col bg-slate-50/70 dark:bg-[#05070a]">
-                  <div className="px-4 py-2 bg-slate-100/80 dark:bg-[#0e131d] border-b border-slate-300 dark:border-[#21262d] flex items-center justify-between font-mono text-[11px]">
+                  <div className="px-4 h-10 bg-slate-100/80 dark:bg-[#0e131d] border-b border-slate-300 dark:border-[#21262d] flex items-center justify-between gap-2 font-mono text-[11px]">
                     <div className="flex items-center gap-2">
                       <span className="px-1.5 py-0.2 border border-slate-300 dark:border-[#30363d] bg-slate-200 dark:bg-[#161b22] font-bold text-slate-800 dark:text-slate-200">
                         {activeCase.sourceTag}
@@ -518,7 +517,7 @@ export default function LandingPage() {
                     </div>
                     <button
                       onClick={() => handleCopy(activeCase.sourceCode)}
-                      className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1"
+                      className="h-7 px-2.5 rounded-full text-slate-500 hover:text-[#0a508f] hover:bg-[#087cf8]/10 flex items-center gap-1 shrink-0"
                     >
                       <CopyIcon className="w-3 h-3" />
                       <span>{copied ? "Copied" : "Copy"}</span>
@@ -532,7 +531,7 @@ export default function LandingPage() {
 
                 {/* Right Pane: Target Transpiled Output */}
                 <div className="flex flex-col bg-white dark:bg-[#07090e]">
-                  <div className="px-4 py-2 bg-slate-100/80 dark:bg-[#0e131d] border-b border-slate-300 dark:border-[#21262d] flex items-center justify-between font-mono text-[11px]">
+                  <div className="px-4 h-10 bg-slate-100/80 dark:bg-[#0e131d] border-b border-slate-300 dark:border-[#21262d] flex items-center justify-between gap-2 font-mono text-[11px]">
                     <div className="flex items-center gap-2">
                       <span className="px-1.5 py-0.2 border border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-[#58a6ff] font-bold">
                         {activeCase.targetTag}
@@ -543,7 +542,7 @@ export default function LandingPage() {
                     </div>
                     <Link
                       href="/console"
-                      className="px-2 py-0.5 border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white font-bold transition-colors"
+                      className="h-7 px-3 rounded-full bg-[#087cf8] hover:bg-[#0a63c4] text-white font-bold transition-colors shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)] inline-flex items-center shrink-0"
                     >
                       Open in Console ➔
                     </Link>

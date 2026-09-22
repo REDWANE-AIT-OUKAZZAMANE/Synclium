@@ -47,7 +47,26 @@ body {
 }
 
 ::selection {
-  @apply bg-blue-500/30 text-blue-600 dark:text-blue-300;
+  @apply bg-[#087cf8]/25 text-[#0a508f];
+}
+
+/* Supaste Marquee Hero — electric cobalt gradient + frosted glass (inspomcp.dev/screens/supaste-com) */
+.supaste-hero {
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(138, 216, 252, 0.9) 0%, transparent 60%),
+    radial-gradient(900px 480px at 85% 20%, rgba(138, 216, 252, 0.5) 0%, transparent 55%),
+    radial-gradient(800px 500px at 10% 25%, rgba(10, 80, 143, 0.55) 0%, transparent 55%),
+    linear-gradient(180deg, #087cf8 0%, #0a63c4 45%, #0a508f 100%);
+}
+
+.supaste-glass {
+  @apply bg-white/80 backdrop-blur-xl border border-white/50;
+  box-shadow: 0 24px 80px -20px rgba(8, 124, 248, 0.45), 0 8px 24px -8px rgba(10, 80, 143, 0.25), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.supaste-glass-nav {
+  @apply bg-white/70 backdrop-blur-xl border-white/40;
+  box-shadow: 0 8px 32px -12px rgba(10, 80, 143, 0.25), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 
 *::-webkit-scrollbar {

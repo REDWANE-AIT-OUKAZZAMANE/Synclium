@@ -488,10 +488,10 @@ export default function WorkbenchPage() {
   const byteSize = activeContent ? new Blob([activeContent]).size : 0;
 
   return (
-    <div className={`min-h-screen ${theme === "dark" ? "grid-bg-dark" : "grid-bg-light"}`}>
-      {/* Top Status & Telemetry Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-300 dark:border-[#21262d] bg-white/95 dark:bg-[#07090e]/95 backdrop-blur">
-        <div className="mx-auto max-w-[1600px] px-4 py-2.5 flex items-center justify-between">
+    <div className="min-h-screen bg-[#eef5fe] text-slate-900 dark:bg-[#07090e] dark:text-[#e2e8f0] font-sans">
+      {/* Floating glass nav (Supaste) */}
+      <header className="sticky top-3 z-40 px-4">
+        <div className="supaste-glass-nav mx-auto max-w-[1600px] rounded-2xl border px-4 py-2.5 flex items-center justify-between dark:bg-[#07090e]/80 dark:border-[#21262d]">
           <div className="flex items-center gap-4 sm:gap-6">
             <Link href="/" className="flex items-center group">
               <img src="/logo.png" alt="Synclium" className="h-12 sm:h-12 w-auto object-contain drop-shadow-sm" />
@@ -507,14 +507,14 @@ export default function WorkbenchPage() {
 
             <Link
               href="/"
-              className="hidden sm:inline-flex items-center gap-1 font-mono text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors border border-slate-200 dark:border-[#30363d] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161b22]"
+              className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0a508f] transition-colors border border-slate-200 bg-white/70 px-2.5 py-1 rounded-full dark:border-[#30363d] dark:bg-[#161b22] dark:text-slate-400"
             >
               <span>← Overview</span>
             </Link>
 
             <Link
               href="/docs"
-              className="hidden sm:inline-flex items-center gap-1 font-mono text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-[#58a6ff] transition-colors border border-slate-200 dark:border-[#30363d] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161b22]"
+              className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0a508f] transition-colors border border-slate-200 bg-white/70 px-2.5 py-1 rounded-full dark:border-[#30363d] dark:bg-[#161b22] dark:text-slate-400"
             >
               <span>API Docs &amp; Playground</span>
             </Link>
@@ -570,7 +570,7 @@ export default function WorkbenchPage() {
             ) : (
               <button
                 onClick={() => signIn("github")}
-                className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-mono text-xs font-semibold hover:opacity-90 transition-opacity shadow-sm"
+                className="h-8 px-4 inline-flex items-center gap-1.5 rounded-full bg-[#087cf8] hover:bg-[#0a63c4] text-white text-xs font-bold transition-all shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)]"
               >
                 <span>Sign in (3 Scans / 4h)</span>
               </button>
@@ -601,7 +601,7 @@ export default function WorkbenchPage() {
 
       {/* Upgrade Banner for Anonymous Users Hit Limit */}
       {showUpgradeModal && !isAuth && (
-        <div className="bg-gradient-to-r from-blue-900/90 to-purple-900/90 border-b border-blue-500/30 px-4 py-3 text-white text-center font-mono text-xs flex flex-wrap items-center justify-center gap-3">
+        <div className="supaste-hero px-4 py-3 text-white text-center text-xs font-semibold flex flex-wrap items-center justify-center gap-3">
           <span>You have reached your 1 free daily scan. Sign in with GitHub to unlock 3 scans/day!</span>
           <button
             onClick={() => signIn("github")}
@@ -618,12 +618,28 @@ export default function WorkbenchPage() {
         </div>
       )}
 
-      {/* Main Split-Screen Technical Workbench */}
-      <main className="mx-auto max-w-[1600px] p-4 sm:p-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+      {/* Supaste workbench hero band */}
+      <main className="px-4 sm:px-6 pb-6">
+        <div className="mx-auto max-w-[1600px]">
+        <div className="supaste-hero rounded-[28px] mt-4 px-6 py-10 sm:py-12 text-center overflow-hidden">
+          <div className="mx-auto max-w-[710px]">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/30 backdrop-blur px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 inline-block" />
+              <span>INTERACTIVE WORKBENCH // IN-MEMORY · ZERO DISK WRITE</span>
+            </div>
+            <h1 className="mt-4 font-sans text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-white leading-[1.05]">
+              Drop an invoice. Get compliance.
+            </h1>
+            <p className="mt-3 text-sm sm:text-base text-white/85 leading-relaxed">
+              Convert, validate, and AI-extract across UBL 2.1, Factur-X, and ZATCA Phase 2 — right in your browser.
+            </p>
+          </div>
+        </div>
+        <div className="mt-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
         {/* Left Column: Ingestion Pipeline & Execution Controls (5 Cols) */}
         <section className="xl:col-span-5 flex flex-col gap-5">
           {/* Ingestion Box */}
-          <div className="surface-card rounded-xl p-5">
+          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] p-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#21262d]">
               <div className="flex items-center gap-2">
                 <FileCodeIcon className="w-4 h-4 text-blue-500" />
@@ -660,11 +676,11 @@ export default function WorkbenchPage() {
                 }
                 fileRef.current?.click();
               }}
-              className={`mt-4 cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-all ${dragging
-                  ? "border-blue-500 bg-blue-500/10"
+              className={`mt-4 cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all ${dragging
+                  ? "border-[#087cf8] bg-[#087cf8]/10"
                   : !isAuth
-                    ? "border-blue-500/40 bg-blue-50/40 dark:bg-blue-950/10 hover:border-blue-500 hover:bg-blue-500/5"
-                    : "border-slate-300 dark:border-[#30363d] bg-slate-50/50 dark:bg-[#05070a] hover:border-blue-500"
+                    ? "border-[#087cf8]/50 bg-[#087cf8]/5 hover:border-[#087cf8] hover:bg-[#087cf8]/10"
+                    : "border-slate-300 dark:border-[#30363d] bg-slate-50/50 dark:bg-[#05070a] hover:border-[#087cf8]"
                 }`}
             >
               <input
@@ -743,7 +759,7 @@ export default function WorkbenchPage() {
           </div>
 
           {/* Quick Production Test Payloads */}
-          <div className="surface-card rounded-xl p-5">
+          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] p-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-[#21262d]">
               <LayersIcon className="w-4 h-4 text-emerald-500" />
               <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
@@ -786,7 +802,7 @@ export default function WorkbenchPage() {
           </div>
 
           {/* Pipeline Transformation Controls with Custom Dropdowns */}
-          <div className="surface-card rounded-xl p-5">
+          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] p-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-[#21262d]">
               <GaugeIcon className="w-4 h-4 text-blue-500" />
               <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
@@ -884,7 +900,7 @@ export default function WorkbenchPage() {
                   void runConvert();
                 }}
                 disabled={isAuth ? (!input.trim() || busy !== "") : false}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-blue-600 bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold shadow transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-[#087cf8] bg-[#087cf8] hover:bg-[#0a63c4] text-white font-mono text-xs font-bold shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 {!isAuth ? (
                   <>
@@ -965,14 +981,14 @@ export default function WorkbenchPage() {
 
         {/* Right Column: Code Matrix & Executive Summary Inspector (7 Cols) */}
         <section className="xl:col-span-7 flex flex-col gap-4">
-          <div className="surface-card rounded-xl overflow-hidden flex flex-col h-full min-h-[660px]">
+          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] overflow-hidden flex flex-col h-full min-h-[660px]">
             {/* Editor Workspace Tab Bar */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#21262d] bg-slate-50 dark:bg-[#05070a] px-3 pt-2">
               <div className="flex items-center gap-1 font-mono text-xs">
                 <button
                   onClick={() => setActiveTab("editor")}
                   className={`px-3.5 py-2 rounded-t-lg font-bold transition-colors ${activeTab === "editor"
-                      ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 border-t-2 border-t-blue-500 border-x border-slate-200 dark:border-[#21262d]"
+                      ? "bg-white dark:bg-[#0d1117] text-[#087cf8] dark:text-[#58a6ff] border-t-2 border-t-[#087cf8] border-x border-slate-200 dark:border-[#21262d]"
                       : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                     }`}
                 >
@@ -983,7 +999,7 @@ export default function WorkbenchPage() {
                   onClick={() => setActiveTab("canonical")}
                   disabled={!canonicalOut}
                   className={`px-3.5 py-2 rounded-t-lg font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${activeTab === "canonical"
-                      ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 border-t-2 border-t-blue-500 border-x border-slate-200 dark:border-[#21262d]"
+                      ? "bg-white dark:bg-[#0d1117] text-[#087cf8] dark:text-[#58a6ff] border-t-2 border-t-[#087cf8] border-x border-slate-200 dark:border-[#21262d]"
                       : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                     }`}
                 >
@@ -994,7 +1010,7 @@ export default function WorkbenchPage() {
                   onClick={() => setActiveTab("compiled")}
                   disabled={!convertedOut}
                   className={`px-3.5 py-2 rounded-t-lg font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${activeTab === "compiled"
-                      ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 border-t-2 border-t-blue-500 border-x border-slate-200 dark:border-[#21262d]"
+                      ? "bg-white dark:bg-[#0d1117] text-[#087cf8] dark:text-[#58a6ff] border-t-2 border-t-[#087cf8] border-x border-slate-200 dark:border-[#21262d]"
                       : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                     }`}
                 >
@@ -1079,6 +1095,8 @@ export default function WorkbenchPage() {
             </div>
           </div>
         </section>
+        </div>
+        </div>
       </main>
 
       {/* Industrial Footer */}
