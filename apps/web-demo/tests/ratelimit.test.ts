@@ -76,9 +76,9 @@ describe("Tiered Persistent Rate Limiting & Bot Mitigation Suite", () => {
 
       // Verify headers
       const headers = buildRateLimitHeaders(second);
-      expect(headers["X-RateLimit-Limit"]).toBe("1");
-      expect(headers["X-RateLimit-Remaining"]).toBe("0");
-      expect(Number(headers["Retry-After"])).toBeGreaterThan(0);
+      expect(headers.get("X-RateLimit-Limit")).toBe("1");
+      expect(headers.get("X-RateLimit-Remaining")).toBe("0");
+      expect(Number(headers.get("Retry-After"))).toBeGreaterThan(0);
     });
 
     it("allows 3 scans for GitHub authenticated users", async () => {

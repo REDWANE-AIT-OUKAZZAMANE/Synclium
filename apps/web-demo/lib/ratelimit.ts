@@ -310,12 +310,12 @@ export async function checkGeneralRateLimit(ip: string): Promise<GeneralRateLimi
 /**
  * Generate standard HTTP RateLimit headers
  */
-export function buildRateLimitHeaders(quota: { limit: number; remaining: number; resetInSec: number }) {
-  return {
+export function buildRateLimitHeaders(quota: { limit: number; remaining: number; resetInSec: number }): Headers {
+  return new Headers({
     "X-RateLimit-Limit": String(quota.limit),
     "X-RateLimit-Remaining": String(quota.remaining),
     "X-RateLimit-Reset": String(quota.resetInSec),
     "Retry-After": String(quota.resetInSec),
     "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-  };
+  });
 }
