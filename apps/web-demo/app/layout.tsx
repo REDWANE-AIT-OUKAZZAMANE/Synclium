@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Synclium — Universal E-Invoice Bridge & AI Extraction",
+  title: "Synclium — The Borderless Invoice",
   description:
-    "Convert, validate, and extract e-invoices across UBL/PEPPOL, Factur-X/ZUGFeRD, and ZATCA. Zero-knowledge in-memory processing with Google Gemini Flash AI extraction.",
+    "Universal e-invoice interoperability engine: UBL 2.1/PEPPOL, Factur-X CII and ZATCA Phase 2 transpiled through one canonical AST. Deterministic, stateless, MIT open source.",
   icons: {
     icon: [
       { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },

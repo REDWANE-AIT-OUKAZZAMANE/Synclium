@@ -4,6 +4,11 @@
 
 :root {
   color-scheme: dark;
+  --syn-ink: #07090c;
+  --syn-paper: #f2ede3;
+  --syn-signal: #ff5c00;
+  --syn-protocol: #3dd6c2;
+  --syn-rule: #1c2128;
 }
 
 html {
@@ -11,71 +16,213 @@ html {
 }
 
 body {
-  @apply bg-[#f4f6f9] text-[#0f172a] dark:bg-[#07090e] dark:text-[#e2e8f0] antialiased transition-colors duration-200;
+  @apply bg-ink-950 text-paper antialiased;
+  font-family: Fraunces, Georgia, "Times New Roman", serif;
   min-height: 100vh;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-}
-
-/* Precision Technical Blueprint Background Grid */
-.grid-bg-dark {
-  background-color: #07090e;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-.grid-bg-light {
-  background-color: #f8fafc;
-  background-image: 
-    linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-/* Precision Terminal Surfaces */
-.surface-card {
-  @apply bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-[#21262d] shadow-sm dark:shadow-terminal transition-all;
-}
-
-.surface-card-interactive {
-  @apply bg-white dark:bg-[#0d1117] border border-slate-200 dark:border-[#21262d] hover:border-slate-400 dark:hover:border-[#388bfd] transition-all;
-}
-
-.surface-input {
-  @apply bg-slate-50 dark:bg-[#05070a] border border-slate-300 dark:border-[#30363d] focus:border-blue-500 dark:focus:border-[#58a6ff] focus:ring-1 focus:ring-blue-500/30 outline-none transition-all font-mono;
 }
 
 ::selection {
-  @apply bg-[#087cf8]/25 text-[#0a508f];
+  background: #ff5c00;
+  color: #07090c;
 }
 
-/* Supaste Marquee Hero — electric cobalt gradient + frosted glass (inspomcp.dev/screens/supaste-com) */
-.supaste-hero {
-  background:
-    radial-gradient(1200px 500px at 50% -10%, rgba(138, 216, 252, 0.9) 0%, transparent 60%),
-    radial-gradient(900px 480px at 85% 20%, rgba(138, 216, 252, 0.5) 0%, transparent 55%),
-    radial-gradient(800px 500px at 10% 25%, rgba(10, 80, 143, 0.55) 0%, transparent 55%),
-    linear-gradient(180deg, #087cf8 0%, #0a63c4 45%, #0a508f 100%);
+/* ---- Synclium ledger surfaces: sharp, ruled, stamped. No glass, no blobs. ---- */
+
+.syn-rule {
+  border-color: #1c2128;
 }
 
-.supaste-glass {
-  @apply bg-white/80 backdrop-blur-xl border border-white/50;
-  box-shadow: 0 24px 80px -20px rgba(8, 124, 248, 0.45), 0 8px 24px -8px rgba(10, 80, 143, 0.25), inset 0 1px 0 rgba(255,255,255,0.7);
+.syn-panel {
+  background: #0b0e13;
+  border: 1px solid #1c2128;
 }
 
-.supaste-glass-nav {
-  @apply bg-white/70 backdrop-blur-xl border-white/40;
-  box-shadow: 0 8px 32px -12px rgba(10, 80, 143, 0.25), inset 0 1px 0 rgba(255,255,255,0.6);
+.syn-ticket {
+  background: #0b0e13;
+  border: 1px solid #1c2128;
+  position: relative;
 }
 
+.syn-ticket::before,
+.syn-ticket::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-top: -7px;
+  border-radius: 9999px;
+  background: #07090c;
+  border: 1px solid #1c2128;
+}
+
+.syn-ticket::before {
+  left: -8px;
+}
+
+.syn-ticket::after {
+  right: -8px;
+}
+
+.syn-perforation {
+  background-image: linear-gradient(to right, #2a313b 45%, transparent 45%);
+  background-size: 10px 1px;
+  background-repeat: repeat-x;
+  height: 1px;
+}
+
+.syn-stamp {
+  border: 1.5px solid currentColor;
+  padding: 0.2rem 0.55rem;
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.syn-stamp-live {
+  animation: stamp-in 0.32s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes stamp-in {
+  0% {
+    transform: scale(1.7) rotate(-9deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(-3deg);
+    opacity: 1;
+  }
+}
+
+/* ---- Motion language: scan, draw, transmit, collapse. Never generic fade-up. ---- */
+
+.syn-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ff5c00;
+  box-shadow: 0 0 18px 2px rgba(255, 92, 0, 0.65);
+  animation: syn-scan 2.8s cubic-bezier(0.45, 0, 0.35, 1) infinite;
+}
+
+@keyframes syn-scan {
+  0% {
+    top: 2%;
+  }
+  50% {
+    top: 97%;
+  }
+  100% {
+    top: 2%;
+  }
+}
+
+.syn-bootbar {
+  transform-origin: left center;
+  animation: syn-boot 1.6s cubic-bezier(0.7, 0, 0.2, 1) both;
+}
+
+@keyframes syn-boot {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.syn-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+.syn-draw-on {
+  animation: syn-draw 1.1s ease-out forwards;
+}
+
+@keyframes syn-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.syn-blink {
+  animation: syn-blink 1.1s steps(2, start) infinite;
+}
+
+@keyframes syn-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.syn-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: syn-marquee 26s linear infinite;
+}
+
+@keyframes syn-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Scroll reveal: clipped wipe, not translateY fade.
+   Hidden state applies ONLY when JS is confirmed running (.js on <html>),
+   so content is never trapped invisible if scripts fail or stall. */
+.syn-reveal {
+  clip-path: none;
+}
+
+.js .syn-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.js .syn-reveal.is-on {
+  clip-path: inset(0 0 0 0);
+}
+
+.syn-reveal-late {
+  transition-delay: 0.12s;
+}
+
+/* Transit progress spine */
+.syn-spine-fill {
+  transform-origin: top center;
+}
+
+/* Thin scrollbars */
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 *::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-[#30363d] rounded-none hover:bg-slate-400 dark:hover:bg-[#484f58];
+  background: #2a313b;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #ff5c00;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .syn-scanline,
+  .syn-marquee-track,
+  .syn-blink {
+    animation: none;
+  }
+  .syn-reveal {
+    clip-path: none;
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

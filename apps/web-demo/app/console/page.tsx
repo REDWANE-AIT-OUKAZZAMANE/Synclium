@@ -17,8 +17,6 @@ import {
   CopyIcon,
   CheckIcon,
   DownloadIcon,
-  SunIcon,
-  MoonIcon,
   ShieldCheckIcon,
   GaugeIcon,
   LayersIcon,
@@ -58,35 +56,35 @@ const SOURCE_OPTIONS: DropdownOption<"auto" | FormatId>[] = [
     label: "Auto-Detect Schema Signature",
     sublabel: "Inspects root XML namespace or JSON structure",
     tag: "AUTO",
-    tagColor: "bg-blue-500/10 text-blue-500 border border-blue-500/20",
+    tagColor: "border-ink-600 text-paper-dim",
   },
   {
     value: "ubl",
     label: "UBL 2.1 / PEPPOL BIS Billing 3.0",
     sublabel: "ISO/IEC 19845 · European standard e-invoice",
     tag: "UBL",
-    tagColor: "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20",
+    tagColor: "border-paper-dim text-paper",
   },
   {
     value: "facturx",
     label: "Factur-X / ZUGFeRD 2.2 (CII)",
     sublabel: "EN16931 · France & Germany CrossIndustryInvoice",
     tag: "CII",
-    tagColor: "bg-purple-500/10 text-purple-500 border border-purple-500/20",
+    tagColor: "border-protocol text-protocol",
   },
   {
     value: "zatca",
     label: "ZATCA Fatoora Phase 2 (KSA)",
     sublabel: "Saudi Arabia Tax and Customs Clearance XML",
     tag: "KSA",
-    tagColor: "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20",
+    tagColor: "border-signal text-signal",
   },
   {
     value: "canonical",
     label: "Canonical JSON AST",
     sublabel: "Universal intermediate invoice hub schema",
     tag: "JSON",
-    tagColor: "bg-amber-500/10 text-amber-500 border border-amber-500/20",
+    tagColor: "border-signal text-signal",
   },
 ];
 
@@ -96,28 +94,28 @@ const TARGET_OPTIONS: DropdownOption<FormatId>[] = [
     label: "UBL 2.1 (PEPPOL BIS Billing 3.0)",
     sublabel: "Compile to ISO/IEC 19845 XML",
     tag: "UBL",
-    tagColor: "bg-cyan-500/10 text-cyan-500 border border-cyan-500/20",
+    tagColor: "border-paper-dim text-paper",
   },
   {
     value: "facturx",
     label: "Factur-X / ZUGFeRD (CII)",
     sublabel: "Compile to EN16931 CrossIndustryInvoice XML",
     tag: "CII",
-    tagColor: "bg-purple-500/10 text-purple-500 border border-purple-500/20",
+    tagColor: "border-protocol text-protocol",
   },
   {
     value: "zatca",
     label: "Saudi ZATCA Phase 2 XML",
     sublabel: "Compile to KSA VAT compliant electronic invoice",
     tag: "KSA",
-    tagColor: "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20",
+    tagColor: "border-signal text-signal",
   },
   {
     value: "canonical",
     label: "Canonical JSON (Hub)",
     sublabel: "Generate intermediate unified JSON object",
     tag: "JSON",
-    tagColor: "bg-amber-500/10 text-amber-500 border border-amber-500/20",
+    tagColor: "border-signal text-signal",
   },
 ];
 
@@ -184,20 +182,12 @@ export default function WorkbenchPage() {
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // Initialize theme
+  // Console is dark-only: the Synclium identity lives on #07090C.
   useEffect(() => {
-    const saved = localStorage.getItem("synclium-theme") as "dark" | "light" | null;
-    const initialTheme = saved ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    setTheme("dark");
+    localStorage.setItem("synclium-theme", "dark");
+    document.documentElement.classList.add("dark");
   }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("synclium-theme", next);
-    document.documentElement.classList.toggle("dark", next === "dark");
-  };
 
   // Fetch initial sample data and query rate-limit status
   const refreshQuota = useCallback(() => {
@@ -488,167 +478,136 @@ export default function WorkbenchPage() {
   const byteSize = activeContent ? new Blob([activeContent]).size : 0;
 
   return (
-    <div className="min-h-screen bg-[#eef5fe] text-slate-900 dark:bg-[#07090e] dark:text-[#e2e8f0] font-sans">
-      {/* Floating glass nav (Supaste) */}
-      <header className="sticky top-3 z-40 px-4">
-        <div className="supaste-glass-nav mx-auto max-w-[1600px] rounded-2xl border px-4 py-2.5 flex items-center justify-between dark:bg-[#07090e]/80 dark:border-[#21262d]">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <Link href="/" className="flex items-center group">
-              <img src="/logo.png" alt="Synclium" className="h-12 sm:h-12 w-auto object-contain drop-shadow-sm" />
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#58a6ff] transition-colors">
-                  SYNCLIUM
-                </span>
-                <span className="text-[10px] px-1.5 py-0.2 border border-slate-300 dark:border-[#30363d] bg-slate-100 dark:bg-[#161b22] text-slate-600 dark:text-slate-400 font-semibold">
-                  CONSOLE
-                </span>
-              </div>
-            </Link>
+    <div className="min-h-screen bg-ink-950 pt-11 font-mono text-paper">
+      {/* System bar — border-control chrome, auth + quota preserved */}
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-ink-700 bg-ink-950">
+        <div className="mx-auto flex h-11 max-w-[1200px] items-center gap-3 px-4 text-[11px]">
+          <Link href="/" className="flex items-center gap-2" aria-label="Synclium home">
+            <img src="/logo.png" alt="Synclium" className="h-6 w-auto" />
+            <span className="font-bold tracking-[0.18em] text-paper">SYNCLIUM</span>
+            <span className="border border-ink-600 px-1.5 py-px text-[9px] tracking-[0.18em] text-paper-dim">CONSOLE</span>
+          </Link>
 
-            <Link
-              href="/"
-              className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0a508f] transition-colors border border-slate-200 bg-white/70 px-2.5 py-1 rounded-full dark:border-[#30363d] dark:bg-[#161b22] dark:text-slate-400"
-            >
-              <span>← Overview</span>
-            </Link>
+          <nav className="ml-2 hidden items-center gap-3 text-paper-dim md:flex" aria-label="Console">
+            <Link href="/" className="hover:text-signal">← JOURNEY</Link>
+            <Link href="/docs" className="hover:text-signal">DOCS</Link>
+          </nav>
 
-            <Link
-              href="/docs"
-              className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#0a508f] transition-colors border border-slate-200 bg-white/70 px-2.5 py-1 rounded-full dark:border-[#30363d] dark:bg-[#161b22] dark:text-slate-400"
-            >
-              <span>API Docs &amp; Playground</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            {/* GitHub Authenticated Tier Badge */}
+          <div className="ml-auto flex items-center gap-2">
+            {/* Authenticated scan quota */}
             {isAuth && (
-              <div className="h-8 px-3 inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-700 dark:text-slate-300">
-                <ShieldCheckIcon className="w-3.5 h-3.5 text-blue-500" />
-                <span className="text-slate-500 dark:text-slate-400">Scans:</span>
-                <span className="font-bold text-blue-600 dark:text-blue-400">
+              <div className="inline-flex h-7 items-center gap-2 border border-ink-600 px-2.5 text-[11px] text-paper-dim">
+                <ShieldCheckIcon className="h-3.5 w-3.5 text-protocol" />
+                <span>SCANS</span>
+                <span className="font-bold text-paper">
                   {quotaRemaining}/{quotaLimit}
                 </span>
                 {resetCountdown ? (
-                  <span className="hidden md:inline text-[10px] text-slate-400 font-mono tracking-tight">
-                    (resets in {resetCountdown})
+                  <span className="hidden text-[10px] text-paper-faint md:inline">
+                    ({resetCountdown})
                   </span>
                 ) : (
-                  <span className="hidden md:inline text-[10px] text-slate-400 font-mono">
-                    (4h window)
-                  </span>
+                  <span className="hidden text-[10px] text-paper-faint md:inline">(4H WINDOW)</span>
                 )}
               </div>
             )}
 
             {/* GitHub Authentication Controls */}
             {authStatus === "loading" ? (
-              <div className="h-8 px-3 inline-flex items-center rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs text-slate-400">
-                ...
+              <div className="inline-flex h-7 items-center border border-ink-600 px-3 text-[11px] text-paper-faint">
+                …
               </div>
             ) : isAuth ? (
-              <div className="h-8 px-2.5 inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d]">
+              <div className="inline-flex h-7 items-center gap-2 border border-ink-600 px-2">
                 {session?.user?.image ? (
                   <img
                     src={session.user.image}
                     alt={session.user.name || "User"}
                     width={20}
                     height={20}
-                    className="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-700 object-cover shrink-0"
+                    className="h-5 w-5 shrink-0 border border-ink-600 object-cover"
                   />
                 ) : null}
-                <span className="hidden sm:inline font-mono text-xs text-slate-700 dark:text-slate-300 font-semibold">
+                <span className="hidden font-mono text-[11px] font-semibold text-paper sm:inline">
                   {(session.user as any).login || session.user?.name}
                 </span>
                 <button
                   onClick={() => signOut()}
-                  className="h-5 px-1.5 inline-flex items-center rounded bg-slate-200 dark:bg-[#21262d] hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 font-mono text-[10px] text-slate-600 dark:text-slate-400 transition-colors"
+                  className="inline-flex h-5 items-center px-1.5 font-mono text-[10px] text-paper-dim hover:text-signal"
                 >
-                  Sign out
+                  SIGN OUT
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => signIn("github")}
-                className="h-8 px-4 inline-flex items-center gap-1.5 rounded-full bg-[#087cf8] hover:bg-[#0a63c4] text-white text-xs font-bold transition-all shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)]"
+                className="inline-flex h-7 items-center bg-signal px-3 text-[11px] font-bold text-ink-950 hover:bg-signal-hot"
               >
-                <span>Sign in (3 Scans / 4h)</span>
+                SIGN IN · 3 SCANS / 4H
               </button>
             )}
-
-            {/* Dark / Light Toggle */}
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle Theme"
-              className="h-8 w-8 inline-flex items-center justify-center rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 hover:text-blue-500 hover:border-blue-500/40 transition-colors"
-            >
-              {theme === "dark" ? <SunIcon className="w-4 h-4" /> : <MoonIcon className="w-4 h-4" />}
-            </button>
 
             {/* Repository Link */}
             <a
               href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium"
               target="_blank"
               rel="noreferrer"
-              className="h-8 px-3 hidden sm:inline-flex items-center justify-center gap-1.5 rounded-lg bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] text-slate-700 dark:text-slate-300 font-mono text-xs font-semibold hover:border-blue-500 transition-colors"
+              className="hidden h-7 items-center border border-ink-600 px-2.5 text-[11px] text-paper-dim hover:border-signal hover:text-signal sm:inline-flex"
             >
-              <span>GitHub</span>
-              <ExternalLinkIcon className="w-3 h-3 opacity-75" />
+              <span>GITHUB</span>
+              <ExternalLinkIcon className="h-3 w-3 opacity-75" />
             </a>
           </div>
         </div>
       </header>
 
-      {/* Upgrade Banner for Anonymous Users Hit Limit */}
+      {/* Quota strip for anonymous users at limit */}
       {showUpgradeModal && !isAuth && (
-        <div className="supaste-hero px-4 py-3 text-white text-center text-xs font-semibold flex flex-wrap items-center justify-center gap-3">
-          <span>You have reached your 1 free daily scan. Sign in with GitHub to unlock 3 scans/day!</span>
+        <div className="border-b border-signal bg-signal/10 px-4 py-3 text-center font-mono text-xs text-paper">
+          <span>QUOTA EXHAUSTED — 1 FREE SCAN USED. SIGN IN WITH GITHUB FOR 3 SCANS / 4H.</span>
           <button
             onClick={() => signIn("github")}
-            className="px-3 py-1 rounded bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors shadow"
+            className="ml-3 bg-signal px-3 py-1 font-bold text-ink-950 hover:bg-signal-hot"
           >
-            Sign in with GitHub
+            SIGN IN
           </button>
           <button
             onClick={() => setShowUpgradeModal(false)}
-            className="text-slate-300 hover:text-white underline ml-2"
+            className="ml-2 text-paper-dim underline hover:text-paper"
           >
-            Dismiss
+            dismiss
           </button>
         </div>
       )}
 
-      {/* Supaste workbench hero band */}
-      <main className="px-4 sm:px-6 pb-6">
-        <div className="mx-auto max-w-[1600px]">
-        <div className="supaste-hero rounded-[28px] mt-4 px-6 py-10 sm:py-12 text-center overflow-hidden">
-          <div className="mx-auto max-w-[710px]">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 border border-white/30 backdrop-blur px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 inline-block" />
-              <span>INTERACTIVE WORKBENCH // IN-MEMORY · ZERO DISK WRITE</span>
-            </div>
-            <h1 className="mt-4 font-sans text-3xl sm:text-5xl font-bold tracking-[-0.04em] text-white leading-[1.05]">
-              Drop an invoice. Get compliance.
-            </h1>
-            <p className="mt-3 text-sm sm:text-base text-white/85 leading-relaxed">
-              Convert, validate, and AI-extract across UBL 2.1, Factur-X, and ZATCA Phase 2 — right in your browser.
-            </p>
-          </div>
+      {/* Inspection deck */}
+      <main className="px-4 pb-6 sm:px-6">
+        <div className="mx-auto max-w-[1200px]">
+        <div className="mt-6 border border-ink-700 bg-ink-900 px-6 py-10">
+          <div className="h-[3px] w-24 bg-signal" aria-hidden />
+          <p className="mt-4 font-mono text-[11px] tracking-[0.28em] text-protocol">BORDER INSPECTION DECK // IN-MEMORY · ZERO DISK WRITE</p>
+          <h1 className="mt-3 font-editorial text-4xl leading-[1.0] text-paper sm:text-6xl">
+            Drop an invoice. Watch it clear.
+          </h1>
+          <p className="mt-3 max-w-2xl font-mono text-[13px] leading-relaxed text-paper-dim">
+            Convert, validate, and AI-extract across UBL 2.1, Factur-X CII, and ZATCA Phase 2 —
+            through the canonical hub, inside this chamber.
+          </p>
         </div>
-        <div className="mt-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div className="mt-6 grid grid-cols-1 xl:grid-cols-12 gap-px border border-ink-700 bg-ink-700">
         {/* Left Column: Ingestion Pipeline & Execution Controls (5 Cols) */}
-        <section className="xl:col-span-5 flex flex-col gap-5">
+        <section className="flex flex-col gap-px bg-ink-950 xl:col-span-5">
           {/* Ingestion Box */}
-          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] p-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#21262d]">
+          <div className="syn-panel p-5">
+            <div className="flex items-center justify-between border-b border-ink-700 pb-3">
               <div className="flex items-center gap-2">
-                <FileCodeIcon className="w-4 h-4 text-blue-500" />
-                <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+                <FileCodeIcon className="h-4 w-4 text-signal" />
+                <h2 className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper">
                   Ingestion Payload
                 </h2>
               </div>
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161b22] text-slate-500 dark:text-slate-400">
-                In-Memory Streaming
+              <span className="border border-ink-600 px-2 py-0.5 font-mono text-[10px] text-paper-faint">
+                IN-MEMORY STREAM
               </span>
             </div>
 
@@ -676,11 +635,11 @@ export default function WorkbenchPage() {
                 }
                 fileRef.current?.click();
               }}
-              className={`mt-4 cursor-pointer rounded-2xl border-2 border-dashed p-6 text-center transition-all ${dragging
-                  ? "border-[#087cf8] bg-[#087cf8]/10"
+              className={`mt-4 cursor-pointer border-2 border-dashed p-6 text-center transition-colors ${dragging
+                  ? "border-signal bg-signal/10"
                   : !isAuth
-                    ? "border-[#087cf8]/50 bg-[#087cf8]/5 hover:border-[#087cf8] hover:bg-[#087cf8]/10"
-                    : "border-slate-300 dark:border-[#30363d] bg-slate-50/50 dark:bg-[#05070a] hover:border-[#087cf8]"
+                    ? "border-signal/60 bg-signal/5 hover:border-signal hover:bg-signal/10"
+                    : "border-ink-600 bg-ink-950 hover:border-signal"
                 }`}
             >
               <input
@@ -700,38 +659,38 @@ export default function WorkbenchPage() {
 
               {!isAuth ? (
                 <>
-                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
-                    <LockIcon className="w-5 h-5" />
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center border border-signal/60 bg-signal/10 text-signal">
+                    <LockIcon className="h-5 w-5" />
                   </div>
 
-                  <p className="mt-3 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
-                    SIGN IN TO UPLOAD & EXTRACT INVOICES
+                  <p className="mt-3 font-mono text-xs font-bold text-paper">
+                    SIGN IN TO UPLOAD + EXTRACT
                   </p>
-                  <p className="mt-1 font-mono text-[11px] text-blue-600 dark:text-blue-400 font-semibold">
-                    Click to sign in with GitHub for 3 free scans (resets every 4h)
+                  <p className="mt-1 font-mono text-[11px] font-semibold text-signal">
+                    GitHub sign-in · 3 free scans / 4h
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center border border-ink-600 bg-ink-950 text-signal">
                     {busy ? (
-                      <RefreshCwIcon className="w-5 h-5 animate-spin text-blue-500" />
+                      <RefreshCwIcon className="h-5 w-5 animate-spin text-signal" />
                     ) : (
-                      <UploadCloudIcon className="w-5 h-5" />
+                      <UploadCloudIcon className="h-5 w-5" />
                     )}
                   </div>
 
-                  <p className="mt-3 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
+                  <p className="mt-3 font-mono text-xs font-bold text-paper">
                     {busy === "extract"
-                      ? "EXTRACTING DOCUMENT..."
+                      ? "EXTRACTING DOCUMENT…"
                       : busy === "convert"
-                        ? "TRANSPILING DIALECT..."
+                        ? "TRANSPILING DIALECT…"
                         : busy === "validate"
-                          ? "RUNNING SCHEMATRON VALIDATION..."
-                          : "DROP INVOICE PAYLOAD (PDF, XML, JSON, TXT)"}
+                          ? "RUNNING VALIDATION GATES…"
+                          : "DROP INVOICE PAYLOAD · PDF XML JSON TXT"}
                   </p>
-                  <p className="mt-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
-                    Native binary PDF / scan ingestion + XML / JSON schema detection
+                  <p className="mt-1 font-mono text-[11px] text-paper-faint">
+                    Binary PDF + scan ingestion · XML / JSON signature sniffing
                   </p>
                 </>
               )}
@@ -739,9 +698,9 @@ export default function WorkbenchPage() {
 
             {/* Active Payload Tag */}
             {fileName && (
-              <div className="mt-3 flex items-center justify-between p-2 rounded bg-slate-100 dark:bg-[#161b22] border border-slate-200 dark:border-[#30363d] font-mono text-xs">
-                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 truncate">
-                  <FileTextIcon className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+              <div className="mt-3 flex items-center justify-between border border-ink-600 bg-ink-950 p-2 font-mono text-xs">
+                <div className="flex items-center gap-2 truncate text-paper">
+                  <FileTextIcon className="h-3.5 w-3.5 flex-shrink-0 text-signal" />
                   <span className="truncate">{fileName}</span>
                 </div>
                 <button
@@ -750,20 +709,20 @@ export default function WorkbenchPage() {
                     setFileName("");
                     reset();
                   }}
-                  className="text-[11px] text-red-500 hover:underline flex-shrink-0 ml-2"
+                  className="ml-2 flex-shrink-0 text-[11px] text-signal hover:underline"
                 >
-                  Clear
+                  CLEAR
                 </button>
               </div>
             )}
           </div>
 
-          {/* Quick Production Test Payloads */}
-          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] p-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-[#21262d]">
-              <LayersIcon className="w-4 h-4 text-emerald-500" />
-              <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                Production Test Cases
+          {/* Border test fixtures */}
+          <div className="syn-panel p-5">
+            <div className="flex items-center gap-2 border-b border-ink-700 pb-3">
+              <LayersIcon className="h-4 w-4 text-protocol" />
+              <h2 className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper">
+                Border Test Cases
               </h2>
             </div>
 
@@ -783,17 +742,17 @@ export default function WorkbenchPage() {
                       setActiveTab("editor");
                     }
                   }}
-                  className="w-full text-left p-3 rounded-lg border border-slate-200 dark:border-[#21262d] bg-slate-50/50 dark:bg-[#05070a] hover:border-blue-500 dark:hover:border-blue-500 transition-all group"
+                  className="w-full border border-ink-700 bg-ink-950 p-3 text-left transition-colors hover:border-signal"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500">
+                    <span className="font-mono text-xs font-bold text-paper">
                       {s.label}
                     </span>
-                    <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-[#161b22] text-slate-600 dark:text-slate-400 uppercase">
+                    <span className="border border-ink-600 px-1.5 py-0.5 font-mono text-[10px] uppercase text-paper-dim">
                       {s.format}
                     </span>
                   </div>
-                  <p className="mt-1 font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 font-mono text-[11px] text-paper-faint">
                     {s.desc}
                   </p>
                 </button>
@@ -802,11 +761,11 @@ export default function WorkbenchPage() {
           </div>
 
           {/* Pipeline Transformation Controls with Custom Dropdowns */}
-          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] p-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-[#21262d]">
-              <GaugeIcon className="w-4 h-4 text-blue-500" />
-              <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                Transformation Pipeline
+          <div className="syn-panel p-5">
+            <div className="flex items-center gap-2 border-b border-ink-700 pb-3">
+              <GaugeIcon className="h-4 w-4 text-signal" />
+              <h2 className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-paper">
+                Crossing Controls
               </h2>
             </div>
 
@@ -827,7 +786,7 @@ export default function WorkbenchPage() {
             </div>
 
             {/* Cloudflare Turnstile Bot Challenge */}
-            <div className="mt-4 pt-3 border-t border-slate-200 dark:border-[#21262d] flex flex-col items-center justify-center min-h-[65px]">
+            <div className="mt-4 flex min-h-[65px] flex-col items-center justify-center border-t border-ink-700 pt-3">
               <Turnstile
                 ref={turnstileRef}
                 siteKey={turnstileSiteKey}
@@ -852,7 +811,7 @@ export default function WorkbenchPage() {
                   void runExtract(input);
                 }}
                 disabled={isAuth ? ((!input.trim() && !fileRef.current?.value) || busy !== "") : false}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="flex cursor-pointer items-center justify-center gap-1.5 border border-ink-600 bg-ink-950 p-2.5 font-mono text-xs font-bold text-paper transition-colors hover:border-paper disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {!isAuth ? (
                   <>
@@ -876,7 +835,7 @@ export default function WorkbenchPage() {
                   void runValidate();
                 }}
                 disabled={isAuth ? (!input.trim() || busy !== "") : false}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-300 font-mono text-xs font-bold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="flex cursor-pointer items-center justify-center gap-1.5 border border-protocol/60 bg-ink-950 p-2.5 font-mono text-xs font-bold text-protocol transition-colors hover:bg-protocol hover:text-ink-950 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {!isAuth ? (
                   <>
@@ -900,7 +859,7 @@ export default function WorkbenchPage() {
                   void runConvert();
                 }}
                 disabled={isAuth ? (!input.trim() || busy !== "") : false}
-                className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-[#087cf8] bg-[#087cf8] hover:bg-[#0a63c4] text-white font-mono text-xs font-bold shadow-[0_8px_20px_-8px_rgba(8,124,248,0.8)] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="flex cursor-pointer items-center justify-center gap-1.5 border border-signal bg-signal p-2.5 font-mono text-xs font-bold text-ink-950 transition-colors hover:bg-signal-hot disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {!isAuth ? (
                   <>
@@ -919,15 +878,15 @@ export default function WorkbenchPage() {
 
           {/* Operational Errors */}
           {error && (
-            <div className="p-4 rounded-xl border border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300 font-mono text-xs flex items-start gap-2.5">
-              <XCircleIcon className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 border border-red-500/60 bg-red-500/5 p-4 font-mono text-xs text-red-300">
+              <XCircleIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-400" />
               <div>
-                <p className="font-bold">ENGINE_EXECUTION_ERROR</p>
+                <p className="font-bold tracking-[0.16em]">ENGINE FAULT</p>
                 <p className="mt-1 opacity-90">{error}</p>
                 {!isAuth && (
                   <button
                     onClick={() => signIn("github")}
-                    className="mt-2 inline-flex items-center gap-1 px-2.5 py-1 rounded bg-red-600 text-white font-bold hover:bg-red-500 transition-colors"
+                    className="mt-2 inline-flex items-center gap-1 bg-signal px-2.5 py-1 font-bold text-ink-950 hover:bg-signal-hot"
                   >
                     Sign in with GitHub for 3 Scans / 4h
                   </button>
@@ -939,21 +898,21 @@ export default function WorkbenchPage() {
           {/* Validation Diagnostics */}
           {validation && (
             <div
-              className={`p-4 rounded-xl border font-mono text-xs ${validation.valid
-                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                  : "border-red-500/40 bg-red-500/10 text-red-700 dark:text-red-300"
+              className={`border p-4 font-mono text-xs ${validation.valid
+                  ? "border-protocol/60 bg-protocol/5 text-paper"
+                  : "border-red-500/60 bg-red-500/5 text-red-200"
                 }`}
             >
-              <div className="flex items-center justify-between pb-2 border-b border-current/20">
-                <div className="flex items-center gap-2 font-bold">
+              <div className="flex items-center justify-between border-b border-ink-700 pb-2">
+                <div className="flex items-center gap-2 font-bold tracking-[0.16em]">
                   {validation.valid ? (
-                    <CheckCircle2Icon className="w-4 h-4 text-emerald-500" />
+                    <CheckCircle2Icon className="h-4 w-4 text-protocol" />
                   ) : (
-                    <XCircleIcon className="w-4 h-4 text-red-500" />
+                    <XCircleIcon className="h-4 w-4 text-red-400" />
                   )}
-                  <span>{validation.valid ? "PASSED_SCHEMA_VALIDATION" : "VALIDATION_FAILED"}</span>
+                  <span>{validation.valid ? "GATES PASS — CLEARED" : "GATES FAIL — HELD"}</span>
                 </div>
-                {validation.format && <span className="opacity-75">SCHEMA: {validation.format}</span>}
+                {validation.format && <span className="text-paper-faint">SCHEMA {validation.format}</span>}
               </div>
 
               {validation.errors.length > 0 && (
@@ -980,41 +939,47 @@ export default function WorkbenchPage() {
         </section>
 
         {/* Right Column: Code Matrix & Executive Summary Inspector (7 Cols) */}
-        <section className="xl:col-span-7 flex flex-col gap-4">
-          <div className="supaste-glass rounded-2xl dark:bg-[#0d1117]/90 dark:border-[#21262d] overflow-hidden flex flex-col h-full min-h-[660px]">
+        <section className="flex flex-col gap-px bg-ink-950 xl:col-span-7">
+          <div className="syn-panel flex h-full min-h-[660px] flex-col overflow-hidden">
             {/* Editor Workspace Tab Bar */}
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#21262d] bg-slate-50 dark:bg-[#05070a] px-3 pt-2">
-              <div className="flex items-center gap-1 font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-ink-700 bg-ink-900 px-3 pt-2">
+              <div className="flex items-center gap-1 font-mono text-xs" role="tablist" aria-label="Buffer views">
                 <button
                   onClick={() => setActiveTab("editor")}
-                  className={`px-3.5 py-2 rounded-t-lg font-bold transition-colors ${activeTab === "editor"
-                      ? "bg-white dark:bg-[#0d1117] text-[#087cf8] dark:text-[#58a6ff] border-t-2 border-t-[#087cf8] border-x border-slate-200 dark:border-[#21262d]"
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                  role="tab"
+                  aria-selected={activeTab === "editor"}
+                  className={`px-3.5 py-2 font-bold transition-colors ${activeTab === "editor"
+                      ? "bg-ink-950 text-signal border-t-2 border-t-signal border-x border-ink-700"
+                      : "text-paper-faint hover:text-paper"
                     }`}
                 >
-                  Raw Ingestion Buffer
+                  INTAKE BUFFER
                 </button>
 
                 <button
                   onClick={() => setActiveTab("canonical")}
                   disabled={!canonicalOut}
-                  className={`px-3.5 py-2 rounded-t-lg font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${activeTab === "canonical"
-                      ? "bg-white dark:bg-[#0d1117] text-[#087cf8] dark:text-[#58a6ff] border-t-2 border-t-[#087cf8] border-x border-slate-200 dark:border-[#21262d]"
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                  role="tab"
+                  aria-selected={activeTab === "canonical"}
+                  className={`px-3.5 py-2 font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${activeTab === "canonical"
+                      ? "bg-ink-950 text-signal border-t-2 border-t-signal border-x border-ink-700"
+                      : "text-paper-faint hover:text-paper"
                     }`}
                 >
-                  Canonical Hub AST
+                  CANONICAL AST
                 </button>
 
                 <button
                   onClick={() => setActiveTab("compiled")}
                   disabled={!convertedOut}
-                  className={`px-3.5 py-2 rounded-t-lg font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${activeTab === "compiled"
-                      ? "bg-white dark:bg-[#0d1117] text-[#087cf8] dark:text-[#58a6ff] border-t-2 border-t-[#087cf8] border-x border-slate-200 dark:border-[#21262d]"
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                  role="tab"
+                  aria-selected={activeTab === "compiled"}
+                  className={`px-3.5 py-2 font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${activeTab === "compiled"
+                      ? "bg-ink-950 text-signal border-t-2 border-t-signal border-x border-ink-700"
+                      : "text-paper-faint hover:text-paper"
                     }`}
                 >
-                  Compiled Target ({to.toUpperCase()})
+                  COMPILED {to.toUpperCase()}
                 </button>
               </div>
 
@@ -1022,24 +987,24 @@ export default function WorkbenchPage() {
               <div className="flex items-center gap-2 pb-2">
                 {/* View Mode Switcher (Code vs Visual Summary) */}
                 {parsedInvoiceObj && (
-                  <div className="flex items-center rounded-lg border border-slate-300 dark:border-[#30363d] bg-slate-100 dark:bg-[#161b22] p-0.5">
+                  <div className="flex items-center border border-ink-600 bg-ink-950 p-0.5">
                     <button
                       onClick={() => setViewMode("code")}
-                      className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold flex items-center gap-1 transition-all ${viewMode === "code"
-                          ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 shadow-sm"
-                          : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                      className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[10px] font-bold transition-colors ${viewMode === "code"
+                          ? "bg-ink-700 text-signal"
+                          : "text-paper-faint hover:text-paper"
                         }`}
                     >
-                      <Code2Icon className="w-3 h-3" /> Code
+                      <Code2Icon className="h-3 w-3" /> CODE
                     </button>
                     <button
                       onClick={() => setViewMode("visual")}
-                      className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold flex items-center gap-1 transition-all ${viewMode === "visual"
-                          ? "bg-white dark:bg-[#0d1117] text-blue-600 dark:text-blue-400 shadow-sm"
-                          : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                      className={`flex items-center gap-1 px-2 py-0.5 font-mono text-[10px] font-bold transition-colors ${viewMode === "visual"
+                          ? "bg-ink-700 text-signal"
+                          : "text-paper-faint hover:text-paper"
                         }`}
                     >
-                      <EyeIcon className="w-3 h-3" /> Visual
+                      <EyeIcon className="h-3 w-3" /> LEDGER
                     </button>
                   </div>
                 )}
@@ -1049,16 +1014,16 @@ export default function WorkbenchPage() {
                 <button
                   onClick={handleDownload}
                   disabled={!activeContent}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-200 dark:bg-[#161b22] border border-slate-300 dark:border-[#30363d] font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:border-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1 border border-ink-600 bg-ink-950 px-2.5 py-1 font-mono text-[11px] text-paper-dim hover:border-signal hover:text-signal disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <DownloadIcon className="w-3 h-3" />
+                  <DownloadIcon className="h-3 w-3" />
                   <span>Download</span>
                 </button>
               </div>
             </div>
 
             {/* Code Matrix Body or Visual Inspection Summary */}
-            <div className="flex-1 p-4 bg-white dark:bg-[#0d1117] flex flex-col justify-between">
+            <div className="flex flex-1 flex-col justify-between bg-ink-950 p-4">
               {viewMode === "visual" && parsedInvoiceObj ? (
                 <div className="max-h-[580px] overflow-auto">
                   <InvoiceSummaryView data={parsedInvoiceObj} />
@@ -1067,29 +1032,29 @@ export default function WorkbenchPage() {
                 <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Paste or drop invoice XML, Canonical JSON, or messy OCR plaintext stream here..."
-                  className="w-full h-full min-h-[560px] bg-transparent font-mono text-xs leading-relaxed text-slate-800 dark:text-[#c9d1d9] outline-none resize-none"
+                  placeholder="Paste or drop invoice XML, canonical JSON, or OCR text…"
+                  className="h-full min-h-[560px] w-full resize-none bg-transparent font-mono text-xs leading-relaxed text-paper-dim outline-none placeholder:text-paper-faint focus:text-paper"
                   spellCheck={false}
                 />
               ) : activeTab === "canonical" ? (
-                <pre className="w-full h-full min-h-[560px] overflow-auto font-mono text-xs leading-relaxed text-slate-800 dark:text-[#58a6ff]">
-                  {canonicalOut || "// Run AI Extraction or Conversion to populate Canonical AST"}
+                <pre className="h-full min-h-[560px] w-full overflow-auto font-mono text-xs leading-relaxed text-protocol">
+                  {canonicalOut || "// Run extraction or conversion to populate the canonical AST"}
                 </pre>
               ) : (
-                <pre className="w-full h-full min-h-[560px] overflow-auto font-mono text-xs leading-relaxed text-slate-800 dark:text-[#7ee787]">
-                  {convertedOut || "// Transpile payload to generate target e-invoicing XML"}
+                <pre className="h-full min-h-[560px] w-full overflow-auto font-mono text-xs leading-relaxed text-paper">
+                  {convertedOut || "// Transpile to emit the target dialect"}
                 </pre>
               )}
 
               {/* Editor Telemetry Status Footer */}
-              <div className="mt-3 pt-2 border-t border-slate-200 dark:border-[#21262d] flex items-center justify-between font-mono text-[10px] text-slate-500 dark:text-slate-400">
+              <div className="mt-3 flex items-center justify-between border-t border-ink-700 pt-2 font-mono text-[10px] tracking-[0.12em] text-paper-faint">
                 <div className="flex items-center gap-4">
-                  <span>LINES: {lineCount}</span>
-                  <span>BYTES: {byteSize.toLocaleString()} B</span>
-                  <span>ENCODING: UTF-8</span>
+                  <span>LINES {lineCount}</span>
+                  <span>BYTES {byteSize.toLocaleString()}</span>
+                  <span>UTF-8</span>
                 </div>
                 <div>
-                  <span>DIALECT: {activeTab === "editor" ? from.toUpperCase() : activeTab === "canonical" ? "CANONICAL_JSON" : to.toUpperCase()}</span>
+                  <span>DIALECT {activeTab === "editor" ? from.toUpperCase() : activeTab === "canonical" ? "CANONICAL" : to.toUpperCase()}</span>
                 </div>
               </div>
             </div>
@@ -1100,28 +1065,28 @@ export default function WorkbenchPage() {
       </main>
 
       {/* Industrial Footer */}
-      <footer className="border-t border-slate-300 dark:border-[#21262d] py-6 bg-slate-100 dark:bg-[#05070a] font-mono text-xs text-slate-500 dark:text-slate-400">
-        <div className="mx-auto max-w-[1600px] px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="mt-6 border border-ink-700 bg-ink-900 py-5 font-mono text-xs text-paper-faint">
+        <div className="flex flex-col items-center justify-between gap-3 px-5 sm:flex-row">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Synclium" className="h-5 w-auto object-contain rounded opacity-80" />
-            <span className="font-bold text-slate-800 dark:text-slate-200">SYNCLIUM</span>
-            <span>- Universal Electronic Invoicing Bridge</span>
+            <img src="/logo.png" alt="Synclium" className="h-5 w-auto" />
+            <span className="font-bold tracking-[0.18em] text-paper">SYNCLIUM</span>
+            <span>— BORDER INSPECTION DECK</span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px]">
-            <span>UBL 2.1 ISO/IEC 19845</span>
-            <span>•</span>
+          <div className="flex items-center gap-3 text-[10px] tracking-[0.12em]">
+            <span>UBL 2.1</span>
+            <span className="text-signal">·</span>
             <span>EN16931 CII</span>
-            <span>•</span>
-            <span>ZATCA 2024 Phase 2</span>
-            <span>•</span>
+            <span className="text-signal">·</span>
+            <span>ZATCA PHASE 2</span>
+            <span className="text-signal">·</span>
             <a
               href="https://github.com/REDWANE-AIT-OUKAZZAMANE/Synclium"
               target="_blank"
               rel="noreferrer"
-              className="text-blue-500 hover:underline"
+              className="text-protocol hover:underline"
             >
-              MIT Open Source
+              MIT
             </a>
           </div>
         </div>
@@ -1144,10 +1109,10 @@ function CopyButton({ content }: { content: string }) {
     <button
       onClick={copy}
       disabled={!content}
-      className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-200 dark:bg-[#161b22] border border-slate-300 dark:border-[#30363d] font-mono text-[11px] text-slate-700 dark:text-slate-300 hover:border-blue-500 disabled:opacity-40"
+      className="flex items-center gap-1 border border-ink-600 bg-ink-950 px-2.5 py-1 font-mono text-[11px] text-paper-dim hover:border-signal hover:text-signal disabled:opacity-40"
     >
-      {copied ? <CheckIcon className="w-3 h-3 text-emerald-500" /> : <CopyIcon className="w-3 h-3" />}
-      <span>{copied ? "Copied" : "Copy"}</span>
+      {copied ? <CheckIcon className="h-3 w-3 text-protocol" /> : <CopyIcon className="h-3 w-3" />}
+      <span>{copied ? "COPIED" : "COPY"}</span>
     </button>
   );
 }

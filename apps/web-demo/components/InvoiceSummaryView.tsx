@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { FileTextIcon, ShieldCheckIcon } from "./Icons";
 
 interface InvoiceData {
   id?: string;
@@ -64,108 +63,84 @@ export function InvoiceSummaryView({ data }: { data: InvoiceData }) {
   const currency = data.currencyCode || "EUR";
 
   return (
-    <div className="space-y-4 font-mono text-xs text-slate-800 dark:text-slate-200">
+    <div className="space-y-3 font-mono text-xs text-paper">
       {/* Header Metadata Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-lg border border-slate-200 dark:border-[#21262d] bg-slate-50/50 dark:bg-[#05070a]">
-        <div>
-          <span className="text-[10px] text-slate-500 uppercase block">Invoice ID</span>
-          <span className="font-bold text-slate-900 dark:text-white">{data.id || "N/A"}</span>
-        </div>
-        <div>
-          <span className="text-[10px] text-slate-500 uppercase block">Issue Date</span>
-          <span className="font-bold text-slate-900 dark:text-white">{data.issueDate || "N/A"}</span>
-        </div>
-        <div>
-          <span className="text-[10px] text-slate-500 uppercase block">Due Date</span>
-          <span className="font-bold text-slate-900 dark:text-white">{data.dueDate || "N/A"}</span>
-        </div>
-        <div>
-          <span className="text-[10px] text-slate-500 uppercase block">Currency</span>
-          <span className="font-bold text-blue-600 dark:text-blue-400">{currency}</span>
-        </div>
+      <div className="grid grid-cols-2 gap-px border border-ink-700 bg-ink-700 sm:grid-cols-4">
+        {[
+          ["INVOICE ID", data.id || "N/A", "text-paper"],
+          ["ISSUE DATE", data.issueDate || "N/A", "text-paper"],
+          ["DUE DATE", data.dueDate || "N/A", "text-paper"],
+          ["CURRENCY", currency, "text-signal"],
+        ].map(([k, v, tone]) => (
+          <div key={k as string} className="bg-ink-950 p-3">
+            <span className="block text-[10px] tracking-[0.18em] text-paper-faint">{k}</span>
+            <span className={`font-bold ${tone}`}>{v}</span>
+          </div>
+        ))}
       </div>
 
       {/* Parties Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Seller Card */}
-        <div className="p-4 rounded-lg border border-slate-200 dark:border-[#21262d] bg-white dark:bg-[#090d14]">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-[#21262d] mb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase">Seller Party</span>
-            {data.seller?.address?.countryCode && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-500 font-bold">
-                {data.seller.address.countryCode}
-              </span>
+      <div className="grid grid-cols-1 gap-px border border-ink-700 bg-ink-700 md:grid-cols-2">
+        {[
+          { role: "SELLER PARTY", party: data.seller, name: data.seller?.name || "Unspecified Seller" },
+          { role: "BUYER PARTY", party: data.buyer, name: data.buyer?.name || "Unspecified Buyer" },
+        ].map(({ role, party, name }) => (
+          <div key={role} className="bg-ink-950 p-4">
+            <div className="mb-2 flex items-center justify-between border-b border-ink-700 pb-2">
+              <span className="text-[11px] font-bold tracking-[0.18em] text-paper-faint">{role}</span>
+              {party?.address?.countryCode && (
+                <span className="border border-protocol px-1.5 py-0.5 text-[10px] font-bold text-protocol">
+                  {party.address.countryCode}
+                </span>
+              )}
+            </div>
+            <p className="text-sm font-bold text-paper">{name}</p>
+            <p className="mt-1 text-[11px] text-paper-faint">
+              TAX ID <span className="font-semibold text-paper-dim">{party?.taxId || "N/A"}</span>
+            </p>
+            {party?.address && (
+              <p className="mt-0.5 text-[11px] text-paper-faint">
+                {[party.address.streetName, party.address.cityName, party.address.postalZone]
+                  .filter(Boolean)
+                  .join(", ")}
+              </p>
             )}
           </div>
-          <p className="font-bold text-sm text-slate-900 dark:text-white">{data.seller?.name || "Unspecified Seller"}</p>
-          <p className="text-slate-500 text-[11px] mt-1">
-            Tax ID: <span className="text-slate-700 dark:text-slate-300 font-semibold">{data.seller?.taxId || "N/A"}</span>
-          </p>
-          {data.seller?.address && (
-            <p className="text-slate-500 text-[11px] mt-0.5">
-              {[data.seller.address.streetName, data.seller.address.cityName, data.seller.address.postalZone]
-                .filter(Boolean)
-                .join(", ")}
-            </p>
-          )}
-        </div>
-
-        {/* Buyer Card */}
-        <div className="p-4 rounded-lg border border-slate-200 dark:border-[#21262d] bg-white dark:bg-[#090d14]">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-[#21262d] mb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase">Buyer Party</span>
-            {data.buyer?.address?.countryCode && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-500 font-bold">
-                {data.buyer.address.countryCode}
-              </span>
-            )}
-          </div>
-          <p className="font-bold text-sm text-slate-900 dark:text-white">{data.buyer?.name || "Unspecified Buyer"}</p>
-          <p className="text-slate-500 text-[11px] mt-1">
-            Tax ID: <span className="text-slate-700 dark:text-slate-300 font-semibold">{data.buyer?.taxId || "N/A"}</span>
-          </p>
-          {data.buyer?.address && (
-            <p className="text-slate-500 text-[11px] mt-0.5">
-              {[data.buyer.address.streetName, data.buyer.address.cityName, data.buyer.address.postalZone]
-                .filter(Boolean)
-                .join(", ")}
-            </p>
-          )}
-        </div>
+        ))}
       </div>
 
       {/* Line Items Table */}
       {data.lineItems && data.lineItems.length > 0 && (
-        <div className="rounded-lg border border-slate-200 dark:border-[#21262d] overflow-hidden">
-          <div className="p-2.5 bg-slate-100 dark:bg-[#161b22] border-b border-slate-200 dark:border-[#21262d] font-bold text-slate-700 dark:text-slate-300">
-            Line Items ({data.lineItems.length})
+        <div className="overflow-hidden border border-ink-700">
+          <div className="border-b border-ink-700 bg-ink-900 p-2.5 font-bold text-paper-dim">
+            LINE ITEMS ({data.lineItems.length})
           </div>
           <table className="w-full text-left text-[11px]">
-            <thead className="bg-slate-50 dark:bg-[#05070a] text-slate-500 border-b border-slate-200 dark:border-[#21262d]">
+            <thead className="border-b border-ink-700 bg-ink-950 tracking-[0.14em] text-paper-faint">
               <tr>
-                <th className="p-2.5">Item Description</th>
-                <th className="p-2.5 text-right">Qty</th>
-                <th className="p-2.5 text-right">Unit Price</th>
-                <th className="p-2.5 text-right">Tax Rate</th>
-                <th className="p-2.5 text-right">Line Total</th>
+                <th className="p-2.5 font-normal">ITEM DESCRIPTION</th>
+                <th className="p-2.5 text-right font-normal">QTY</th>
+                <th className="p-2.5 text-right font-normal">UNIT PRICE</th>
+                <th className="p-2.5 text-right font-normal">TAX RATE</th>
+                <th className="p-2.5 text-right font-normal">LINE TOTAL</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-[#21262d] bg-white dark:bg-[#090d14]">
+            <tbody className="divide-y divide-ink-700 bg-ink-950">
               {data.lineItems.map((item, idx) => (
-                <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-[#161b22]/50">
-                  <td className="p-2.5 font-medium text-slate-900 dark:text-white">
+                <tr key={idx} className="hover:bg-ink-900">
+                  <td className="p-2.5 font-medium text-paper">
                     {item.name || `Item ${idx + 1}`}
                   </td>
-                  <td className="p-2.5 text-right text-slate-600 dark:text-slate-400">
+                  <td className="p-2.5 text-right text-paper-dim">
                     {item.quantity ?? 1} {item.unitCode || ""}
                   </td>
-                  <td className="p-2.5 text-right text-slate-600 dark:text-slate-400">
+                  <td className="p-2.5 text-right text-paper-dim">
                     {currency} {Number(item.unitPriceAmount ?? 0).toFixed(2)}
                   </td>
-                  <td className="p-2.5 text-right text-slate-600 dark:text-slate-400">
+                  <td className="p-2.5 text-right text-paper-dim">
                     {item.taxes?.[0]?.rate != null ? `${item.taxes[0].rate}%` : "—"}
                   </td>
-                  <td className="p-2.5 text-right font-bold text-slate-900 dark:text-white">
+                  <td className="p-2.5 text-right font-bold text-paper">
                     {currency} {Number(item.lineExtensionAmount ?? 0).toFixed(2)}
                   </td>
                 </tr>
@@ -177,24 +152,24 @@ export function InvoiceSummaryView({ data }: { data: InvoiceData }) {
 
       {/* Financial Totals & Reconciliation Bar */}
       {data.totals && (
-        <div className="p-4 rounded-lg border border-slate-200 dark:border-[#21262d] bg-slate-50 dark:bg-[#090d14] flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border border-signal/60 bg-signal/5 p-4">
           <div>
-            <span className="text-[10px] text-slate-500 uppercase block">Net Taxable Amount</span>
-            <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">
+            <span className="block text-[10px] tracking-[0.18em] text-paper-faint">NET TAXABLE</span>
+            <span className="text-sm font-bold text-paper">
               {currency} {Number(data.totals.lineExtensionAmount ?? data.totals.taxExclusiveAmount ?? 0).toFixed(2)}
             </span>
           </div>
 
           <div>
-            <span className="text-[10px] text-slate-500 uppercase block">VAT / Tax Total</span>
-            <span className="font-bold text-amber-600 dark:text-amber-400 text-sm">
+            <span className="block text-[10px] tracking-[0.18em] text-paper-faint">VAT / TAX TOTAL</span>
+            <span className="text-sm font-bold text-protocol">
               {currency} {Number(data.totals.taxTotalAmount ?? 0).toFixed(2)}
             </span>
           </div>
 
           <div className="text-right">
-            <span className="text-[10px] text-slate-500 uppercase block">Total Due (Gross Payable)</span>
-            <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-base">
+            <span className="block text-[10px] tracking-[0.18em] text-paper-faint">TOTAL DUE</span>
+            <span className="text-base font-extrabold text-signal">
               {currency} {Number(data.totals.payableAmount ?? data.totals.taxInclusiveAmount ?? 0).toFixed(2)}
             </span>
           </div>
@@ -203,14 +178,14 @@ export function InvoiceSummaryView({ data }: { data: InvoiceData }) {
 
       {/* Payment Information */}
       {data.paymentTerms && (
-        <div className="p-3 rounded-lg border border-slate-200 dark:border-[#21262d] bg-white dark:bg-[#090d14] text-[11px] text-slate-600 dark:text-slate-400 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border border-ink-700 bg-ink-950 p-3 text-[11px] text-paper-dim">
           <div>
-            <span className="font-bold text-slate-800 dark:text-slate-200">Payment Terms: </span>
+            <span className="font-bold text-paper">PAYMENT TERMS </span>
             <span>{data.paymentTerms.note || "Standard terms apply"}</span>
           </div>
           {data.paymentTerms.payeeFinancialAccount && (
-            <div className="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161b22] text-slate-700 dark:text-slate-300">
-              IBAN: {data.paymentTerms.payeeFinancialAccount}
+            <div className="border border-ink-600 px-2 py-0.5 font-mono text-[10px] text-paper-dim">
+              IBAN {data.paymentTerms.payeeFinancialAccount}
             </div>
           )}
         </div>

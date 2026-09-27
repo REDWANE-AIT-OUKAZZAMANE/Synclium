@@ -58,7 +58,7 @@ export function CustomDropdown<T extends string>({
 
   return (
     <div className="relative w-full" ref={containerRef}>
-      <span className="block font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">
+      <span className="mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-paper-faint">
         {label}
       </span>
 
@@ -66,24 +66,24 @@ export function CustomDropdown<T extends string>({
         type="button"
         disabled={disabled}
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-3 rounded-lg border border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#05070a] hover:border-blue-500 dark:hover:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/40 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+        className="flex w-full items-center justify-between border border-ink-600 bg-ink-950 p-3 text-left transition-colors hover:border-signal focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <div className="flex items-center gap-2.5 truncate">
           {selectedOption.tag && (
             <span
-              className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                selectedOption.tagColor || "bg-slate-200 dark:bg-[#161b22] text-slate-700 dark:text-slate-300"
+              className={`border px-1.5 py-0.5 font-mono text-[10px] font-bold ${
+                selectedOption.tagColor || "border-ink-600 text-paper-dim"
               }`}
             >
               {selectedOption.tag}
             </span>
           )}
           <div className="truncate">
-            <p className="font-mono text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+            <p className="truncate font-mono text-xs font-bold text-paper">
               {selectedOption.label}
             </p>
             {selectedOption.sublabel && (
-              <p className="font-mono text-[10px] text-slate-500 dark:text-slate-400 truncate">
+              <p className="truncate font-mono text-[10px] text-paper-faint">
                 {selectedOption.sublabel}
               </p>
             )}
@@ -91,15 +91,15 @@ export function CustomDropdown<T extends string>({
         </div>
 
         <ChevronDownIcon
-          className={`w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0 transition-transform duration-200 ${
-            open ? "rotate-180 text-blue-500" : ""
+          className={`h-4 w-4 flex-shrink-0 text-paper-faint transition-transform duration-200 ${
+            open ? "rotate-180 text-signal" : ""
           }`}
         />
       </button>
 
       {/* Dropdown Options Flyout */}
       {open && (
-        <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-72 overflow-auto rounded-lg border border-slate-300 dark:border-[#30363d] bg-white dark:bg-[#0d1117] shadow-xl p-1.5 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="absolute left-0 right-0 z-50 mt-1.5 max-h-72 overflow-auto border border-ink-600 bg-ink-900 p-1.5">
           {options.map((opt) => {
             const isSelected = opt.value === value;
             return (
@@ -110,31 +110,31 @@ export function CustomDropdown<T extends string>({
                   onChange(opt.value);
                   setOpen(false);
                 }}
-                className={`w-full flex items-center justify-between p-2.5 rounded-md font-mono text-left transition-colors ${
+                className={`flex w-full items-center justify-between p-2.5 text-left font-mono transition-colors ${
                   isSelected
-                    ? "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
-                    : "hover:bg-slate-100 dark:hover:bg-[#161b22] text-slate-800 dark:text-slate-200"
+                    ? "bg-signal/15 text-signal"
+                    : "text-paper hover:bg-ink-800"
                 }`}
               >
                 <div className="flex items-center gap-2.5 truncate">
                   {opt.tag && (
                     <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                        opt.tagColor || "bg-slate-200 dark:bg-[#161b22] text-slate-700 dark:text-slate-300"
+                      className={`border px-1.5 py-0.5 text-[10px] font-bold ${
+                        opt.tagColor || "border-ink-600 text-paper-dim"
                       }`}
                     >
                       {opt.tag}
                     </span>
                   )}
                   <div className="truncate">
-                    <p className="text-xs font-bold truncate">{opt.label}</p>
+                    <p className="truncate text-xs font-bold">{opt.label}</p>
                     {opt.sublabel && (
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{opt.sublabel}</p>
+                      <p className="truncate text-[10px] text-paper-faint">{opt.sublabel}</p>
                     )}
                   </div>
                 </div>
 
-                {isSelected && <CheckIcon className="w-4 h-4 text-blue-500 flex-shrink-0 ml-2" />}
+                {isSelected && <CheckIcon className="ml-2 h-4 w-4 flex-shrink-0 text-signal" />}
               </button>
             );
           })}

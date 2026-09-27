@@ -6,14 +6,35 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* Supaste (inspomcp.dev/screens/supaste-com) — Marquee Hero, light glassmorphism */
-        supaste: {
-          dominant: "#087cf8",
-          surface: "#8ad8fc",
-          ink: "#0a508f",
-          accent: "#ac6853",
-          detail: "#b5bcc6",
+        /* SYNCLIUM — THE BORDERLESS INVOICE
+           ink: almost-black field · paper: warm off-white document/data
+           signal: electric orange = transit / clearance / movement
+           protocol: restrained cyan = machine state / system
+           rule: hairline borders */
+        ink: {
+          950: "#07090C",
+          900: "#0B0E13",
+          850: "#10141B",
+          800: "#161B23",
+          700: "#1C2128",
+          600: "#2A313B",
         },
+        paper: {
+          DEFAULT: "#F2EDE3",
+          dim: "#CFC7B8",
+          faint: "#A29B8A",
+        },
+        signal: {
+          DEFAULT: "#FF5C00",
+          hot: "#FF7A29",
+          deep: "#B23E00",
+        },
+        protocol: {
+          DEFAULT: "#3DD6C2",
+          dim: "#1E8A7E",
+          faint: "#123B37",
+        },
+        /* legacy aliases retained for /console + /docs routes */
         obsidian: {
           950: "#05070a",
           900: "#090d14",
@@ -43,15 +64,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Inter Display", "Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        mono: ["ui-monospace", "Cascadia Code", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
-      },
-      boxShadow: {
-        floating: "0 24px 80px -20px rgba(8, 124, 248, 0.45), 0 8px 24px -8px rgba(10, 80, 143, 0.25)",
-        glass: "0 8px 32px -8px rgba(10, 80, 143, 0.18), inset 0 1px 0 rgba(255,255,255,0.6)",
-        terminal: "0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 40px -15px rgba(0, 0, 0, 0.7)",
-        "terminal-light": "0 0 0 1px rgba(0, 0, 0, 0.08), 0 20px 40px -15px rgba(0, 0, 0, 0.1)",
-        glow: "0 0 30px -5px rgba(0, 240, 255, 0.25)",
+        /* Editorial voice: high-contrast serif, never a geometric sans */
+        editorial: ["Fraunces", "Georgia", "'Times New Roman'", "serif"],
+        sans: ["Fraunces", "Georgia", "'Times New Roman'", "serif"],
+        /* Technical voice: monospace telemetry */
+        mono: ["'IBM Plex Mono'", "ui-monospace", "'Cascadia Code'", "Menlo", "Consolas", "monospace"],
       },
     },
   },
