@@ -5,6 +5,10 @@ out/
 .turbo/
 coverage/
 *.tsbuildinfo
+# Local agent tooling — contributor setup, not part of the public repo
+.agents/
+# Local scratch space — never commit
+scratch/
 # Environment variables
 .env
 .env.*
